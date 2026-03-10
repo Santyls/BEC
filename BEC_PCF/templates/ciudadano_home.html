@@ -30,11 +30,13 @@
                 </p>
                 
                 <div class="flex flex-col sm:flex-row gap-5">
+                    <!-- CORRECCIÓN: Botón manda al mapa de albergues -->
                     <a href="{{ url_for('ciudadano_albergues') }}" class="inline-flex justify-center items-center px-8 py-4 rounded-xl bg-bec-accent text-bec-dark font-bold hover:bg-cyan-400 transition-all shadow-[0_0_20px_rgba(91,192,190,0.3)] hover:shadow-[0_0_30px_rgba(91,192,190,0.5)] gap-3">
                         <i data-lucide="map-pin" class="w-5 h-5"></i>
                         Ver Albergues
                     </a>
-                    <a href="#" class="inline-flex justify-center items-center px-8 py-4 rounded-xl glass-panel text-white hover:border-bec-accent hover:text-bec-accent transition-all gap-3 font-medium">
+                    <!-- CORRECCIÓN: Botón manda a donaciones -->
+                    <a href="{{ url_for('ciudadano_donaciones') }}" class="inline-flex justify-center items-center px-8 py-4 rounded-xl glass-panel text-white hover:border-bec-accent hover:text-bec-accent transition-all gap-3 font-medium">
                         <i data-lucide="heart" class="w-5 h-5"></i>
                         Quiero Donar
                     </a>
@@ -43,7 +45,6 @@
 
             <!-- Gráfico / Tarjetas Flotantes -->
             <div class="relative hidden lg:block h-[500px]">
-                <!-- Tarjeta Principal -->
                 <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 glass-panel rounded-2xl p-6 border border-white/10 shadow-2xl z-20">
                     <div class="w-12 h-12 bg-bec-base rounded-xl flex items-center justify-center mb-4 border border-bec-accent/30">
                         <i data-lucide="box" class="w-6 h-6 text-bec-accent"></i>
@@ -56,7 +57,6 @@
                     <p class="text-xs text-right text-bec-accent font-medium">75% Meta Alcanzada</p>
                 </div>
 
-                <!-- Tarjeta Secundaria 1 -->
                 <div class="absolute top-10 right-0 w-64 glass-panel rounded-2xl p-5 border border-white/10 shadow-xl z-10 animate-pulse" style="animation-duration: 4s;">
                     <div class="flex items-center gap-4">
                         <div class="w-10 h-10 bg-status-info/20 rounded-full flex items-center justify-center text-status-info">
@@ -69,7 +69,6 @@
                     </div>
                 </div>
 
-                <!-- Tarjeta Secundaria 2 -->
                 <div class="absolute bottom-10 left-0 w-64 glass-panel rounded-2xl p-5 border border-white/10 shadow-xl z-30">
                     <div class="flex items-center gap-4">
                         <div class="w-10 h-10 bg-status-success/20 rounded-full flex items-center justify-center text-status-success">
@@ -82,7 +81,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </section>
@@ -90,24 +88,21 @@
 <!-- SECCIÓN: SERVICIOS / VISTAS RÁPIDAS -->
 <section class="py-24 border-t border-white/5 relative bg-bec-base/20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
         <div class="text-center max-w-2xl mx-auto mb-16">
             <h2 class="text-3xl font-bold text-white mb-4">¿Qué puedes hacer en el portal?</h2>
             <p class="text-slate-400">Tu panel de control para ayudar a Querétaro.</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <!-- Card 1 -->
             <a href="{{ url_for('ciudadano_donaciones') }}" class="glass-panel rounded-2xl p-8 hover:-translate-y-2 transition-transform duration-300 group">
                 <div class="w-14 h-14 bg-bec-base border border-bec-accent/20 rounded-xl flex items-center justify-center mb-6 group-hover:border-bec-accent group-hover:shadow-[0_0_15px_rgba(91,192,190,0.3)] transition-all">
                     <i data-lucide="clipboard-list" class="w-7 h-7 text-bec-accent"></i>
                 </div>
                 <h3 class="text-xl font-semibold text-white mb-3">Mis Donaciones</h3>
-                <p class="text-slate-400 text-sm mb-6">Consulta el historial y el estado de todos los artículos que has donado en los centros de acopio.</p>
+                <p class="text-slate-400 text-sm mb-6">Consulta el historial y los artículos que has donado en los centros de acopio.</p>
                 <span class="text-bec-accent text-sm font-medium flex items-center gap-2">Consultar historial <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
             </a>
 
-            <!-- Card 2 -->
             <a href="{{ url_for('ciudadano_voluntariados') }}" class="glass-panel rounded-2xl p-8 hover:-translate-y-2 transition-transform duration-300 group">
                 <div class="w-14 h-14 bg-bec-base border border-bec-accent/20 rounded-xl flex items-center justify-center mb-6 group-hover:border-bec-accent group-hover:shadow-[0_0_15px_rgba(91,192,190,0.3)] transition-all">
                     <i data-lucide="calendar-check" class="w-7 h-7 text-bec-accent"></i>
@@ -117,13 +112,12 @@
                 <span class="text-bec-accent text-sm font-medium flex items-center gap-2">Ver agenda <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
             </a>
 
-            <!-- Card 3 -->
             <a href="{{ url_for('ciudadano_perfil') }}" class="glass-panel rounded-2xl p-8 hover:-translate-y-2 transition-transform duration-300 group">
                 <div class="w-14 h-14 bg-bec-base border border-bec-accent/20 rounded-xl flex items-center justify-center mb-6 group-hover:border-bec-accent group-hover:shadow-[0_0_15px_rgba(91,192,190,0.3)] transition-all">
                     <i data-lucide="user-cog" class="w-7 h-7 text-bec-accent"></i>
                 </div>
                 <h3 class="text-xl font-semibold text-white mb-3">Mi Perfil y Domicilio</h3>
-                <p class="text-slate-400 text-sm mb-6">Actualiza tu información de contacto y domicilio para facilitar la recolección de donativos.</p>
+                <p class="text-slate-400 text-sm mb-6">Actualiza tu información de contacto y domicilio para agilizar el proceso.</p>
                 <span class="text-bec-accent text-sm font-medium flex items-center gap-2">Editar datos <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
             </a>
         </div>

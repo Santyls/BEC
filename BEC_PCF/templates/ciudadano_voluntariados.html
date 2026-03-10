@@ -9,185 +9,124 @@
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
         <div>
             <h1 class="text-3xl font-bold text-white mb-2">Mis Voluntariados</h1>
-            <p class="text-slate-400">Tu historial de participación y próximos eventos de ayuda.</p>
+            <p class="text-slate-400">Gestiona tus participaciones en las campañas activas.</p>
         </div>
         
-        <!-- Tarjetas de Resumen Rápido -->
-        <div class="flex gap-4">
-            <div class="glass-panel px-6 py-4 rounded-xl flex items-center gap-4 border-bec-accent/20">
-                <div class="p-3 bg-bec-accent/10 rounded-lg text-bec-accent">
-                    <i data-lucide="heart-handshake" class="w-6 h-6"></i>
-                </div>
-                <div>
-                    <p class="text-xs text-slate-400 uppercase tracking-wider mb-1">Eventos</p>
-                    <p class="text-2xl font-bold text-white">5</p>
+        <!-- Tarjeta de Resumen Rápido con Botón '+' -->
+        <div class="glass-panel px-6 py-4 rounded-xl flex items-center gap-6 border-bec-accent/20">
+            <div>
+                <p class="text-xs text-slate-400 uppercase tracking-wider mb-1">Horas Aportadas</p>
+                <div class="flex items-end gap-2">
+                    <p class="text-2xl font-bold text-white">12</p>
+                    <span class="text-sm text-slate-400 mb-1">hrs</span>
                 </div>
             </div>
-            
-            <div class="glass-panel px-6 py-4 rounded-xl flex items-center gap-4 border-status-success/20 hidden sm:flex">
-                <div class="p-3 bg-status-success/10 rounded-lg text-status-success">
-                    <i data-lucide="clock" class="w-6 h-6"></i>
-                </div>
-                <div>
-                    <p class="text-xs text-slate-400 uppercase tracking-wider mb-1">Horas Aportadas</p>
-                    <p class="text-2xl font-bold text-white">24<span class="text-sm text-slate-400 font-normal">h</span></p>
-                </div>
-            </div>
+            <div class="w-px h-10 bg-white/10"></div>
+            <!-- Nuevo botón para anotarse a voluntariado -->
+            <button class="bg-bec-accent hover:bg-bec-accent/80 text-bec-dark font-bold px-4 py-2 rounded-lg flex items-center gap-2 transition-colors shadow-[0_0_15px_rgba(91,192,190,0.3)] hover:shadow-[0_0_20px_rgba(91,192,190,0.5)] group" title="Anotarse a nuevo voluntariado">
+                <i data-lucide="plus" class="w-5 h-5 group-hover:rotate-90 transition-transform"></i>
+                <span class="text-sm">Inscribirme</span>
+            </button>
         </div>
     </div>
 
-    <!-- Filtros rápidos (Opcional visualmente) -->
-    <div class="flex gap-2 mb-6 overflow-x-auto pb-2 scrollbar-hide">
-        <button class="px-4 py-2 rounded-full bg-bec-accent text-bec-dark font-medium text-sm whitespace-nowrap">Todos</button>
-        <button class="px-4 py-2 rounded-full bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white border border-white/10 font-medium text-sm transition-colors whitespace-nowrap">Próximos</button>
-        <button class="px-4 py-2 rounded-full bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white border border-white/10 font-medium text-sm transition-colors whitespace-nowrap">Completados</button>
+    <!-- Filtros Pestañas -->
+    <div class="flex flex-wrap items-center gap-2 mb-8 border-b border-white/10 pb-4">
+        <button onclick="filtrarVoluntariados('todos', this)" class="filtro-btn active px-4 py-2 rounded-lg text-sm font-medium transition-colors bg-white/10 text-white">Todos</button>
+        <button onclick="filtrarVoluntariados('proximo', this)" class="filtro-btn px-4 py-2 rounded-lg text-sm font-medium transition-colors text-slate-400 hover:text-white hover:bg-white/5">Próximos</button>
+        <button onclick="filtrarVoluntariados('completado', this)" class="filtro-btn px-4 py-2 rounded-lg text-sm font-medium transition-colors text-slate-400 hover:text-white hover:bg-white/5">Completados</button>
     </div>
 
     <!-- Lista de Voluntariados -->
-    <div class="space-y-4">
+    <div class="space-y-4" id="listaVoluntariados">
 
-        <!-- EVENTO 1 (Próximo - Info) -->
-        <div class="glass-panel rounded-2xl p-6 border border-white/5 hover:border-white/10 transition-colors relative overflow-hidden group">
-            <div class="absolute left-0 top-0 bottom-0 w-1 bg-status-info"></div>
-            
+        <!-- TARJETA 1: PRÓXIMO -->
+        <div class="voluntariado-card glass-panel rounded-2xl p-6 border border-status-info/30 hover:border-status-info/60 transition-colors" data-status="proximo">
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                 <!-- Info principal -->
                 <div class="flex items-start gap-4">
-                    <div class="w-12 h-12 rounded-xl bg-bec-dark border border-white/10 flex items-center justify-center flex-shrink-0">
-                        <i data-lucide="calendar-clock" class="text-status-info w-6 h-6"></i>
+                    <div class="w-14 h-14 rounded-xl bg-status-info/10 border border-status-info/30 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="calendar-clock" class="text-status-info w-7 h-7"></i>
                     </div>
                     <div>
                         <div class="flex items-center gap-3 mb-1">
-                            <h3 class="text-lg font-semibold text-white">Repartición de Cenas Calientes</h3>
-                            <span class="px-2.5 py-0.5 rounded-full bg-status-info/10 text-status-info text-xs font-medium border border-status-info/20 animate-pulse">
-                                Próximo
-                            </span>
+                            <h3 class="text-lg font-semibold text-white">Colecta de Invierno 2026</h3>
+                            <span class="px-2 py-0.5 rounded text-xs font-medium bg-status-info/20 text-status-info border border-status-info/20">Próximo</span>
                         </div>
-                        <p class="text-sm text-slate-400 flex items-center gap-2 mb-2">
-                            <i data-lucide="building-2" class="w-4 h-4"></i> Organiza: Albergue San Juan
+                        <p class="text-sm text-slate-400 flex flex-wrap items-center gap-x-4 gap-y-2 mt-2">
+                            <span class="flex items-center gap-1.5"><i data-lucide="calendar" class="w-4 h-4 text-slate-500"></i> 15 de Nov, 2026</span>
+                            <span class="flex items-center gap-1.5"><i data-lucide="clock" class="w-4 h-4 text-slate-500"></i> 09:00 AM - 02:00 PM</span>
+                            <span class="flex items-center gap-1.5"><i data-lucide="map-pin" class="w-4 h-4 text-slate-500"></i> Albergue San Juan</span>
                         </p>
                     </div>
                 </div>
 
-                <!-- Detalles de Fecha y Lugar -->
-                <div class="flex-grow max-w-md bg-bec-dark/50 rounded-lg p-3 border border-white/5 flex gap-6">
-                    <div>
-                        <p class="text-xs text-slate-500 mb-1 font-medium uppercase tracking-wider">Fecha y Hora</p>
-                        <p class="text-sm text-white flex items-center gap-2">
-                            <i data-lucide="calendar" class="w-4 h-4 text-bec-accent"></i> 24 Dic, 2026
-                        </p>
-                        <p class="text-sm text-slate-300 flex items-center gap-2 mt-1">
-                            <i data-lucide="clock" class="w-4 h-4 text-bec-accent"></i> 18:00 - 22:00 hrs
-                        </p>
-                    </div>
-                    <div class="w-px bg-white/10"></div>
-                    <div>
-                        <p class="text-xs text-slate-500 mb-1 font-medium uppercase tracking-wider">Ubicación</p>
-                        <p class="text-sm text-white flex items-start gap-2">
-                            <i data-lucide="map-pin" class="w-4 h-4 text-status-danger mt-0.5"></i> 
-                            <span>Plaza de Armas<br><span class="text-slate-400 text-xs">Centro Histórico</span></span>
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Botón Acción -->
-                <div class="flex-shrink-0 flex flex-col gap-2">
-                    <button class="text-bec-dark bg-bec-accent hover:bg-cyan-400 px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2 w-full lg:w-auto">
-                        Ver Detalles
+                <!-- Botones Acción -->
+                <div class="flex flex-wrap items-center gap-3 flex-shrink-0">
+                    <button onclick="abrirModalCancelar()" class="text-status-danger hover:text-white bg-status-danger/10 hover:bg-status-danger/20 border border-status-danger/20 px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2">
+                        <i data-lucide="x-circle" class="w-4 h-4"></i> Cancelar Asistencia
                     </button>
-                    <button class="text-status-danger hover:text-white text-sm font-medium transition-colors flex items-center justify-center gap-1 w-full lg:w-auto py-1">
-                        Cancelar Asistencia
+                    <button onclick="abrirModalDetalles('Colecta de Invierno 2026', 'proximo')" class="text-slate-300 hover:text-bec-dark bg-white/5 hover:bg-bec-accent border border-white/10 hover:border-bec-accent px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2">
+                        Ver Detalles <i data-lucide="arrow-right" class="w-4 h-4"></i>
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- EVENTO 2 (Completado - Success) -->
-        <div class="glass-panel rounded-2xl p-6 border border-white/5 hover:border-white/10 transition-colors relative overflow-hidden group">
-            <div class="absolute left-0 top-0 bottom-0 w-1 bg-status-success"></div>
-            
+        <!-- TARJETA 2: COMPLETADO -->
+        <div class="voluntariado-card glass-panel rounded-2xl p-6 border border-status-success/20 hover:border-status-success/40 transition-colors opacity-80" data-status="completado">
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                 <!-- Info principal -->
                 <div class="flex items-start gap-4">
-                    <div class="w-12 h-12 rounded-xl bg-bec-dark border border-white/10 flex items-center justify-center flex-shrink-0">
-                        <i data-lucide="check-circle-2" class="text-status-success w-6 h-6"></i>
+                    <div class="w-14 h-14 rounded-xl bg-status-success/10 border border-status-success/30 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="check-circle-2" class="text-status-success w-7 h-7"></i>
                     </div>
                     <div>
                         <div class="flex items-center gap-3 mb-1">
-                            <h3 class="text-lg font-semibold text-white text-opacity-80">Clasificación de Ropa de Invierno</h3>
-                            <span class="px-2.5 py-0.5 rounded-full bg-status-success/10 text-status-success text-xs font-medium border border-status-success/20">
-                                Completado
-                            </span>
+                            <h3 class="text-lg font-semibold text-white">Repartición de Despensas</h3>
+                            <span class="px-2 py-0.5 rounded text-xs font-medium bg-status-success/20 text-status-success border border-status-success/20">Completado</span>
                         </div>
-                        <p class="text-sm text-slate-400 flex items-center gap-2">
-                            <i data-lucide="building-2" class="w-4 h-4"></i> Organiza: Centro Comunitario La Paz
+                        <p class="text-sm text-slate-400 flex flex-wrap items-center gap-x-4 gap-y-2 mt-2">
+                            <span class="flex items-center gap-1.5"><i data-lucide="calendar" class="w-4 h-4 text-slate-500"></i> 10 de Feb, 2026</span>
+                            <span class="flex items-center gap-1.5"><i data-lucide="clock" class="w-4 h-4 text-slate-500"></i> 4 Horas Aportadas</span>
+                            <span class="flex items-center gap-1.5"><i data-lucide="map-pin" class="w-4 h-4 text-slate-500"></i> Banco de Alimentos</span>
                         </p>
                     </div>
                 </div>
 
-                <!-- Detalles de Fecha y Lugar -->
-                <div class="flex-grow max-w-md bg-bec-dark/30 rounded-lg p-3 border border-white/5 flex gap-6 opacity-80">
-                    <div>
-                        <p class="text-xs text-slate-500 mb-1 font-medium uppercase tracking-wider">Fecha y Hora</p>
-                        <p class="text-sm text-white flex items-center gap-2">
-                            <i data-lucide="calendar" class="w-4 h-4 text-slate-400"></i> 10 Nov, 2025
-                        </p>
-                        <p class="text-sm text-slate-300 flex items-center gap-2 mt-1">
-                            <i data-lucide="clock" class="w-4 h-4 text-slate-400"></i> 09:00 - 14:00 hrs
-                        </p>
-                    </div>
-                    <div class="w-px bg-white/10"></div>
-                    <div class="flex items-center justify-center flex-grow">
-                        <div class="text-center">
-                            <p class="text-2xl font-bold text-status-success">5<span class="text-sm font-normal text-slate-400">hrs</span></p>
-                            <p class="text-xs text-slate-500 uppercase tracking-wider">Aportadas</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Botón Acción -->
-                <div class="flex-shrink-0">
-                    <button class="text-bec-accent hover:text-white bg-bec-accent/10 hover:bg-bec-accent border border-bec-accent/20 hover:border-bec-accent px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 w-full lg:w-auto justify-center">
-                        <i data-lucide="award" class="w-4 h-4"></i> Constancia
+                <!-- Botones Acción -->
+                <div class="flex flex-wrap items-center gap-3 flex-shrink-0">
+                    <button onclick="abrirModalDetalles('Repartición de Despensas', 'completado')" class="text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2">
+                        Ver Detalles <i data-lucide="eye" class="w-4 h-4"></i>
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- EVENTO 3 (Cancelado / Falta - Danger) -->
-        <div class="glass-panel rounded-2xl p-6 border border-white/5 hover:border-white/10 transition-colors relative overflow-hidden group opacity-75">
-            <div class="absolute left-0 top-0 bottom-0 w-1 bg-status-danger"></div>
-            
+        <!-- TARJETA 3: CANCELADO -->
+        <div class="voluntariado-card glass-panel rounded-2xl p-6 border border-slate-700/50 opacity-60 grayscale hover:grayscale-0 transition-all" data-status="cancelado">
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                 <!-- Info principal -->
                 <div class="flex items-start gap-4">
-                    <div class="w-12 h-12 rounded-xl bg-bec-dark border border-white/10 flex items-center justify-center flex-shrink-0">
-                        <i data-lucide="x-circle" class="text-status-danger w-6 h-6"></i>
+                    <div class="w-14 h-14 rounded-xl bg-slate-800 border border-slate-600 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="ban" class="text-slate-400 w-7 h-7"></i>
                     </div>
                     <div>
                         <div class="flex items-center gap-3 mb-1">
-                            <h3 class="text-lg font-semibold text-white text-opacity-60 line-through">Pintura de Fachadas</h3>
-                            <span class="px-2.5 py-0.5 rounded-full bg-status-danger/10 text-status-danger text-xs font-medium border border-status-danger/20">
-                                Cancelado
-                            </span>
+                            <h3 class="text-lg font-semibold text-slate-300 line-through decoration-slate-500">Clasificación de Ropa</h3>
+                            <span class="px-2 py-0.5 rounded text-xs font-medium bg-slate-800 text-slate-400 border border-slate-700">Cancelado</span>
                         </div>
-                        <p class="text-sm text-slate-500 flex items-center gap-2">
-                            <i data-lucide="building-2" class="w-4 h-4"></i> Organiza: Casa del Migrante
+                        <p class="text-sm text-slate-500 flex flex-wrap items-center gap-x-4 gap-y-2 mt-2">
+                            <span class="flex items-center gap-1.5"><i data-lucide="calendar" class="w-4 h-4 text-slate-600"></i> 05 de Ene, 2026</span>
+                            <span class="flex items-center gap-1.5"><i data-lucide="map-pin" class="w-4 h-4 text-slate-600"></i> Casa del Migrante</span>
                         </p>
                     </div>
                 </div>
 
-                <!-- Detalles de Fecha -->
-                <div class="flex-grow max-w-md bg-bec-dark/30 rounded-lg p-3 border border-white/5">
-                    <p class="text-sm text-slate-400">
-                        Cancelaste tu participación el 12 de Oct, 2025.
-                    </p>
-                </div>
-
-                <!-- Botón Acción -->
-                <div class="flex-shrink-0">
-                    <button class="text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-2 rounded-lg text-sm font-medium transition-all w-full lg:w-auto text-center">
-                        Ver Detalles
+                <!-- Botones Acción -->
+                <div class="flex flex-wrap items-center gap-3 flex-shrink-0">
+                    <button onclick="abrirModalDetalles('Clasificación de Ropa', 'cancelado')" class="text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2">
+                        Ver Detalles <i data-lucide="eye" class="w-4 h-4"></i>
                     </button>
                 </div>
             </div>
@@ -195,4 +134,247 @@
 
     </div>
 </div>
+
+<!-- ========================================== -->
+<!-- MODAL DE CONFIRMACIÓN (CANCELAR ASISTENCIA)-->
+<!-- ========================================== -->
+<div id="modalConfirmar" class="fixed inset-0 z-50 hidden">
+    <!-- Overlay oscuro con blur -->
+    <div class="absolute inset-0 bg-bec-dark/80 backdrop-blur-sm" onclick="cerrarModalCancelar()"></div>
+    
+    <!-- Contenedor del Modal Centrado -->
+    <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
+        <div class="bg-bec-base border border-status-danger/30 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden pointer-events-auto transform scale-95 opacity-0 transition-all duration-300" id="modalConfirmarContent">
+            <div class="p-6 text-center">
+                <div class="w-16 h-16 bg-status-danger/10 text-status-danger rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="alert-triangle" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2">¿Cancelar asistencia?</h3>
+                <p class="text-slate-400 text-sm mb-6">
+                    Estás a punto de cancelar tu participación en este voluntariado. El albergue contaba con tu apoyo, ¿estás seguro de que deseas proceder?
+                </p>
+                <div class="flex gap-3">
+                    <button onclick="cerrarModalCancelar()" class="flex-1 bg-white/5 hover:bg-white/10 text-white font-medium py-2.5 rounded-lg transition-colors border border-white/10">
+                        No, mantener
+                    </button>
+                    <button onclick="ejecutarCancelacion()" class="flex-1 bg-status-danger hover:bg-red-600 text-white font-bold py-2.5 rounded-lg transition-colors shadow-[0_0_15px_rgba(239,68,68,0.3)]">
+                        Sí, cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- MODAL FLOTANTE (VER DETALLES)              -->
+<!-- ========================================== -->
+<div id="modalDetalles" class="fixed inset-0 z-[60] hidden">
+    <!-- Overlay oscuro con blur -->
+    <div class="absolute inset-0 bg-bec-dark/90 backdrop-blur-md" onclick="cerrarModalDetalles()"></div>
+    
+    <!-- Contenedor del Modal Centrado -->
+    <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
+        <div class="glass-panel w-full max-w-4xl rounded-2xl border border-white/10 shadow-2xl overflow-hidden pointer-events-auto flex flex-col md:flex-row transform scale-95 opacity-0 transition-all duration-300" id="modalDetallesContent">
+            
+            <!-- Botón Cerrar (Absoluto para ambas vistas) -->
+            <button onclick="cerrarModalDetalles()" class="absolute top-4 right-4 z-10 text-slate-400 hover:text-white bg-bec-dark/50 p-2 rounded-full transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <!-- Izquierda: Descripción del Voluntariado -->
+            <div class="w-full md:w-1/2 bg-bec-dark/60 p-8 border-b md:border-b-0 md:border-r border-white/5 flex flex-col">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-bec-accent/10 border border-bec-accent/30 text-bec-accent text-xs font-semibold mb-6 uppercase tracking-widest w-fit">
+                    <i data-lucide="info" class="w-3 h-3"></i> Información
+                </div>
+                
+                <h2 id="modalTitulo" class="text-2xl font-bold text-white mb-4">Título del Voluntariado</h2>
+                
+                <div class="text-slate-300 text-sm leading-relaxed space-y-4 mb-6 flex-grow">
+                    <p>
+                        Esta campaña está destinada a brindar apoyo directo a las comunidades vulnerables durante la temporada invernal. Tu participación es vital para organizar y distribuir los recursos.
+                    </p>
+                    <p>
+                        <strong>Actividades principales:</strong><br>
+                        • Recepción de donativos en especie.<br>
+                        • Clasificación y empaquetado.<br>
+                        • Apoyo logístico en el centro de acopio.
+                    </p>
+                    <div class="bg-status-warning/10 border border-status-warning/20 p-3 rounded-lg flex items-start gap-3 mt-4">
+                        <i data-lucide="alert-circle" class="w-5 h-5 text-status-warning flex-shrink-0 mt-0.5"></i>
+                        <p class="text-xs text-status-warning">Se recomienda llevar ropa cómoda, zapatos cerrados e hidratación personal.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Derecha: Datos Técnicos y Fechas -->
+            <div class="w-full md:w-1/2 p-8 relative flex flex-col bg-bec-base/30">
+                <h3 class="text-lg font-semibold text-white mb-6 flex items-center gap-2">
+                    <i data-lucide="file-text" class="text-bec-accent w-5 h-5"></i>
+                    Datos de la Campaña
+                </h3>
+
+                <div class="space-y-6">
+                    <!-- Dato 1 -->
+                    <div class="flex gap-4">
+                        <div class="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0 border border-white/10">
+                            <i data-lucide="calendar" class="w-5 h-5 text-bec-accent"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-500 uppercase tracking-wider mb-0.5">Fecha y Hora</p>
+                            <p class="text-white font-medium">15 de Noviembre, 2026</p>
+                            <p class="text-sm text-slate-400">De 09:00 AM a 02:00 PM</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Dato 2 -->
+                    <div class="flex gap-4">
+                        <div class="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0 border border-white/10">
+                            <i data-lucide="map-pin" class="w-5 h-5 text-bec-accent"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-500 uppercase tracking-wider mb-0.5">Ubicación</p>
+                            <p class="text-white font-medium">Albergue San Juan</p>
+                            <p class="text-sm text-slate-400">Av. Universidad 123, Centro Histórico</p>
+                        </div>
+                    </div>
+
+                    <!-- Dato 3 -->
+                    <div class="flex gap-4">
+                        <div class="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0 border border-white/10">
+                            <i data-lucide="user" class="w-5 h-5 text-bec-accent"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-500 uppercase tracking-wider mb-0.5">Coordinador</p>
+                            <p class="text-white font-medium">Lic. María Fernández</p>
+                            <p class="text-sm text-slate-400">Contacto: 442 123 4567</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estado del voluntariado actual -->
+                <div class="mt-auto pt-8 border-t border-white/10">
+                    <p class="text-xs text-slate-500 uppercase tracking-wider mb-2">Estado de tu inscripción</p>
+                    <div id="modalStatusBadge" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-status-info/20 text-status-info border border-status-info/30 text-sm font-semibold">
+                        <i data-lucide="clock" class="w-4 h-4"></i> Próximo a realizarse
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- SCRIPTS Y ESTILOS LOCALES                  -->
+<!-- ========================================== -->
+<script>
+    // ---------------------------------------------
+    // 1. Lógica de Filtros (Pestañas)
+    // ---------------------------------------------
+    function filtrarVoluntariados(estado, botonClickeado) {
+        // Actualizar estilos de los botones
+        const botones = document.querySelectorAll('.filtro-btn');
+        botones.forEach(btn => {
+            btn.classList.remove('bg-white/10', 'text-white');
+            btn.classList.add('text-slate-400', 'hover:text-white', 'hover:bg-white/5');
+        });
+        botonClickeado.classList.remove('text-slate-400', 'hover:text-white', 'hover:bg-white/5');
+        botonClickeado.classList.add('bg-white/10', 'text-white');
+
+        // Filtrar tarjetas
+        const tarjetas = document.querySelectorAll('.voluntariado-card');
+        tarjetas.forEach(tarjeta => {
+            if (estado === 'todos') {
+                tarjeta.style.display = 'block';
+            } else {
+                if (tarjeta.getAttribute('data-status') === estado) {
+                    tarjeta.style.display = 'block';
+                } else {
+                    tarjeta.style.display = 'none';
+                }
+            }
+        });
+    }
+
+    // ---------------------------------------------
+    // 2. Lógica del Modal de Cancelación
+    // ---------------------------------------------
+    const modalConfirmar = document.getElementById('modalConfirmar');
+    const modalConfirmarContent = document.getElementById('modalConfirmarContent');
+
+    function abrirModalCancelar() {
+        modalConfirmar.classList.remove('hidden');
+        document.body.classList.add('overflow-hidden'); // Bloquear scroll
+        setTimeout(() => {
+            modalConfirmarContent.classList.remove('scale-95', 'opacity-0');
+            modalConfirmarContent.classList.add('scale-100', 'opacity-100');
+        }, 10);
+    }
+
+    function cerrarModalCancelar() {
+        modalConfirmarContent.classList.remove('scale-100', 'opacity-100');
+        modalConfirmarContent.classList.add('scale-95', 'opacity-0');
+        document.body.classList.remove('overflow-hidden'); // Desbloquear scroll
+        setTimeout(() => {
+            modalConfirmar.classList.add('hidden');
+        }, 300);
+    }
+
+    function ejecutarCancelacion() {
+        // Aquí iría la llamada AJAX/Fetch a tu backend Flask
+        const btn = document.querySelector('#modalConfirmarContent .bg-status-danger');
+        btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Cancelando...`;
+        lucide.createIcons();
+
+        // Simulamos un retraso de red
+        setTimeout(() => {
+            cerrarModalCancelar();
+            // Recargar la página o cambiar la tarjeta visualmente a "cancelado"
+            // location.reload(); 
+        }, 1000);
+    }
+
+    // ---------------------------------------------
+    // 3. Lógica del Modal de Detalles
+    // ---------------------------------------------
+    const modalDetalles = document.getElementById('modalDetalles');
+    const modalDetallesContent = document.getElementById('modalDetallesContent');
+
+    function abrirModalDetalles(titulo, estado) {
+        // Actualizar título dinámicamente
+        document.getElementById('modalTitulo').innerText = titulo;
+
+        // Actualizar Badge de Estado dinámicamente
+        const badge = document.getElementById('modalStatusBadge');
+        if(estado === 'proximo'){
+            badge.className = "inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-status-info/20 text-status-info border border-status-info/30 text-sm font-semibold";
+            badge.innerHTML = `<i data-lucide="clock" class="w-4 h-4"></i> Próximo a realizarse`;
+        } else if (estado === 'completado') {
+            badge.className = "inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-status-success/20 text-status-success border border-status-success/30 text-sm font-semibold";
+            badge.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> Voluntariado Completado`;
+        } else {
+            badge.className = "inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800 text-slate-400 border border-slate-700 text-sm font-semibold";
+            badge.innerHTML = `<i data-lucide="ban" class="w-4 h-4"></i> Asistencia Cancelada`;
+        }
+        lucide.createIcons(); // Re-renderizar iconos
+
+        // Mostrar Modal
+        modalDetalles.classList.remove('hidden');
+        document.body.classList.add('overflow-hidden'); // Bloquear scroll principal
+        setTimeout(() => {
+            modalDetallesContent.classList.remove('scale-95', 'opacity-0');
+            modalDetallesContent.classList.add('scale-100', 'opacity-100');
+        }, 10);
+    }
+
+    function cerrarModalDetalles() {
+        modalDetallesContent.classList.remove('scale-100', 'opacity-100');
+        modalDetallesContent.classList.add('scale-95', 'opacity-0');
+        document.body.classList.remove('overflow-hidden'); // Desbloquear scroll principal
+        setTimeout(() => {
+            modalDetalles.classList.add('hidden');
+        }, 300);
+    }
+</script>
 {% endblock %}

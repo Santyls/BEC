@@ -9,45 +9,73 @@
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
         <div>
             <h1 class="text-3xl font-bold text-white mb-2">Mis Donaciones</h1>
-            <p class="text-slate-400">Historial de tus aportaciones y seguimiento de entrega.</p>
+            <p class="text-slate-400">Historial de las aportaciones que has realizado a la comunidad.</p>
         </div>
         
         <!-- Tarjeta de Resumen Rápido -->
         <div class="glass-panel px-6 py-4 rounded-xl flex items-center gap-6 border-bec-accent/20">
             <div>
                 <p class="text-xs text-slate-400 uppercase tracking-wider mb-1">Total Aportaciones</p>
-                <p class="text-2xl font-bold text-white">4</p>
-            </div>
-            <div class="h-10 w-px bg-white/10"></div>
-            <div>
-                <p class="text-xs text-slate-400 uppercase tracking-wider mb-1">Impacto</p>
-                <div class="flex items-center gap-2 text-status-success">
-                    <i data-lucide="trending-up" class="w-4 h-4"></i>
-                    <span class="font-bold">Alto</span>
-                </div>
+                <p class="text-2xl font-bold text-white">3</p>
             </div>
         </div>
     </div>
 
-    <!-- Lista de Donaciones (Mockup) -->
+    <!-- ========================================== -->
+    <!-- BARRA DE FILTROS DINÁMICOS                 -->
+    <!-- ========================================== -->
+    <div class="glass-panel p-4 rounded-xl mb-6 flex flex-col md:flex-row gap-4 items-center border-white/5">
+        <div class="flex items-center gap-3 text-slate-300 w-full md:w-auto">
+            <i data-lucide="filter" class="w-5 h-5 text-bec-accent"></i>
+            <span class="font-medium text-sm">Filtrar por:</span>
+        </div>
+        
+        <!-- Filtro Principal -->
+        <select id="filtroPrincipal" onchange="actualizarFiltros()" class="w-full md:w-56 bg-bec-dark/80 border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:border-bec-accent transition-colors appearance-none cursor-pointer">
+            <option value="todas">Todas las donaciones</option>
+            <option value="categoria">Categoría</option>
+            <option value="albergue">Por albergue</option>
+        </select>
+
+        <!-- Sub-filtro: Categorías (Oculto por defecto) -->
+        <select id="filtroCategoria" class="hidden w-full md:w-56 bg-bec-dark/80 border border-bec-accent/50 rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:ring-1 focus:ring-bec-accent transition-colors appearance-none cursor-pointer animate-fade-in">
+            <option value="" disabled selected>Selecciona una categoría...</option>
+            <option value="ropa">Ropa</option>
+            <option value="alimentos">Alimentos</option>
+            <option value="bienes">Bienes (Muebles, Electrónicos)</option>
+            <option value="medicamentos">Medicamentos</option>
+            <option value="dinero">Aportaciones Económicas</option>
+        </select>
+
+        <!-- Sub-filtro: Albergues (Oculto por defecto) -->
+        <select id="filtroAlbergue" class="hidden w-full md:w-56 bg-bec-dark/80 border border-bec-accent/50 rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:ring-1 focus:ring-bec-accent transition-colors appearance-none cursor-pointer animate-fade-in">
+            <option value="" disabled selected>Selecciona un albergue...</option>
+            <option value="sanjuan">Albergue San Juan</option>
+            <option value="bancoalimentos">Banco de Alimentos Qro.</option>
+        </select>
+
+        <!-- Botón Aplicar Filtro -->
+        <button id="btnAplicar" onclick="aplicarFiltro()" class="w-full md:w-auto ml-auto bg-bec-accent hover:bg-bec-accent/80 text-bec-dark font-semibold px-6 py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-[0_0_10px_rgba(91,192,190,0.2)]">
+            <i data-lucide="search" class="w-4 h-4"></i> Aplicar
+        </button>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- LISTA DE DONACIONES                        -->
+    <!-- ========================================== -->
     <div class="space-y-4">
 
-        <!-- DONACIÓN 1 (Entregado - Success) -->
-        <div class="glass-panel rounded-2xl p-6 border border-white/5 hover:border-white/10 transition-colors relative overflow-hidden group">
-            <div class="absolute left-0 top-0 bottom-0 w-1 bg-status-success"></div>
-            
+        <!-- DONACIÓN 1 (Ropa: 2 elementos = SIN botón Ver Detalles) -->
+        <div class="glass-panel rounded-2xl p-6 border border-white/5 hover:border-white/10 transition-colors">
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                 <!-- Info principal -->
                 <div class="flex items-start gap-4">
-                    <div class="w-12 h-12 rounded-xl bg-bec-dark border border-white/10 flex items-center justify-center flex-shrink-0">
-                        <i data-lucide="package-check" class="text-status-success w-6 h-6"></i>
+                    <div class="w-12 h-12 rounded-xl bg-bec-dark border border-bec-accent/30 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="shirt" class="text-bec-accent w-6 h-6"></i>
                     </div>
                     <div>
                         <div class="flex items-center gap-3 mb-1">
-                            <h3 class="text-lg font-semibold text-white">Ropa de Invierno</h3>
-                            <span class="px-2.5 py-0.5 rounded-full bg-status-success/10 text-status-success text-xs font-medium border border-status-success/20">
-                                Entregado
-                            </span>
+                            <h3 class="text-lg font-semibold text-white">Donación de Ropa</h3>
                         </div>
                         <p class="text-sm text-slate-400 flex items-center gap-2">
                             <i data-lucide="calendar" class="w-4 h-4"></i> 15 de Ene, 2026
@@ -57,40 +85,28 @@
                     </div>
                 </div>
 
-                <!-- Detalle de artículos -->
+                <!-- Detalle de artículos (Solo 2, se muestran completos) -->
                 <div class="flex-grow max-w-md bg-bec-dark/50 rounded-lg p-3 border border-white/5">
-                    <p class="text-xs text-slate-500 mb-2 font-medium uppercase tracking-wider">Artículos Donados</p>
+                    <p class="text-xs text-slate-500 mb-2 font-medium uppercase tracking-wider">Artículos Registrados</p>
                     <ul class="text-sm text-slate-300 space-y-1">
                         <li class="flex justify-between"><span>Cobijas gruesas</span> <span class="text-white font-medium">3 Piezas</span></li>
                         <li class="flex justify-between"><span>Suéteres adulto</span> <span class="text-white font-medium">5 Piezas</span></li>
                     </ul>
                 </div>
-
-                <!-- Botón Acción -->
-                <div class="flex-shrink-0">
-                    <button class="text-bec-accent hover:text-white bg-bec-accent/10 hover:bg-bec-accent border border-bec-accent/20 hover:border-bec-accent px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2">
-                        Ver Recibo <i data-lucide="download" class="w-4 h-4"></i>
-                    </button>
-                </div>
             </div>
         </div>
 
-        <!-- DONACIÓN 2 (En Camino / En Proceso - Warning/Info) -->
-        <div class="glass-panel rounded-2xl p-6 border border-white/5 hover:border-white/10 transition-colors relative overflow-hidden group">
-            <div class="absolute left-0 top-0 bottom-0 w-1 bg-status-info"></div>
-            
+        <!-- DONACIÓN 2 (Alimentos: 6 elementos = CON botón Ver Detalles) -->
+        <div class="glass-panel rounded-2xl p-6 border border-white/5 hover:border-white/10 transition-colors">
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                 <!-- Info principal -->
                 <div class="flex items-start gap-4">
-                    <div class="w-12 h-12 rounded-xl bg-bec-dark border border-white/10 flex items-center justify-center flex-shrink-0">
-                        <i data-lucide="truck" class="text-status-info w-6 h-6"></i>
+                    <div class="w-12 h-12 rounded-xl bg-bec-dark border border-bec-accent/30 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="apple" class="text-bec-accent w-6 h-6"></i>
                     </div>
                     <div>
                         <div class="flex items-center gap-3 mb-1">
                             <h3 class="text-lg font-semibold text-white">Alimentos No Perecederos</h3>
-                            <span class="px-2.5 py-0.5 rounded-full bg-status-info/10 text-status-info text-xs font-medium border border-status-info/20 animate-pulse">
-                                En Centro de Acopio
-                            </span>
                         </div>
                         <p class="text-sm text-slate-400 flex items-center gap-2">
                             <i data-lucide="calendar" class="w-4 h-4"></i> 02 de Mar, 2026
@@ -100,68 +116,230 @@
                     </div>
                 </div>
 
-                <!-- Detalle de artículos -->
+                <!-- Detalle de artículos (Muestra 4, oculta el resto) -->
                 <div class="flex-grow max-w-md bg-bec-dark/50 rounded-lg p-3 border border-white/5">
-                    <p class="text-xs text-slate-500 mb-2 font-medium uppercase tracking-wider">Artículos Donados</p>
+                    <p class="text-xs text-slate-500 mb-2 font-medium uppercase tracking-wider">Artículos Registrados</p>
                     <ul class="text-sm text-slate-300 space-y-1">
                         <li class="flex justify-between"><span>Arroz</span> <span class="text-white font-medium">10 Kg</span></li>
                         <li class="flex justify-between"><span>Frijol</span> <span class="text-white font-medium">5 Kg</span></li>
                         <li class="flex justify-between"><span>Atún en lata</span> <span class="text-white font-medium">15 Latas</span></li>
+                        <li class="flex justify-between"><span>Aceite Vegetal</span> <span class="text-white font-medium">4 Litros</span></li>
                     </ul>
+                    <p class="text-xs text-bec-accent mt-2 italic">+ 2 artículos más ocultos</p>
                 </div>
 
-                <!-- Botón Acción -->
+                <!-- Botón Acción (Aparece porque son > 4 elementos) -->
                 <div class="flex-shrink-0">
-                    <button class="text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2">
-                        Detalles <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    <button onclick="abrirModalDetalles()" class="text-bec-accent hover:text-bec-dark hover:bg-bec-accent border border-bec-accent/50 px-5 py-2.5 rounded-lg text-sm font-medium transition-all flex items-center gap-2 shadow-[0_0_10px_rgba(91,192,190,0.1)] hover:shadow-[0_0_15px_rgba(91,192,190,0.4)]">
+                        Ver Detalles Completos <i data-lucide="maximize-2" class="w-4 h-4"></i>
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- DONACIÓN 3 (Pendiente Recolección - Warning) -->
-        <div class="glass-panel rounded-2xl p-6 border border-white/5 hover:border-white/10 transition-colors relative overflow-hidden group">
-            <div class="absolute left-0 top-0 bottom-0 w-1 bg-status-warning"></div>
-            
+        <!-- DONACIÓN 3 (Medicamentos: 2 elementos = SIN botón Ver Detalles) -->
+        <div class="glass-panel rounded-2xl p-6 border border-white/5 hover:border-white/10 transition-colors">
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                 <!-- Info principal -->
                 <div class="flex items-start gap-4">
-                    <div class="w-12 h-12 rounded-xl bg-bec-dark border border-white/10 flex items-center justify-center flex-shrink-0">
-                        <i data-lucide="clock" class="text-status-warning w-6 h-6"></i>
+                    <div class="w-12 h-12 rounded-xl bg-bec-dark border border-bec-accent/30 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="pill" class="text-bec-accent w-6 h-6"></i>
                     </div>
                     <div>
                         <div class="flex items-center gap-3 mb-1">
-                            <h3 class="text-lg font-semibold text-white">Medicamentos Básicos</h3>
-                            <span class="px-2.5 py-0.5 rounded-full bg-status-warning/10 text-status-warning text-xs font-medium border border-status-warning/20">
-                                Pendiente de Recolección
-                            </span>
+                            <h3 class="text-lg font-semibold text-white">Medicamentos y Botiquín</h3>
                         </div>
                         <p class="text-sm text-slate-400 flex items-center gap-2">
-                            <i data-lucide="calendar" class="w-4 h-4"></i> Solicitado: Hoy
+                            <i data-lucide="calendar" class="w-4 h-4"></i> 10 de Mar, 2026
                             <span class="text-white/20">|</span>
-                            <i data-lucide="map-pin" class="w-4 h-4"></i> Recolección en Domicilio
+                            <i data-lucide="home" class="w-4 h-4"></i> Albergue San Juan
                         </p>
                     </div>
                 </div>
 
                 <!-- Detalle de artículos -->
                 <div class="flex-grow max-w-md bg-bec-dark/50 rounded-lg p-3 border border-white/5">
-                    <p class="text-xs text-slate-500 mb-2 font-medium uppercase tracking-wider">Artículos a Entregar</p>
+                    <p class="text-xs text-slate-500 mb-2 font-medium uppercase tracking-wider">Artículos Registrados</p>
                     <ul class="text-sm text-slate-300 space-y-1">
                         <li class="flex justify-between"><span>Paracetamol Cajas</span> <span class="text-white font-medium">5 Cajas</span></li>
                         <li class="flex justify-between"><span>Alcohol 500ml</span> <span class="text-white font-medium">2 Botellas</span></li>
                     </ul>
-                </div>
-
-                <!-- Botón Acción -->
-                <div class="flex-shrink-0">
-                    <button class="text-status-danger hover:text-white bg-status-danger/10 hover:bg-status-danger border border-status-danger/20 hover:border-status-danger px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2">
-                        Cancelar <i data-lucide="x" class="w-4 h-4"></i>
-                    </button>
                 </div>
             </div>
         </div>
 
     </div>
 </div>
+
+<!-- ========================================== -->
+<!-- MODAL FLOTANTE (VER DETALLES)              -->
+<!-- ========================================== -->
+<div id="modalDetalles" class="fixed inset-0 z-50 hidden">
+    <!-- Overlay oscuro con blur -->
+    <div class="absolute inset-0 bg-bec-dark/80 backdrop-blur-sm" onclick="cerrarModalDetalles()"></div>
+    
+    <!-- Contenedor del Modal Centrado -->
+    <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
+        <div class="glass-panel w-full max-w-3xl rounded-2xl border border-white/10 shadow-2xl overflow-hidden pointer-events-auto flex flex-col md:flex-row transform scale-95 opacity-0 transition-all duration-300" id="modalContent">
+            
+            <!-- Izquierda: Información de la Donación -->
+            <div class="w-full md:w-1/2 bg-bec-dark/50 p-8 border-b md:border-b-0 md:border-r border-white/5 flex flex-col justify-center relative">
+                <!-- Botón Cerrar (Móvil) -->
+                <button onclick="cerrarModalDetalles()" class="md:hidden absolute top-4 right-4 text-slate-400 hover:text-white">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+
+                <div class="w-16 h-16 rounded-2xl bg-bec-accent/10 border border-bec-accent/30 flex items-center justify-center mb-6">
+                    <i data-lucide="apple" class="text-bec-accent w-8 h-8"></i>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-white mb-4">Alimentos No Perecederos</h2>
+                
+                <div class="space-y-4">
+                    <div>
+                        <p class="text-xs text-slate-500 uppercase tracking-wider mb-1">Fecha de Registro</p>
+                        <p class="text-slate-300 flex items-center gap-2">
+                            <i data-lucide="calendar" class="w-4 h-4 text-bec-accent"></i> 02 de Mar, 2026
+                        </p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-500 uppercase tracking-wider mb-1">Destino</p>
+                        <p class="text-slate-300 flex items-center gap-2">
+                            <i data-lucide="home" class="w-4 h-4 text-bec-accent"></i> Banco de Alimentos Qro.
+                        </p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-500 uppercase tracking-wider mb-1">Total de Artículos</p>
+                        <p class="text-xl font-bold text-white">6 Tipos Distintos</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Derecha: Lista de Elementos con Scroll -->
+            <div class="w-full md:w-1/2 p-8 relative flex flex-col max-h-[60vh] md:max-h-[500px]">
+                <!-- Botón Cerrar (Desktop) -->
+                <button onclick="cerrarModalDetalles()" class="hidden md:block absolute top-4 right-4 text-slate-400 hover:text-white transition-colors">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+
+                <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                    <i data-lucide="list-checks" class="text-bec-accent w-5 h-5"></i>
+                    Lista Completa
+                </h3>
+
+                <!-- Contenedor con Scroll INTERNO (Solo esto hace scroll) -->
+                <div class="flex-grow overflow-y-auto pr-2 space-y-2 custom-scrollbar">
+                    <div class="bg-bec-dark/40 border border-white/5 rounded-lg p-3 flex justify-between items-center hover:bg-white/5 transition-colors">
+                        <span class="text-slate-300">Arroz</span>
+                        <span class="text-white font-bold bg-bec-primary/30 px-2 py-1 rounded text-sm">10 Kg</span>
+                    </div>
+                    <div class="bg-bec-dark/40 border border-white/5 rounded-lg p-3 flex justify-between items-center hover:bg-white/5 transition-colors">
+                        <span class="text-slate-300">Frijol</span>
+                        <span class="text-white font-bold bg-bec-primary/30 px-2 py-1 rounded text-sm">5 Kg</span>
+                    </div>
+                    <div class="bg-bec-dark/40 border border-white/5 rounded-lg p-3 flex justify-between items-center hover:bg-white/5 transition-colors">
+                        <span class="text-slate-300">Atún en lata</span>
+                        <span class="text-white font-bold bg-bec-primary/30 px-2 py-1 rounded text-sm">15 Latas</span>
+                    </div>
+                    <div class="bg-bec-dark/40 border border-white/5 rounded-lg p-3 flex justify-between items-center hover:bg-white/5 transition-colors">
+                        <span class="text-slate-300">Aceite Vegetal</span>
+                        <span class="text-white font-bold bg-bec-primary/30 px-2 py-1 rounded text-sm">4 Litros</span>
+                    </div>
+                    <div class="bg-bec-dark/40 border border-white/5 rounded-lg p-3 flex justify-between items-center hover:bg-white/5 transition-colors">
+                        <span class="text-slate-300">Pastas (Sopa)</span>
+                        <span class="text-white font-bold bg-bec-primary/30 px-2 py-1 rounded text-sm">20 Paquetes</span>
+                    </div>
+                    <div class="bg-bec-dark/40 border border-white/5 rounded-lg p-3 flex justify-between items-center hover:bg-white/5 transition-colors">
+                        <span class="text-slate-300">Avena en hojuelas</span>
+                        <span class="text-white font-bold bg-bec-primary/30 px-2 py-1 rounded text-sm">3 Kg</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- SCRIPTS Y ESTILOS LOCALES                  -->
+<!-- ========================================== -->
+<style>
+    /* Estilos para el scrollbar de la lista flotante */
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(91,192,190,0.3); border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(91,192,190,0.6); }
+    
+    /* Animación simple de aparición para los filtros */
+    .animate-fade-in { animation: fadeIn 0.3s ease-in-out forwards; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+
+<script>
+    // Lógica para mostrar/ocultar los sub-filtros
+    function actualizarFiltros() {
+        const principal = document.getElementById('filtroPrincipal').value;
+        const subCat = document.getElementById('filtroCategoria');
+        const subAlb = document.getElementById('filtroAlbergue');
+
+        // Ocultar ambos por defecto
+        subCat.classList.add('hidden');
+        subAlb.classList.add('hidden');
+
+        // Mostrar dependiendo de la selección
+        if (principal === 'categoria') {
+            subCat.classList.remove('hidden');
+        } else if (principal === 'albergue') {
+            subAlb.classList.remove('hidden');
+        }
+    }
+
+    // Simulador de botón aplicar filtro
+    function aplicarFiltro() {
+        const btn = document.getElementById('btnAplicar');
+        const icon = btn.querySelector('i');
+        
+        // Efecto visual de "buscando"
+        btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Aplicando...`;
+        lucide.createIcons();
+
+        setTimeout(() => {
+            btn.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> Listo`;
+            lucide.createIcons();
+            
+            setTimeout(() => {
+                btn.innerHTML = `<i data-lucide="search" class="w-4 h-4"></i> Aplicar`;
+                lucide.createIcons();
+            }, 1500);
+        }, 800);
+    }
+
+    // Lógica para el Modal Flotante
+    const modal = document.getElementById('modalDetalles');
+    const modalContent = document.getElementById('modalContent');
+
+    function abrirModalDetalles() {
+        modal.classList.remove('hidden');
+        
+        // ¡LA SOLUCIÓN! Bloquear el scroll del fondo (body)
+        document.body.classList.add('overflow-hidden');
+        
+        setTimeout(() => {
+            modalContent.classList.remove('scale-95', 'opacity-0');
+            modalContent.classList.add('scale-100', 'opacity-100');
+        }, 10);
+    }
+
+    function cerrarModalDetalles() {
+        modalContent.classList.remove('scale-100', 'opacity-100');
+        modalContent.classList.add('scale-95', 'opacity-0');
+        
+        // Desbloquear el scroll del fondo (body)
+        document.body.classList.remove('overflow-hidden');
+        
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 300);
+    }
+</script>
 {% endblock %}
