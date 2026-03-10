@@ -1,0 +1,198 @@
+{% extends 'layout_ciudadano.html' %}
+
+{% block title %}Mis Voluntariados{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    
+    <!-- Encabezado y Estadísticas -->
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+        <div>
+            <h1 class="text-3xl font-bold text-white mb-2">Mis Voluntariados</h1>
+            <p class="text-slate-400">Tu historial de participación y próximos eventos de ayuda.</p>
+        </div>
+        
+        <!-- Tarjetas de Resumen Rápido -->
+        <div class="flex gap-4">
+            <div class="glass-panel px-6 py-4 rounded-xl flex items-center gap-4 border-bec-accent/20">
+                <div class="p-3 bg-bec-accent/10 rounded-lg text-bec-accent">
+                    <i data-lucide="heart-handshake" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <p class="text-xs text-slate-400 uppercase tracking-wider mb-1">Eventos</p>
+                    <p class="text-2xl font-bold text-white">5</p>
+                </div>
+            </div>
+            
+            <div class="glass-panel px-6 py-4 rounded-xl flex items-center gap-4 border-status-success/20 hidden sm:flex">
+                <div class="p-3 bg-status-success/10 rounded-lg text-status-success">
+                    <i data-lucide="clock" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <p class="text-xs text-slate-400 uppercase tracking-wider mb-1">Horas Aportadas</p>
+                    <p class="text-2xl font-bold text-white">24<span class="text-sm text-slate-400 font-normal">h</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros rápidos (Opcional visualmente) -->
+    <div class="flex gap-2 mb-6 overflow-x-auto pb-2 scrollbar-hide">
+        <button class="px-4 py-2 rounded-full bg-bec-accent text-bec-dark font-medium text-sm whitespace-nowrap">Todos</button>
+        <button class="px-4 py-2 rounded-full bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white border border-white/10 font-medium text-sm transition-colors whitespace-nowrap">Próximos</button>
+        <button class="px-4 py-2 rounded-full bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white border border-white/10 font-medium text-sm transition-colors whitespace-nowrap">Completados</button>
+    </div>
+
+    <!-- Lista de Voluntariados -->
+    <div class="space-y-4">
+
+        <!-- EVENTO 1 (Próximo - Info) -->
+        <div class="glass-panel rounded-2xl p-6 border border-white/5 hover:border-white/10 transition-colors relative overflow-hidden group">
+            <div class="absolute left-0 top-0 bottom-0 w-1 bg-status-info"></div>
+            
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                <!-- Info principal -->
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-bec-dark border border-white/10 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="calendar-clock" class="text-status-info w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-3 mb-1">
+                            <h3 class="text-lg font-semibold text-white">Repartición de Cenas Calientes</h3>
+                            <span class="px-2.5 py-0.5 rounded-full bg-status-info/10 text-status-info text-xs font-medium border border-status-info/20 animate-pulse">
+                                Próximo
+                            </span>
+                        </div>
+                        <p class="text-sm text-slate-400 flex items-center gap-2 mb-2">
+                            <i data-lucide="building-2" class="w-4 h-4"></i> Organiza: Albergue San Juan
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Detalles de Fecha y Lugar -->
+                <div class="flex-grow max-w-md bg-bec-dark/50 rounded-lg p-3 border border-white/5 flex gap-6">
+                    <div>
+                        <p class="text-xs text-slate-500 mb-1 font-medium uppercase tracking-wider">Fecha y Hora</p>
+                        <p class="text-sm text-white flex items-center gap-2">
+                            <i data-lucide="calendar" class="w-4 h-4 text-bec-accent"></i> 24 Dic, 2026
+                        </p>
+                        <p class="text-sm text-slate-300 flex items-center gap-2 mt-1">
+                            <i data-lucide="clock" class="w-4 h-4 text-bec-accent"></i> 18:00 - 22:00 hrs
+                        </p>
+                    </div>
+                    <div class="w-px bg-white/10"></div>
+                    <div>
+                        <p class="text-xs text-slate-500 mb-1 font-medium uppercase tracking-wider">Ubicación</p>
+                        <p class="text-sm text-white flex items-start gap-2">
+                            <i data-lucide="map-pin" class="w-4 h-4 text-status-danger mt-0.5"></i> 
+                            <span>Plaza de Armas<br><span class="text-slate-400 text-xs">Centro Histórico</span></span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Botón Acción -->
+                <div class="flex-shrink-0 flex flex-col gap-2">
+                    <button class="text-bec-dark bg-bec-accent hover:bg-cyan-400 px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2 w-full lg:w-auto">
+                        Ver Detalles
+                    </button>
+                    <button class="text-status-danger hover:text-white text-sm font-medium transition-colors flex items-center justify-center gap-1 w-full lg:w-auto py-1">
+                        Cancelar Asistencia
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- EVENTO 2 (Completado - Success) -->
+        <div class="glass-panel rounded-2xl p-6 border border-white/5 hover:border-white/10 transition-colors relative overflow-hidden group">
+            <div class="absolute left-0 top-0 bottom-0 w-1 bg-status-success"></div>
+            
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                <!-- Info principal -->
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-bec-dark border border-white/10 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="check-circle-2" class="text-status-success w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-3 mb-1">
+                            <h3 class="text-lg font-semibold text-white text-opacity-80">Clasificación de Ropa de Invierno</h3>
+                            <span class="px-2.5 py-0.5 rounded-full bg-status-success/10 text-status-success text-xs font-medium border border-status-success/20">
+                                Completado
+                            </span>
+                        </div>
+                        <p class="text-sm text-slate-400 flex items-center gap-2">
+                            <i data-lucide="building-2" class="w-4 h-4"></i> Organiza: Centro Comunitario La Paz
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Detalles de Fecha y Lugar -->
+                <div class="flex-grow max-w-md bg-bec-dark/30 rounded-lg p-3 border border-white/5 flex gap-6 opacity-80">
+                    <div>
+                        <p class="text-xs text-slate-500 mb-1 font-medium uppercase tracking-wider">Fecha y Hora</p>
+                        <p class="text-sm text-white flex items-center gap-2">
+                            <i data-lucide="calendar" class="w-4 h-4 text-slate-400"></i> 10 Nov, 2025
+                        </p>
+                        <p class="text-sm text-slate-300 flex items-center gap-2 mt-1">
+                            <i data-lucide="clock" class="w-4 h-4 text-slate-400"></i> 09:00 - 14:00 hrs
+                        </p>
+                    </div>
+                    <div class="w-px bg-white/10"></div>
+                    <div class="flex items-center justify-center flex-grow">
+                        <div class="text-center">
+                            <p class="text-2xl font-bold text-status-success">5<span class="text-sm font-normal text-slate-400">hrs</span></p>
+                            <p class="text-xs text-slate-500 uppercase tracking-wider">Aportadas</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botón Acción -->
+                <div class="flex-shrink-0">
+                    <button class="text-bec-accent hover:text-white bg-bec-accent/10 hover:bg-bec-accent border border-bec-accent/20 hover:border-bec-accent px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 w-full lg:w-auto justify-center">
+                        <i data-lucide="award" class="w-4 h-4"></i> Constancia
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- EVENTO 3 (Cancelado / Falta - Danger) -->
+        <div class="glass-panel rounded-2xl p-6 border border-white/5 hover:border-white/10 transition-colors relative overflow-hidden group opacity-75">
+            <div class="absolute left-0 top-0 bottom-0 w-1 bg-status-danger"></div>
+            
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                <!-- Info principal -->
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-bec-dark border border-white/10 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="x-circle" class="text-status-danger w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-3 mb-1">
+                            <h3 class="text-lg font-semibold text-white text-opacity-60 line-through">Pintura de Fachadas</h3>
+                            <span class="px-2.5 py-0.5 rounded-full bg-status-danger/10 text-status-danger text-xs font-medium border border-status-danger/20">
+                                Cancelado
+                            </span>
+                        </div>
+                        <p class="text-sm text-slate-500 flex items-center gap-2">
+                            <i data-lucide="building-2" class="w-4 h-4"></i> Organiza: Casa del Migrante
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Detalles de Fecha -->
+                <div class="flex-grow max-w-md bg-bec-dark/30 rounded-lg p-3 border border-white/5">
+                    <p class="text-sm text-slate-400">
+                        Cancelaste tu participación el 12 de Oct, 2025.
+                    </p>
+                </div>
+
+                <!-- Botón Acción -->
+                <div class="flex-shrink-0">
+                    <button class="text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-2 rounded-lg text-sm font-medium transition-all w-full lg:w-auto text-center">
+                        Ver Detalles
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Recepcionista{% endblock %} - BEC</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { background-color: #0f172a; color: #f8fafc; }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .sidebar-item-active { background: rgba(59, 130, 246, 0.1); color: #60a5fa; border-left: 4px solid #3b82f6; }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+    <!-- BARRA LATERAL -->
+    <aside class="w-64 glass flex flex-col border-r border-slate-800 z-20 relative">
+        <div class="p-6">
+            <h1 class="text-xl font-black tracking-tighter text-emerald-500 uppercase">BEC<span class="text-white">_Recepción</span></h1>
+        </div>
+        
+        <nav class="flex-1 px-4 space-y-2 mt-4">
+            <!-- En Jinja2 usamos url_for('nombre_de_la_funcion_en_app_py') -->
+            <a href="{{ url_for('home') }}" class="flex items-center p-3 rounded-lg transition-colors sidebar-item-active">
+                <i data-lucide="home" class="w-5 h-5 mr-3"></i> Inicio
+            </a>
+            
+            <div class="pt-4 pb-1">
+                <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-3">Atención al Ciudadano</span>
+            </div>
+
+            <a href="{{ url_for('nuevo_usuario') }}" class="flex items-center p-3 rounded-lg transition-colors text-slate-400 hover:bg-slate-800">
+                <i data-lucide="user-plus" class="w-5 h-5 mr-3"></i> Alta de Ciudadano
+            </a>
+            <a href="{{ url_for('nueva_donacion') }}" class="flex items-center p-3 rounded-lg transition-colors text-slate-400 hover:bg-slate-800">
+                <i data-lucide="package-plus" class="w-5 h-5 mr-3"></i> Recibir Donación
+            </a>
+            <a href="{{ url_for('asignar_voluntariado') }}" class="flex items-center p-3 rounded-lg transition-colors text-slate-400 hover:bg-slate-800">
+                <i data-lucide="clipboard-check" class="w-5 h-5 mr-3"></i> Asignar Voluntario
+            </a>
+        </nav>
+        
+        <div class="p-4 border-t border-slate-800">
+            <button class="flex items-center w-full p-2 text-sm text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors">
+                <i data-lucide="log-out" class="w-4 h-4 mr-2"></i> Cerrar Turno
+            </button>
+        </div>
+    </aside>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="flex-1 flex flex-col h-screen relative">
+        <!-- Decoración de fondo para que se vea más bonito -->
+        <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/5 rounded-full blur-[100px] pointer-events-none"></div>
+        <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-emerald-600/5 rounded-full blur-[100px] pointer-events-none"></div>
+
+        <header class="h-16 flex items-center px-8 border-b border-slate-800 justify-between glass z-10">
+            <h2 class="text-sm font-semibold uppercase tracking-widest text-slate-400">{% block header_title %}Panel de Control{% endblock %}</h2>
+            <div class="flex items-center space-x-3">
+                <div class="text-right">
+                    <p class="text-xs font-bold text-slate-200">Recepción Sede Centro</p>
+                    <p class="text-[10px] text-emerald-400">● Turno Matutino</p>
+                </div>
+                <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-600 flex items-center justify-center font-bold text-white shadow-lg">R</div>
+            </div>
+        </header>
+        
+        <div class="flex-1 overflow-y-auto p-8 z-10 relative">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

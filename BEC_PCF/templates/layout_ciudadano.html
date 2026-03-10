@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}BEC{% endblock %} - Portal Ciudadano</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Configuración exacta de tu Guía de Estilos -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Poppins', 'sans-serif'], },
+                    colors: {
+                        bec: {
+                            dark: '#0B132B',
+                            base: '#1C2541',
+                            primary: '#3A506B',
+                            accent: '#5BC0BE',
+                            light: '#E2F0F9',
+                        },
+                        status: {
+                            success: '#10B981', warning: '#F59E0B', danger: '#EF4444', info: '#3B82F6',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #0B132B; color: #E2F0F9; }
+        .glass-panel { background: rgba(28, 37, 65, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .glass-nav { background: rgba(11, 19, 43, 0.85); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(91, 192, 190, 0.2); }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen relative overflow-x-hidden">
+
+    <!-- Efectos de luz de fondo globales -->
+    <div class="fixed top-[-20%] left-[-10%] w-[50%] h-[50%] bg-bec-accent/10 rounded-full blur-[120px] pointer-events-none z-0"></div>
+    <div class="fixed bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-bec-primary/20 rounded-full blur-[120px] pointer-events-none z-0"></div>
+
+    <!-- NAVBAR (Basado en el mockup de tu txt) -->
+    <nav class="glass-nav fixed w-full z-50 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <a href="{{ url_for('ciudadano_home') }}" class="flex items-center gap-3 group">
+                        <div class="w-10 h-10 bg-bec-base rounded-xl border border-bec-accent/30 flex items-center justify-center group-hover:border-bec-accent transition-colors shadow-[0_0_15px_rgba(91,192,190,0.2)] group-hover:shadow-[0_0_20px_rgba(91,192,190,0.4)]">
+                            <i data-lucide="globe" class="text-bec-accent w-6 h-6"></i>
+                        </div>
+                        <span class="font-bold text-xl tracking-wide text-white">BEC<span class="text-bec-accent">_Portal</span></span>
+                    </a>
+                </div>
+
+                <!-- Enlaces Centrales -->
+                <div class="hidden md:flex items-center space-x-8 z-10">
+                    <a href="{{ url_for('ciudadano_home') }}" class="text-slate-300 hover:text-bec-accent font-medium transition-colors text-sm">Inicio</a>
+                    <a href="{{ url_for('ciudadano_albergues') }}" class="text-slate-300 hover:text-bec-accent font-medium transition-colors text-sm">Albergues</a>
+                    <!-- Menú de Usuario (Ejemplo visual si está logueado) -->
+                    <div class="relative group">
+                        <button class="flex items-center gap-2 text-slate-300 hover:text-bec-accent font-medium transition-colors text-sm">
+                            Mi Espacio <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                        </button>
+                        <div class="absolute top-full left-0 mt-2 w-48 glass-panel rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all transform translate-y-2 group-hover:translate-y-0">
+                            <a href="{{ url_for('ciudadano_perfil') }}" class="block px-4 py-3 text-sm text-slate-300 hover:bg-bec-accent/10 hover:text-bec-accent first:rounded-t-xl">Mi Perfil</a>
+                            <a href="{{ url_for('ciudadano_donaciones') }}" class="block px-4 py-3 text-sm text-slate-300 hover:bg-bec-accent/10 hover:text-bec-accent">Mis Donaciones</a>
+                            <a href="{{ url_for('ciudadano_voluntariados') }}" class="block px-4 py-3 text-sm text-slate-300 hover:bg-bec-accent/10 hover:text-bec-accent last:rounded-b-xl">Mis Voluntariados</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botones Acceso -->
+                <div class="hidden md:flex items-center space-x-4 z-10">
+                    <a href="#" class="text-slate-300 hover:text-white font-medium px-3 py-2 transition-colors text-sm">Ingresar</a>
+                    <a href="#" class="bg-bec-accent text-bec-dark px-6 py-2.5 rounded-xl font-semibold hover:bg-cyan-400 hover:shadow-[0_0_20px_rgba(91,192,190,0.4)] transition-all text-sm">
+                        Registrarse
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="flex-grow pt-20 relative z-10">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- FOOTER (Basado en el mockup de tu txt) -->
+    <footer class="bg-bec-dark border-t border-white/5 pt-16 pb-8 mt-20 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+                <div class="col-span-1 md:col-span-2">
+                    <a href="#" class="flex items-center gap-2 mb-4">
+                        <div class="w-8 h-8 bg-bec-base rounded-lg border border-bec-accent/30 flex items-center justify-center">
+                            <i data-lucide="globe" class="text-bec-accent w-4 h-4"></i>
+                        </div>
+                        <span class="font-bold text-lg text-white">Blue Earth Coders</span>
+                    </a>
+                    <p class="text-slate-400 max-w-sm text-sm">Sistema integral de asistencia ciudadana. Conectando voluntad con necesidad a través de la tecnología.</p>
+                </div>
+                <div>
+                    <h4 class="text-white font-medium mb-4">Plataforma</h4>
+                    <ul class="space-y-2 text-sm text-slate-400">
+                        <li><a href="#" class="hover:text-bec-accent transition-colors">Voluntariados</a></li>
+                        <li><a href="#" class="hover:text-bec-accent transition-colors">Albergues</a></li>
+                        <li><a href="#" class="hover:text-bec-accent transition-colors">Donaciones</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-medium mb-4">Legal</h4>
+                    <ul class="space-y-2 text-sm text-slate-400">
+                        <li><a href="#" class="hover:text-bec-accent transition-colors">Privacidad</a></li>
+                        <li><a href="#" class="hover:text-bec-accent transition-colors">Términos</a></li>
+                        <li><a href="#" class="hover:text-bec-accent transition-colors">Contacto</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-white/10 pt-8 text-center text-sm text-slate-500">
+                &copy; 2026 Blue Earth Coders. Todos los derechos reservados.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

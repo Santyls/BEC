@@ -1,0 +1,6 @@
+@import "tailwindcss";
+@source "../views"; /* Le obliga a leer todo lo que esté en tu carpeta views */
+
+@theme {
+  --color-bec-dark: #0b1120;
+}

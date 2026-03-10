@@ -1,0 +1,167 @@
+{% extends 'layout_ciudadano.html' %}
+
+{% block title %}Mis Donaciones{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    
+    <!-- Encabezado y Estadísticas -->
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+        <div>
+            <h1 class="text-3xl font-bold text-white mb-2">Mis Donaciones</h1>
+            <p class="text-slate-400">Historial de tus aportaciones y seguimiento de entrega.</p>
+        </div>
+        
+        <!-- Tarjeta de Resumen Rápido -->
+        <div class="glass-panel px-6 py-4 rounded-xl flex items-center gap-6 border-bec-accent/20">
+            <div>
+                <p class="text-xs text-slate-400 uppercase tracking-wider mb-1">Total Aportaciones</p>
+                <p class="text-2xl font-bold text-white">4</p>
+            </div>
+            <div class="h-10 w-px bg-white/10"></div>
+            <div>
+                <p class="text-xs text-slate-400 uppercase tracking-wider mb-1">Impacto</p>
+                <div class="flex items-center gap-2 text-status-success">
+                    <i data-lucide="trending-up" class="w-4 h-4"></i>
+                    <span class="font-bold">Alto</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Donaciones (Mockup) -->
+    <div class="space-y-4">
+
+        <!-- DONACIÓN 1 (Entregado - Success) -->
+        <div class="glass-panel rounded-2xl p-6 border border-white/5 hover:border-white/10 transition-colors relative overflow-hidden group">
+            <div class="absolute left-0 top-0 bottom-0 w-1 bg-status-success"></div>
+            
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                <!-- Info principal -->
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-bec-dark border border-white/10 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="package-check" class="text-status-success w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-3 mb-1">
+                            <h3 class="text-lg font-semibold text-white">Ropa de Invierno</h3>
+                            <span class="px-2.5 py-0.5 rounded-full bg-status-success/10 text-status-success text-xs font-medium border border-status-success/20">
+                                Entregado
+                            </span>
+                        </div>
+                        <p class="text-sm text-slate-400 flex items-center gap-2">
+                            <i data-lucide="calendar" class="w-4 h-4"></i> 15 de Ene, 2026
+                            <span class="text-white/20">|</span>
+                            <i data-lucide="home" class="w-4 h-4"></i> Albergue San Juan
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Detalle de artículos -->
+                <div class="flex-grow max-w-md bg-bec-dark/50 rounded-lg p-3 border border-white/5">
+                    <p class="text-xs text-slate-500 mb-2 font-medium uppercase tracking-wider">Artículos Donados</p>
+                    <ul class="text-sm text-slate-300 space-y-1">
+                        <li class="flex justify-between"><span>Cobijas gruesas</span> <span class="text-white font-medium">3 Piezas</span></li>
+                        <li class="flex justify-between"><span>Suéteres adulto</span> <span class="text-white font-medium">5 Piezas</span></li>
+                    </ul>
+                </div>
+
+                <!-- Botón Acción -->
+                <div class="flex-shrink-0">
+                    <button class="text-bec-accent hover:text-white bg-bec-accent/10 hover:bg-bec-accent border border-bec-accent/20 hover:border-bec-accent px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2">
+                        Ver Recibo <i data-lucide="download" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- DONACIÓN 2 (En Camino / En Proceso - Warning/Info) -->
+        <div class="glass-panel rounded-2xl p-6 border border-white/5 hover:border-white/10 transition-colors relative overflow-hidden group">
+            <div class="absolute left-0 top-0 bottom-0 w-1 bg-status-info"></div>
+            
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                <!-- Info principal -->
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-bec-dark border border-white/10 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="truck" class="text-status-info w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-3 mb-1">
+                            <h3 class="text-lg font-semibold text-white">Alimentos No Perecederos</h3>
+                            <span class="px-2.5 py-0.5 rounded-full bg-status-info/10 text-status-info text-xs font-medium border border-status-info/20 animate-pulse">
+                                En Centro de Acopio
+                            </span>
+                        </div>
+                        <p class="text-sm text-slate-400 flex items-center gap-2">
+                            <i data-lucide="calendar" class="w-4 h-4"></i> 02 de Mar, 2026
+                            <span class="text-white/20">|</span>
+                            <i data-lucide="home" class="w-4 h-4"></i> Banco de Alimentos Qro.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Detalle de artículos -->
+                <div class="flex-grow max-w-md bg-bec-dark/50 rounded-lg p-3 border border-white/5">
+                    <p class="text-xs text-slate-500 mb-2 font-medium uppercase tracking-wider">Artículos Donados</p>
+                    <ul class="text-sm text-slate-300 space-y-1">
+                        <li class="flex justify-between"><span>Arroz</span> <span class="text-white font-medium">10 Kg</span></li>
+                        <li class="flex justify-between"><span>Frijol</span> <span class="text-white font-medium">5 Kg</span></li>
+                        <li class="flex justify-between"><span>Atún en lata</span> <span class="text-white font-medium">15 Latas</span></li>
+                    </ul>
+                </div>
+
+                <!-- Botón Acción -->
+                <div class="flex-shrink-0">
+                    <button class="text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2">
+                        Detalles <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- DONACIÓN 3 (Pendiente Recolección - Warning) -->
+        <div class="glass-panel rounded-2xl p-6 border border-white/5 hover:border-white/10 transition-colors relative overflow-hidden group">
+            <div class="absolute left-0 top-0 bottom-0 w-1 bg-status-warning"></div>
+            
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                <!-- Info principal -->
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-bec-dark border border-white/10 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="clock" class="text-status-warning w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-3 mb-1">
+                            <h3 class="text-lg font-semibold text-white">Medicamentos Básicos</h3>
+                            <span class="px-2.5 py-0.5 rounded-full bg-status-warning/10 text-status-warning text-xs font-medium border border-status-warning/20">
+                                Pendiente de Recolección
+                            </span>
+                        </div>
+                        <p class="text-sm text-slate-400 flex items-center gap-2">
+                            <i data-lucide="calendar" class="w-4 h-4"></i> Solicitado: Hoy
+                            <span class="text-white/20">|</span>
+                            <i data-lucide="map-pin" class="w-4 h-4"></i> Recolección en Domicilio
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Detalle de artículos -->
+                <div class="flex-grow max-w-md bg-bec-dark/50 rounded-lg p-3 border border-white/5">
+                    <p class="text-xs text-slate-500 mb-2 font-medium uppercase tracking-wider">Artículos a Entregar</p>
+                    <ul class="text-sm text-slate-300 space-y-1">
+                        <li class="flex justify-between"><span>Paracetamol Cajas</span> <span class="text-white font-medium">5 Cajas</span></li>
+                        <li class="flex justify-between"><span>Alcohol 500ml</span> <span class="text-white font-medium">2 Botellas</span></li>
+                    </ul>
+                </div>
+
+                <!-- Botón Acción -->
+                <div class="flex-shrink-0">
+                    <button class="text-status-danger hover:text-white bg-status-danger/10 hover:bg-status-danger border border-status-danger/20 hover:border-status-danger px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2">
+                        Cancelar <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

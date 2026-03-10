@@ -1,0 +1,19 @@
+# Usamos una imagen oficial de Python ligera
+FROM python:3.11-slim
+
+# Configuramos el directorio de trabajo
+WORKDIR /app
+
+# Evitamos que Python genere archivos .pyc y forzamos la salida estándar
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+# Copiamos el archivo de requerimientos e instalamos dependencias
+# Asegúrate de tener un requirements.txt en tu carpeta BEC_PCF / BEC_PRF
+COPY requirements.txt /app/
+RUN pip install --no-cache-dir -r requirements.txt
+
+# El código se montará vía volúmenes en el docker-compose
+
+# Ejecutamos Flask
+CMD ["flask", "run", "--host=0.0.0.0"]

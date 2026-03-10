@@ -1,0 +1,61 @@
+services:
+  # 1. API Principal (FastAPI)
+  bec_api:
+    build: 
+      context: ./BEC_API
+    container_name: bec_api_app
+    restart: unless-stopped
+    ports:
+      - "8000:5000"
+    volumes:
+      - ./BEC_API:/app
+    networks:
+      - bec_network
+
+  # 2. Portal Centros (Flask)
+  bec_pcf:
+    build: 
+      context: ./BEC_PCF
+    container_name: bec_pcf_app
+    restart: unless-stopped
+    ports:
+      - "8001:5000"
+    volumes:
+      - ./BEC_PCF:/app
+    networks:
+      - bec_network
+
+  # 3. Portal Receptores (Flask)
+  bec_prf:
+    build: 
+      context: ./BEC_PRF
+    container_name: bec_prf_app
+    restart: unless-stopped
+    ports:
+      - "8002:5000"
+    volumes:
+      - ./BEC_PRF:/app
+    networks:
+      - bec_network
+
+  # 4. Portal Admin (Laravel)
+  bec_pal:
+    build: 
+      context: ./BEC_PAL
+    container_name: bec_pal_app
+    restart: unless-stopped
+    ports:
+      - "8003:8000"
+    working_dir: /app
+    volumes:
+      - ./BEC_PAL:/app
+    networks:
+      - bec_network
+
+# ==========================================
+# AQUÍ ESTÁ LA SOLUCIÓN AL ERROR:
+# Declaramos la red para que exista
+# ==========================================
+networks:
+  bec_network:
+    driver: bridge
