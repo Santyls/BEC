@@ -22,8 +22,8 @@
                 </div>
             </div>
             <div class="w-px h-10 bg-white/10"></div>
-            <!-- Nuevo botón para anotarse a voluntariado -->
-            <button class="bg-bec-accent hover:bg-bec-accent/80 text-bec-dark font-bold px-4 py-2 rounded-lg flex items-center gap-2 transition-colors shadow-[0_0_15px_rgba(91,192,190,0.3)] hover:shadow-[0_0_20px_rgba(91,192,190,0.5)] group" title="Anotarse a nuevo voluntariado">
+            <!-- Botón que abre el panel lateral -->
+            <button onclick="abrirPanelVoluntariados()" class="bg-bec-accent hover:bg-bec-accent/80 text-bec-dark font-bold px-4 py-2 rounded-lg flex items-center gap-2 transition-colors shadow-[0_0_15px_rgba(91,192,190,0.3)] hover:shadow-[0_0_20px_rgba(91,192,190,0.5)] group" title="Anotarse a nuevo voluntariado">
                 <i data-lucide="plus" class="w-5 h-5 group-hover:rotate-90 transition-transform"></i>
                 <span class="text-sm">Inscribirme</span>
             </button>
@@ -37,7 +37,7 @@
         <button onclick="filtrarVoluntariados('completado', this)" class="filtro-btn px-4 py-2 rounded-lg text-sm font-medium transition-colors text-slate-400 hover:text-white hover:bg-white/5">Completados</button>
     </div>
 
-    <!-- Lista de Voluntariados -->
+    <!-- Lista de Mis Voluntariados -->
     <div class="space-y-4" id="listaVoluntariados">
 
         <!-- TARJETA 1: PRÓXIMO -->
@@ -66,7 +66,8 @@
                     <button onclick="abrirModalCancelar()" class="text-status-danger hover:text-white bg-status-danger/10 hover:bg-status-danger/20 border border-status-danger/20 px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2">
                         <i data-lucide="x-circle" class="w-4 h-4"></i> Cancelar Asistencia
                     </button>
-                    <button onclick="abrirModalDetalles('Colecta de Invierno 2026', 'proximo')" class="text-slate-300 hover:text-bec-dark bg-white/5 hover:bg-bec-accent border border-white/10 hover:border-bec-accent px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2">
+                    <!-- Pasamos 'false' en el tercer parámetro para indicar que NO es modo inscripción -->
+                    <button onclick="abrirModalDetalles('Colecta de Invierno 2026', 'proximo', false)" class="text-slate-300 hover:text-bec-dark bg-white/5 hover:bg-bec-accent border border-white/10 hover:border-bec-accent px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2">
                         Ver Detalles <i data-lucide="arrow-right" class="w-4 h-4"></i>
                     </button>
                 </div>
@@ -96,7 +97,7 @@
 
                 <!-- Botones Acción -->
                 <div class="flex flex-wrap items-center gap-3 flex-shrink-0">
-                    <button onclick="abrirModalDetalles('Repartición de Despensas', 'completado')" class="text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2">
+                    <button onclick="abrirModalDetalles('Repartición de Despensas', 'completado', false)" class="text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2">
                         Ver Detalles <i data-lucide="eye" class="w-4 h-4"></i>
                     </button>
                 </div>
@@ -125,7 +126,7 @@
 
                 <!-- Botones Acción -->
                 <div class="flex flex-wrap items-center gap-3 flex-shrink-0">
-                    <button onclick="abrirModalDetalles('Clasificación de Ropa', 'cancelado')" class="text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2">
+                    <button onclick="abrirModalDetalles('Clasificación de Ropa', 'cancelado', false)" class="text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2">
                         Ver Detalles <i data-lucide="eye" class="w-4 h-4"></i>
                     </button>
                 </div>
@@ -136,32 +137,70 @@
 </div>
 
 <!-- ========================================== -->
-<!-- MODAL DE CONFIRMACIÓN (CANCELAR ASISTENCIA)-->
+<!-- PANEL LATERAL (NUEVOS VOLUNTARIADOS)       -->
 <!-- ========================================== -->
-<div id="modalConfirmar" class="fixed inset-0 z-50 hidden">
+<div id="panelVoluntariados" class="fixed inset-0 z-40 hidden">
     <!-- Overlay oscuro con blur -->
-    <div class="absolute inset-0 bg-bec-dark/80 backdrop-blur-sm" onclick="cerrarModalCancelar()"></div>
+    <div class="absolute inset-0 bg-bec-dark/80 backdrop-blur-sm transition-opacity opacity-0" id="panelOverlay" onclick="cerrarPanelVoluntariados()"></div>
     
-    <!-- Contenedor del Modal Centrado -->
-    <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
-        <div class="bg-bec-base border border-status-danger/30 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden pointer-events-auto transform scale-95 opacity-0 transition-all duration-300" id="modalConfirmarContent">
-            <div class="p-6 text-center">
-                <div class="w-16 h-16 bg-status-danger/10 text-status-danger rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i data-lucide="alert-triangle" class="w-8 h-8"></i>
-                </div>
-                <h3 class="text-xl font-bold text-white mb-2">¿Cancelar asistencia?</h3>
-                <p class="text-slate-400 text-sm mb-6">
-                    Estás a punto de cancelar tu participación en este voluntariado. El albergue contaba con tu apoyo, ¿estás seguro de que deseas proceder?
-                </p>
-                <div class="flex gap-3">
-                    <button onclick="cerrarModalCancelar()" class="flex-1 bg-white/5 hover:bg-white/10 text-white font-medium py-2.5 rounded-lg transition-colors border border-white/10">
-                        No, mantener
-                    </button>
-                    <button onclick="ejecutarCancelacion()" class="flex-1 bg-status-danger hover:bg-red-600 text-white font-bold py-2.5 rounded-lg transition-colors shadow-[0_0_15px_rgba(239,68,68,0.3)]">
-                        Sí, cancelar
-                    </button>
-                </div>
+    <!-- Contenedor del Panel (Desliza desde la derecha) -->
+    <div class="absolute top-0 right-0 h-full w-full sm:w-[450px] bg-bec-base border-l border-white/10 shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col" id="panelContent">
+        
+        <!-- Header del Panel -->
+        <div class="p-6 border-b border-white/10 flex items-center justify-between bg-bec-dark/50">
+            <div>
+                <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                    <i data-lucide="list-plus" class="text-bec-accent w-5 h-5"></i>
+                    Voluntariados Activos
+                </h2>
+                <p class="text-sm text-slate-400 mt-1">Súmate a nuevas campañas</p>
             </div>
+            <button onclick="cerrarPanelVoluntariados()" class="text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 p-2 rounded-full transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <!-- Lista de Campañas Disponibles -->
+        <div class="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
+            
+            <!-- Opción 1 -->
+            <div class="bg-white/5 border border-white/10 rounded-xl p-5 hover:border-bec-accent/50 transition-colors">
+                <div class="flex justify-between items-start mb-3">
+                    <h3 class="font-semibold text-white text-lg">Campaña de Reforestación</h3>
+                    <span class="bg-bec-accent/20 text-bec-accent text-xs px-2 py-1 rounded font-medium border border-bec-accent/30">Nuevo</span>
+                </div>
+                <div class="space-y-2 mb-4">
+                    <p class="text-sm text-slate-400 flex items-center gap-2">
+                        <i data-lucide="calendar" class="w-4 h-4 text-slate-500"></i> 20 de Mar, 2026
+                    </p>
+                    <p class="text-sm text-slate-400 flex items-center gap-2">
+                        <i data-lucide="map-pin" class="w-4 h-4 text-slate-500"></i> Parque Ecológico M.
+                    </p>
+                </div>
+                <button onclick="abrirModalDetalles('Campaña de Reforestación', 'disponible', true)" class="w-full text-center text-sm font-medium bg-white/5 hover:bg-bec-accent hover:text-bec-dark text-slate-300 py-2 rounded-lg border border-white/10 transition-colors flex items-center justify-center gap-2">
+                    Ver Detalles e Inscribirse
+                </button>
+            </div>
+
+            <!-- Opción 2 -->
+            <div class="bg-white/5 border border-white/10 rounded-xl p-5 hover:border-bec-accent/50 transition-colors">
+                <div class="flex justify-between items-start mb-3">
+                    <h3 class="font-semibold text-white text-lg">Apoyo en Comedor Comunitario</h3>
+                    <span class="bg-status-warning/20 text-status-warning text-xs px-2 py-1 rounded font-medium border border-status-warning/30">Urgente</span>
+                </div>
+                <div class="space-y-2 mb-4">
+                    <p class="text-sm text-slate-400 flex items-center gap-2">
+                        <i data-lucide="calendar" class="w-4 h-4 text-slate-500"></i> 25 de Mar, 2026
+                    </p>
+                    <p class="text-sm text-slate-400 flex items-center gap-2">
+                        <i data-lucide="map-pin" class="w-4 h-4 text-slate-500"></i> Parroquia de la Cruz
+                    </p>
+                </div>
+                <button onclick="abrirModalDetalles('Apoyo en Comedor Comunitario', 'disponible', true)" class="w-full text-center text-sm font-medium bg-white/5 hover:bg-bec-accent hover:text-bec-dark text-slate-300 py-2 rounded-lg border border-white/10 transition-colors flex items-center justify-center gap-2">
+                    Ver Detalles e Inscribirse
+                </button>
+            </div>
+
         </div>
     </div>
 </div>
@@ -169,36 +208,34 @@
 <!-- ========================================== -->
 <!-- MODAL FLOTANTE (VER DETALLES)              -->
 <!-- ========================================== -->
-<div id="modalDetalles" class="fixed inset-0 z-[60] hidden">
+<div id="modalDetalles" class="fixed inset-0 z-50 hidden">
     <!-- Overlay oscuro con blur -->
     <div class="absolute inset-0 bg-bec-dark/90 backdrop-blur-md" onclick="cerrarModalDetalles()"></div>
     
     <!-- Contenedor del Modal Centrado -->
     <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
-        <div class="glass-panel w-full max-w-4xl rounded-2xl border border-white/10 shadow-2xl overflow-hidden pointer-events-auto flex flex-col md:flex-row transform scale-95 opacity-0 transition-all duration-300" id="modalDetallesContent">
+        <div class="glass-panel w-full max-w-4xl rounded-2xl border border-white/10 shadow-2xl overflow-hidden pointer-events-auto flex flex-col md:flex-row transform scale-95 opacity-0 transition-all duration-300" id="modalDetallesBody">
             
-            <!-- Botón Cerrar (Absoluto para ambas vistas) -->
+            <!-- Botón Cerrar -->
             <button onclick="cerrarModalDetalles()" class="absolute top-4 right-4 z-10 text-slate-400 hover:text-white bg-bec-dark/50 p-2 rounded-full transition-colors">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
 
-            <!-- Izquierda: Descripción del Voluntariado -->
+            <!-- Izquierda: Descripción -->
             <div class="w-full md:w-1/2 bg-bec-dark/60 p-8 border-b md:border-b-0 md:border-r border-white/5 flex flex-col">
                 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-bec-accent/10 border border-bec-accent/30 text-bec-accent text-xs font-semibold mb-6 uppercase tracking-widest w-fit">
-                    <i data-lucide="info" class="w-3 h-3"></i> Información
+                    <i data-lucide="info" class="w-3 h-3"></i> Información de Campaña
                 </div>
                 
                 <h2 id="modalTitulo" class="text-2xl font-bold text-white mb-4">Título del Voluntariado</h2>
                 
                 <div class="text-slate-300 text-sm leading-relaxed space-y-4 mb-6 flex-grow">
-                    <p>
-                        Esta campaña está destinada a brindar apoyo directo a las comunidades vulnerables durante la temporada invernal. Tu participación es vital para organizar y distribuir los recursos.
-                    </p>
+                    <p>Esta campaña está destinada a brindar apoyo directo a las comunidades. Tu participación es vital para lograr los objetivos de asistencia social del albergue.</p>
                     <p>
                         <strong>Actividades principales:</strong><br>
-                        • Recepción de donativos en especie.<br>
-                        • Clasificación y empaquetado.<br>
-                        • Apoyo logístico en el centro de acopio.
+                        • Recepción y organización.<br>
+                        • Apoyo logístico y distribución.<br>
+                        • Atención a beneficiarios.
                     </p>
                     <div class="bg-status-warning/10 border border-status-warning/20 p-3 rounded-lg flex items-start gap-3 mt-4">
                         <i data-lucide="alert-circle" class="w-5 h-5 text-status-warning flex-shrink-0 mt-0.5"></i>
@@ -207,15 +244,13 @@
                 </div>
             </div>
 
-            <!-- Derecha: Datos Técnicos y Fechas -->
+            <!-- Derecha: Datos Técnicos y Acción/Estado -->
             <div class="w-full md:w-1/2 p-8 relative flex flex-col bg-bec-base/30">
                 <h3 class="text-lg font-semibold text-white mb-6 flex items-center gap-2">
-                    <i data-lucide="file-text" class="text-bec-accent w-5 h-5"></i>
-                    Datos de la Campaña
+                    <i data-lucide="file-text" class="text-bec-accent w-5 h-5"></i> Datos Generales
                 </h3>
 
                 <div class="space-y-6">
-                    <!-- Dato 1 -->
                     <div class="flex gap-4">
                         <div class="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0 border border-white/10">
                             <i data-lucide="calendar" class="w-5 h-5 text-bec-accent"></i>
@@ -227,7 +262,6 @@
                         </div>
                     </div>
                     
-                    <!-- Dato 2 -->
                     <div class="flex gap-4">
                         <div class="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0 border border-white/10">
                             <i data-lucide="map-pin" class="w-5 h-5 text-bec-accent"></i>
@@ -235,29 +269,14 @@
                         <div>
                             <p class="text-xs text-slate-500 uppercase tracking-wider mb-0.5">Ubicación</p>
                             <p class="text-white font-medium">Albergue San Juan</p>
-                            <p class="text-sm text-slate-400">Av. Universidad 123, Centro Histórico</p>
-                        </div>
-                    </div>
-
-                    <!-- Dato 3 -->
-                    <div class="flex gap-4">
-                        <div class="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0 border border-white/10">
-                            <i data-lucide="user" class="w-5 h-5 text-bec-accent"></i>
-                        </div>
-                        <div>
-                            <p class="text-xs text-slate-500 uppercase tracking-wider mb-0.5">Coordinador</p>
-                            <p class="text-white font-medium">Lic. María Fernández</p>
-                            <p class="text-sm text-slate-400">Contacto: 442 123 4567</p>
+                            <p class="text-sm text-slate-400">Centro Histórico</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Estado del voluntariado actual -->
-                <div class="mt-auto pt-8 border-t border-white/10">
-                    <p class="text-xs text-slate-500 uppercase tracking-wider mb-2">Estado de tu inscripción</p>
-                    <div id="modalStatusBadge" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-status-info/20 text-status-info border border-status-info/30 text-sm font-semibold">
-                        <i data-lucide="clock" class="w-4 h-4"></i> Próximo a realizarse
-                    </div>
+                <!-- CONTENEDOR DINÁMICO: Badge de Estado o Botón de Inscripción -->
+                <div id="modalFooterAccion" class="mt-auto pt-8 border-t border-white/10">
+                    <!-- Contenido inyectado por JS -->
                 </div>
             </div>
 
@@ -266,14 +285,69 @@
 </div>
 
 <!-- ========================================== -->
+<!-- MODAL CONFIRMAR INSCRIPCIÓN                -->
+<!-- ========================================== -->
+<div id="modalConfirmarInscripcion" class="fixed inset-0 z-[60] hidden">
+    <div class="absolute inset-0 bg-bec-dark/80 backdrop-blur-sm" onclick="cerrarModalInscribir()"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
+        <div class="bg-bec-base border border-bec-accent/30 w-full max-w-md rounded-2xl shadow-[0_0_30px_rgba(91,192,190,0.15)] overflow-hidden pointer-events-auto transform scale-95 opacity-0 transition-all duration-300" id="modalInscribirContent">
+            <div class="p-6 text-center">
+                <div class="w-16 h-16 bg-bec-accent/10 text-bec-accent rounded-full flex items-center justify-center mx-auto mb-4 border border-bec-accent/20">
+                    <i data-lucide="check-circle" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2">¡Únete a la causa!</h3>
+                <p class="text-slate-400 text-sm mb-6">
+                    ¿Estás seguro de que deseas anotarte a esta actividad? El albergue contará con tu asistencia en la fecha indicada.
+                </p>
+                <div class="flex gap-3">
+                    <button onclick="cerrarModalInscribir()" class="flex-1 bg-white/5 hover:bg-white/10 text-white font-medium py-2.5 rounded-lg transition-colors border border-white/10">
+                        Cancelar
+                    </button>
+                    <button onclick="ejecutarInscripcion()" class="flex-1 bg-bec-accent hover:bg-bec-accent/80 text-bec-dark font-bold py-2.5 rounded-lg transition-colors shadow-[0_0_15px_rgba(91,192,190,0.3)]">
+                        Sí, anotarme
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- MODAL DE CANCELAR (Ya existente)           -->
+<!-- ========================================== -->
+<div id="modalConfirmar" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-bec-dark/80 backdrop-blur-sm" onclick="cerrarModalCancelar()"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
+        <div class="bg-bec-base border border-status-danger/30 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden pointer-events-auto transform scale-95 opacity-0 transition-all duration-300" id="modalConfirmarContent">
+            <div class="p-6 text-center">
+                <div class="w-16 h-16 bg-status-danger/10 text-status-danger rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="alert-triangle" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2">¿Cancelar asistencia?</h3>
+                <p class="text-slate-400 text-sm mb-6">Estás a punto de cancelar tu participación en este voluntariado. ¿Deseas proceder?</p>
+                <div class="flex gap-3">
+                    <button onclick="cerrarModalCancelar()" class="flex-1 bg-white/5 hover:bg-white/10 text-white font-medium py-2.5 rounded-lg border border-white/10">No, mantener</button>
+                    <button onclick="ejecutarCancelacion()" class="flex-1 bg-status-danger hover:bg-red-600 text-white font-bold py-2.5 rounded-lg shadow-[0_0_15px_rgba(239,68,68,0.3)]">Sí, cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================== -->
 <!-- SCRIPTS Y ESTILOS LOCALES                  -->
 <!-- ========================================== -->
+<style>
+    /* Estilo para el scrollbar del panel lateral */
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+</style>
+
 <script>
-    // ---------------------------------------------
-    // 1. Lógica de Filtros (Pestañas)
-    // ---------------------------------------------
+    // 1. Lógica de Pestañas
     function filtrarVoluntariados(estado, botonClickeado) {
-        // Actualizar estilos de los botones
         const botones = document.querySelectorAll('.filtro-btn');
         botones.forEach(btn => {
             btn.classList.remove('bg-white/10', 'text-white');
@@ -282,7 +356,6 @@
         botonClickeado.classList.remove('text-slate-400', 'hover:text-white', 'hover:bg-white/5');
         botonClickeado.classList.add('bg-white/10', 'text-white');
 
-        // Filtrar tarjetas
         const tarjetas = document.querySelectorAll('.voluntariado-card');
         tarjetas.forEach(tarjeta => {
             if (estado === 'todos') {
@@ -297,15 +370,139 @@
         });
     }
 
-    // ---------------------------------------------
-    // 2. Lógica del Modal de Cancelación
-    // ---------------------------------------------
+    // 2. PANEL LATERAL DE INSCRIPCIÓN
+    const panel = document.getElementById('panelVoluntariados');
+    const panelOverlay = document.getElementById('panelOverlay');
+    const panelContent = document.getElementById('panelContent');
+
+    function abrirPanelVoluntariados() {
+        panel.classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+        
+        // Timeout ligero para que el display block se aplique antes de animar
+        setTimeout(() => {
+            panelOverlay.classList.remove('opacity-0');
+            panelContent.classList.remove('translate-x-full');
+        }, 10);
+    }
+
+    function cerrarPanelVoluntariados() {
+        panelOverlay.classList.add('opacity-0');
+        panelContent.classList.add('translate-x-full');
+        
+        setTimeout(() => {
+            panel.classList.add('hidden');
+            // Solo quitar el overflow si no hay otros modales abiertos
+            if(document.getElementById('modalDetalles').classList.contains('hidden')) {
+                document.body.classList.remove('overflow-hidden');
+            }
+        }, 300);
+    }
+
+    // 3. MODAL DE DETALLES (DINÁMICO)
+    const modalDetalles = document.getElementById('modalDetalles');
+    const modalDetallesBody = document.getElementById('modalDetallesBody');
+    const modalFooterAccion = document.getElementById('modalFooterAccion');
+
+    function abrirModalDetalles(titulo, estado, esModoInscripcion) {
+        document.getElementById('modalTitulo').innerText = titulo;
+
+        // Limpiar el pie del modal
+        modalFooterAccion.innerHTML = '';
+
+        if (esModoInscripcion) {
+            // SI VENIMOS DEL PANEL LATERAL: Mostrar botón de inscripción
+            modalFooterAccion.innerHTML = `
+                <p class="text-xs text-slate-500 uppercase tracking-wider mb-3">Acción</p>
+                <button onclick="abrirModalInscribir()" class="w-full bg-bec-accent hover:bg-bec-accent/80 text-bec-dark font-bold py-3 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(91,192,190,0.3)]">
+                    <i data-lucide="user-plus" class="w-5 h-5"></i> Quiero Participar
+                </button>
+            `;
+        } else {
+            // SI VENIMOS DE MIS VOLUNTARIADOS: Mostrar Badge de Estado
+            let badgeClass, iconStr, textStr;
+            
+            if(estado === 'proximo'){
+                badgeClass = "bg-status-info/20 text-status-info border border-status-info/30";
+                iconStr = "clock"; textStr = "Próximo a realizarse";
+            } else if (estado === 'completado') {
+                badgeClass = "bg-status-success/20 text-status-success border border-status-success/30";
+                iconStr = "check"; textStr = "Voluntariado Completado";
+            } else {
+                badgeClass = "bg-slate-800 text-slate-400 border border-slate-700";
+                iconStr = "ban"; textStr = "Asistencia Cancelada";
+            }
+
+            modalFooterAccion.innerHTML = `
+                <p class="text-xs text-slate-500 uppercase tracking-wider mb-2">Estado de tu inscripción</p>
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-semibold ${badgeClass}">
+                    <i data-lucide="${iconStr}" class="w-4 h-4"></i> ${textStr}
+                </div>
+            `;
+        }
+
+        lucide.createIcons(); // Renderizar iconos inyectados
+
+        modalDetalles.classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+        setTimeout(() => {
+            modalDetallesBody.classList.remove('scale-95', 'opacity-0');
+            modalDetallesBody.classList.add('scale-100', 'opacity-100');
+        }, 10);
+    }
+
+    function cerrarModalDetalles() {
+        modalDetallesBody.classList.remove('scale-100', 'opacity-100');
+        modalDetallesBody.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => {
+            modalDetalles.classList.add('hidden');
+            // Si el panel lateral NO está abierto, desbloqueamos scroll
+            if (document.getElementById('panelVoluntariados').classList.contains('hidden')) {
+                document.body.classList.remove('overflow-hidden');
+            }
+        }, 300);
+    }
+
+    // 4. MODAL DE CONFIRMACIÓN DE INSCRIPCIÓN
+    const modalInscribir = document.getElementById('modalConfirmarInscripcion');
+    const modalInscribirContent = document.getElementById('modalInscribirContent');
+
+    function abrirModalInscribir() {
+        modalInscribir.classList.remove('hidden');
+        setTimeout(() => {
+            modalInscribirContent.classList.remove('scale-95', 'opacity-0');
+            modalInscribirContent.classList.add('scale-100', 'opacity-100');
+        }, 10);
+    }
+
+    function cerrarModalInscribir() {
+        modalInscribirContent.classList.remove('scale-100', 'opacity-100');
+        modalInscribirContent.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => {
+            modalInscribir.classList.add('hidden');
+        }, 300);
+    }
+
+    function ejecutarInscripcion() {
+        const btn = document.querySelector('#modalInscribirContent .bg-bec-accent');
+        btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Anotando...`;
+        lucide.createIcons();
+
+        setTimeout(() => {
+            cerrarModalInscribir();
+            cerrarModalDetalles();
+            cerrarPanelVoluntariados();
+            // location.reload(); // Aquí iría la recarga o actualización AJAX
+        }, 1000);
+    }
+
+    // 5. MODAL DE CANCELACIÓN (Mismo funcionamiento anterior)
     const modalConfirmar = document.getElementById('modalConfirmar');
     const modalConfirmarContent = document.getElementById('modalConfirmarContent');
 
     function abrirModalCancelar() {
         modalConfirmar.classList.remove('hidden');
-        document.body.classList.add('overflow-hidden'); // Bloquear scroll
+        document.body.classList.add('overflow-hidden');
         setTimeout(() => {
             modalConfirmarContent.classList.remove('scale-95', 'opacity-0');
             modalConfirmarContent.classList.add('scale-100', 'opacity-100');
@@ -315,66 +512,19 @@
     function cerrarModalCancelar() {
         modalConfirmarContent.classList.remove('scale-100', 'opacity-100');
         modalConfirmarContent.classList.add('scale-95', 'opacity-0');
-        document.body.classList.remove('overflow-hidden'); // Desbloquear scroll
+        document.body.classList.remove('overflow-hidden');
         setTimeout(() => {
             modalConfirmar.classList.add('hidden');
         }, 300);
     }
 
     function ejecutarCancelacion() {
-        // Aquí iría la llamada AJAX/Fetch a tu backend Flask
         const btn = document.querySelector('#modalConfirmarContent .bg-status-danger');
         btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Cancelando...`;
         lucide.createIcons();
-
-        // Simulamos un retraso de red
         setTimeout(() => {
             cerrarModalCancelar();
-            // Recargar la página o cambiar la tarjeta visualmente a "cancelado"
-            // location.reload(); 
         }, 1000);
-    }
-
-    // ---------------------------------------------
-    // 3. Lógica del Modal de Detalles
-    // ---------------------------------------------
-    const modalDetalles = document.getElementById('modalDetalles');
-    const modalDetallesContent = document.getElementById('modalDetallesContent');
-
-    function abrirModalDetalles(titulo, estado) {
-        // Actualizar título dinámicamente
-        document.getElementById('modalTitulo').innerText = titulo;
-
-        // Actualizar Badge de Estado dinámicamente
-        const badge = document.getElementById('modalStatusBadge');
-        if(estado === 'proximo'){
-            badge.className = "inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-status-info/20 text-status-info border border-status-info/30 text-sm font-semibold";
-            badge.innerHTML = `<i data-lucide="clock" class="w-4 h-4"></i> Próximo a realizarse`;
-        } else if (estado === 'completado') {
-            badge.className = "inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-status-success/20 text-status-success border border-status-success/30 text-sm font-semibold";
-            badge.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> Voluntariado Completado`;
-        } else {
-            badge.className = "inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800 text-slate-400 border border-slate-700 text-sm font-semibold";
-            badge.innerHTML = `<i data-lucide="ban" class="w-4 h-4"></i> Asistencia Cancelada`;
-        }
-        lucide.createIcons(); // Re-renderizar iconos
-
-        // Mostrar Modal
-        modalDetalles.classList.remove('hidden');
-        document.body.classList.add('overflow-hidden'); // Bloquear scroll principal
-        setTimeout(() => {
-            modalDetallesContent.classList.remove('scale-95', 'opacity-0');
-            modalDetallesContent.classList.add('scale-100', 'opacity-100');
-        }, 10);
-    }
-
-    function cerrarModalDetalles() {
-        modalDetallesContent.classList.remove('scale-100', 'opacity-100');
-        modalDetallesContent.classList.add('scale-95', 'opacity-0');
-        document.body.classList.remove('overflow-hidden'); // Desbloquear scroll principal
-        setTimeout(() => {
-            modalDetalles.classList.add('hidden');
-        }, 300);
     }
 </script>
 {% endblock %}

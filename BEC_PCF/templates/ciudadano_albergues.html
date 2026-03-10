@@ -1,179 +1,102 @@
 {% extends 'layout_ciudadano.html' %}
 
-{% block title %}Mi Perfil{% endblock %}
+{% block title %}Mapa de Albergues{% endblock %}
 
 {% block content %}
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     
-    <!-- Encabezado de la página -->
+    <!-- Encabezado -->
     <div class="mb-10">
-        <h1 class="text-3xl font-bold text-white mb-2">Configuración de Cuenta</h1>
-        <p class="text-slate-400">Administra tu información personal y dirección de recolección.</p>
+        <h1 class="text-3xl font-bold text-white mb-2">Red de Albergues</h1>
+        <p class="text-slate-400">Encuentra los centros de acopio y albergues oficiales más cercanos a ti en Querétaro.</p>
     </div>
 
-    <div class="flex flex-col lg:flex-row gap-8">
+    <!-- Contenedor Principal: Lista + Mapa -->
+    <div class="flex flex-col lg:flex-row gap-8 h-[600px]">
         
-        <!-- Menú Lateral -->
-        <aside class="w-full lg:w-64 flex-shrink-0">
-            <nav class="glass-panel rounded-2xl p-4 sticky top-28 space-y-2">
-                <a href="{{ url_for('ciudadano_perfil') }}" 
-                   class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium text-sm
-                          {% if tab == 'datos' %} bg-bec-accent/10 text-bec-accent border border-bec-accent/30 {% else %} text-slate-300 hover:bg-white/5 hover:text-white {% endif %}">
-                    <i data-lucide="user" class="w-5 h-5"></i>
-                    Datos Personales
-                </a>
-                
-                <a href="{{ url_for('ciudadano_domicilio') }}" 
-                   class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium text-sm
-                          {% if tab == 'domicilio' %} bg-bec-accent/10 text-bec-accent border border-bec-accent/30 {% else %} text-slate-300 hover:bg-white/5 hover:text-white {% endif %}">
-                    <i data-lucide="map-pin" class="w-5 h-5"></i>
-                    Domicilio
-                </a>
+        <!-- Columna Izquierda: Lista de Albergues -->
+        <div class="w-full lg:w-1/3 flex flex-col gap-4 overflow-y-auto pr-2 custom-scrollbar h-full">
+            
+            <!-- Barra de Búsqueda -->
+            <div class="relative mb-2">
+                <input type="text" placeholder="Buscar albergue o zona..." class="w-full bg-bec-dark/80 border border-white/10 rounded-xl px-4 py-3 pl-10 text-white placeholder-slate-500 focus:outline-none focus:border-bec-accent focus:ring-1 focus:ring-bec-accent transition-colors">
+                <i data-lucide="search" class="absolute left-3 top-3.5 text-slate-500 w-5 h-5"></i>
+            </div>
 
-                <div class="pt-4 mt-4 border-t border-white/10">
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium text-sm text-status-danger hover:bg-status-danger/10">
-                        <i data-lucide="log-out" class="w-5 h-5"></i>
-                        Cerrar Sesión
-                    </a>
+            <!-- Tarjeta Albergue 1 (Activo) -->
+            <div class="glass-panel rounded-xl p-5 border border-bec-accent/40 bg-bec-accent/5 cursor-pointer hover:bg-bec-accent/10 transition-colors">
+                <h3 class="text-white font-bold text-lg mb-1">Albergue San Juan</h3>
+                <p class="text-sm text-slate-400 mb-3 flex items-start gap-2">
+                    <i data-lucide="map-pin" class="w-4 h-4 text-bec-accent mt-0.5 flex-shrink-0"></i>
+                    <span>Av. Universidad 123, Centro Histórico, 76000 Querétaro, Qro.</span>
+                </p>
+                <div class="flex items-center justify-between mt-4">
+                    <span class="text-xs px-2 py-1 rounded bg-bec-primary/30 text-slate-300 font-medium">Recibe Donaciones</span>
+                    <button class="text-bec-accent text-sm font-medium hover:text-cyan-400 flex items-center gap-1">
+                        Ruta <i data-lucide="navigation" class="w-4 h-4"></i>
+                    </button>
                 </div>
-            </nav>
-        </aside>
+            </div>
 
-        <!-- Área de Formularios -->
-        <div class="flex-grow">
-            <div class="glass-panel rounded-2xl p-8 border border-white/10 shadow-2xl relative overflow-hidden">
-                <!-- Efecto de luz interno -->
-                <div class="absolute top-0 right-0 w-64 h-64 bg-bec-primary/10 rounded-full blur-[80px] pointer-events-none"></div>
-
-                {% if tab == 'datos' %}
-                <!-- ============================ -->
-                <!-- FORMULARIO: DATOS PERSONALES -->
-                <!-- ============================ -->
-                <div class="relative z-10">
-                    <h2 class="text-xl font-semibold text-white mb-6 flex items-center gap-2">
-                        <i data-lucide="user-circle" class="text-bec-accent w-6 h-6"></i>
-                        Información Personal
-                    </h2>
-                    
-                    <form action="#" method="POST" class="space-y-6">
-                        <!-- Grid 2 columnas -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Nombre -->
-                            <div>
-                                <label class="block text-sm font-medium text-slate-300 mb-2">Nombre(s)</label>
-                                <input type="text" value="Juan Carlos" class="w-full bg-bec-dark/80 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-bec-accent focus:ring-1 focus:ring-bec-accent transition-colors">
-                            </div>
-                            <!-- Apellidos -->
-                            <div>
-                                <label class="block text-sm font-medium text-slate-300 mb-2">Apellidos</label>
-                                <input type="text" value="Pérez García" class="w-full bg-bec-dark/80 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-bec-accent focus:ring-1 focus:ring-bec-accent transition-colors">
-                            </div>
-                            <!-- Correo -->
-                            <div>
-                                <label class="block text-sm font-medium text-slate-300 mb-2">Correo Electrónico</label>
-                                <input type="email" value="juan.perez@email.com" class="w-full bg-bec-dark/80 border border-white/10 rounded-xl px-4 py-3 text-slate-400 cursor-not-allowed" readonly>
-                                <p class="text-xs text-slate-500 mt-1">El correo no se puede cambiar.</p>
-                            </div>
-                            <!-- Teléfono -->
-                            <div>
-                                <label class="block text-sm font-medium text-slate-300 mb-2">Teléfono / Celular</label>
-                                <input type="tel" value="4421234567" class="w-full bg-bec-dark/80 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-bec-accent focus:ring-1 focus:ring-bec-accent transition-colors">
-                            </div>
-                            <!-- Género -->
-                            <div>
-                                <label class="block text-sm font-medium text-slate-300 mb-2">Género</label>
-                                <select class="w-full bg-bec-dark/80 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-bec-accent focus:ring-1 focus:ring-bec-accent transition-colors appearance-none">
-                                    <option value="1" selected>Masculino</option>
-                                    <option value="2">Femenino</option>
-                                    <option value="3">Prefiero no decirlo</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="pt-6 border-t border-white/10 flex justify-end">
-                            <button type="submit" class="bg-bec-accent text-bec-dark px-8 py-3 rounded-xl font-semibold hover:bg-cyan-400 hover:shadow-[0_0_15px_rgba(91,192,190,0.4)] transition-all flex items-center gap-2">
-                                <i data-lucide="save" class="w-4 h-4"></i> Guardar Cambios
-                            </button>
-                        </div>
-                    </form>
+            <!-- Tarjeta Albergue 2 -->
+            <div class="glass-panel rounded-xl p-5 border border-white/5 cursor-pointer hover:border-white/20 transition-colors">
+                <h3 class="text-white font-bold text-lg mb-1">Casa del Migrante</h3>
+                <p class="text-sm text-slate-400 mb-3 flex items-start gap-2">
+                    <i data-lucide="map-pin" class="w-4 h-4 text-slate-500 mt-0.5 flex-shrink-0"></i>
+                    <span>Calle del Fuego 45, San Francisquito, 76040 Querétaro, Qro.</span>
+                </p>
+                <div class="flex items-center justify-between mt-4">
+                    <span class="text-xs px-2 py-1 rounded bg-bec-primary/30 text-slate-300 font-medium">Busca Voluntarios</span>
+                    <button class="text-slate-400 text-sm font-medium hover:text-white flex items-center gap-1">
+                        Ruta <i data-lucide="navigation" class="w-4 h-4"></i>
+                    </button>
                 </div>
-                {% endif %}
+            </div>
 
-                {% if tab == 'domicilio' %}
-                <!-- ============================ -->
-                <!-- FORMULARIO: DOMICILIO        -->
-                <!-- ============================ -->
-                <div class="relative z-10">
-                    <h2 class="text-xl font-semibold text-white mb-6 flex items-center gap-2">
-                        <i data-lucide="home" class="text-bec-accent w-6 h-6"></i>
-                        Dirección de Residencia
-                    </h2>
-                    <p class="text-sm text-slate-400 mb-8">Esta dirección se utilizará si solicitas recolección de donativos a domicilio.</p>
-                    
-                    <form action="#" method="POST" class="space-y-6">
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <!-- Código Postal -->
-                            <div class="col-span-1">
-                                <label class="block text-sm font-medium text-slate-300 mb-2">Código Postal</label>
-                                <div class="relative">
-                                    <input type="text" value="76000" class="w-full bg-bec-dark/80 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-bec-accent focus:ring-1 focus:ring-bec-accent transition-colors">
-                                    <button type="button" class="absolute right-3 top-3 text-bec-accent hover:text-cyan-400">
-                                        <i data-lucide="search" class="w-5 h-5"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <!-- Estado -->
-                            <div class="col-span-1 md:col-span-2">
-                                <label class="block text-sm font-medium text-slate-300 mb-2">Estado</label>
-                                <input type="text" value="Querétaro" readonly class="w-full bg-bec-dark/80 border border-white/10 rounded-xl px-4 py-3 text-slate-400 cursor-not-allowed">
-                            </div>
-                            
-                            <!-- Municipio -->
-                            <div class="col-span-1 md:col-span-1">
-                                <label class="block text-sm font-medium text-slate-300 mb-2">Municipio</label>
-                                <input type="text" value="Querétaro" readonly class="w-full bg-bec-dark/80 border border-white/10 rounded-xl px-4 py-3 text-slate-400 cursor-not-allowed">
-                            </div>
-
-                            <!-- Colonia -->
-                            <div class="col-span-1 md:col-span-2">
-                                <label class="block text-sm font-medium text-slate-300 mb-2">Colonia</label>
-                                <select class="w-full bg-bec-dark/80 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-bec-accent focus:ring-1 focus:ring-bec-accent transition-colors appearance-none">
-                                    <option value="1" selected>Centro Histórico</option>
-                                    <option value="2">San Francisquito</option>
-                                    <option value="3">La Cruz</option>
-                                </select>
-                            </div>
-
-                            <!-- Calle -->
-                            <div class="col-span-1 md:col-span-3">
-                                <label class="block text-sm font-medium text-slate-300 mb-2">Calle</label>
-                                <input type="text" value="Av. Corregidora" class="w-full bg-bec-dark/80 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-bec-accent focus:ring-1 focus:ring-bec-accent transition-colors">
-                            </div>
-
-                            <!-- Num Ext -->
-                            <div class="col-span-1">
-                                <label class="block text-sm font-medium text-slate-300 mb-2">Núm. Exterior</label>
-                                <input type="text" value="15" class="w-full bg-bec-dark/80 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-bec-accent focus:ring-1 focus:ring-bec-accent transition-colors">
-                            </div>
-
-                            <!-- Num Int -->
-                            <div class="col-span-1">
-                                <label class="block text-sm font-medium text-slate-300 mb-2">Núm. Interior</label>
-                                <input type="text" placeholder="Opcional" class="w-full bg-bec-dark/80 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-bec-accent focus:ring-1 focus:ring-bec-accent transition-colors">
-                            </div>
-                        </div>
-
-                        <div class="pt-6 border-t border-white/10 flex justify-end">
-                            <button type="submit" class="bg-bec-accent text-bec-dark px-8 py-3 rounded-xl font-semibold hover:bg-cyan-400 hover:shadow-[0_0_15px_rgba(91,192,190,0.4)] transition-all flex items-center gap-2">
-                                <i data-lucide="save" class="w-4 h-4"></i> Guardar Domicilio
-                            </button>
-                        </div>
-                    </form>
+            <!-- Tarjeta Albergue 3 -->
+            <div class="glass-panel rounded-xl p-5 border border-white/5 cursor-pointer hover:border-white/20 transition-colors">
+                <h3 class="text-white font-bold text-lg mb-1">Centro Comunitario La Paz</h3>
+                <p class="text-sm text-slate-400 mb-3 flex items-start gap-2">
+                    <i data-lucide="map-pin" class="w-4 h-4 text-slate-500 mt-0.5 flex-shrink-0"></i>
+                    <span>Prol. Zaragoza 890, La Paz, 76180 Querétaro, Qro.</span>
+                </p>
+                <div class="flex items-center justify-between mt-4">
+                    <span class="text-xs px-2 py-1 rounded bg-bec-primary/30 text-slate-300 font-medium">Recibe Donaciones</span>
+                    <button class="text-slate-400 text-sm font-medium hover:text-white flex items-center gap-1">
+                        Ruta <i data-lucide="navigation" class="w-4 h-4"></i>
+                    </button>
                 </div>
-                {% endif %}
+            </div>
+            
+        </div>
 
+        <!-- Columna Derecha: Mapa (Iframe de Google Maps en Dark Mode) -->
+        <div class="w-full lg:w-2/3 h-full rounded-2xl overflow-hidden border border-white/10 glass-panel shadow-2xl relative">
+            <!-- Nota: El filtro invert y hue-rotate hace que el mapa de Google se vea en Modo Oscuro -->
+            <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d119561.32833010373!2d-100.48599427494512!3d20.61218706342898!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85d35b8fdc5b965f%3A0x24751f380126a117!2sSantiago%20de%20Quer%C3%A9taro%2C%20Qro.!5e0!3m2!1ses!2smx!4v1709581234567!5m2!1ses!2smx" 
+                width="100%" 
+                height="100%" 
+                style="border:0; filter: invert(90%) hue-rotate(180deg) contrast(110%);" 
+                allowfullscreen="" 
+                loading="lazy">
+            </iframe>
+            
+            <!-- Etiqueta Flotante sobre el mapa -->
+            <div class="absolute top-4 left-4 glass-panel bg-bec-dark/80 px-4 py-2 rounded-lg border border-white/10 flex items-center gap-2">
+                <div class="w-2 h-2 rounded-full bg-bec-accent animate-pulse"></div>
+                <span class="text-sm font-medium text-white">Mostrando 3 albergues cerca de ti</span>
             </div>
         </div>
+
     </div>
 </div>
+
+<style>
+    /* Estilos para ocultar la barra de scroll de la lista pero permitir scroll */
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(91,192,190,0.2); border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(91,192,190,0.4); }
+</style>
 {% endblock %}

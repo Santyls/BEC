@@ -45,7 +45,7 @@
     <div class="fixed top-[-20%] left-[-10%] w-[50%] h-[50%] bg-bec-accent/10 rounded-full blur-[120px] pointer-events-none z-0"></div>
     <div class="fixed bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-bec-primary/20 rounded-full blur-[120px] pointer-events-none z-0"></div>
 
-    <!-- NAVBAR (Basado en el mockup de tu txt) -->
+    <!-- NAVBAR -->
     <nav class="glass-nav fixed w-full z-50 transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20">
@@ -62,8 +62,10 @@
                 <!-- Enlaces Centrales -->
                 <div class="hidden md:flex items-center space-x-8 z-10">
                     <a href="{{ url_for('ciudadano_home') }}" class="text-slate-300 hover:text-bec-accent font-medium transition-colors text-sm">Inicio</a>
+                    <!-- AQUÍ ESTÁ EL ENLACE AL MAPA -->
                     <a href="{{ url_for('ciudadano_albergues') }}" class="text-slate-300 hover:text-bec-accent font-medium transition-colors text-sm">Albergues</a>
-                    <!-- Menú de Usuario (Ejemplo visual si está logueado) -->
+                    
+                    <!-- Menú de Usuario -->
                     <div class="relative group">
                         <button class="flex items-center gap-2 text-slate-300 hover:text-bec-accent font-medium transition-colors text-sm">
                             Mi Espacio <i data-lucide="chevron-down" class="w-4 h-4"></i>
@@ -87,13 +89,13 @@
         </div>
     </nav>
 
-    <!-- CONTENIDO PRINCIPAL -->
-    <main class="flex-grow pt-20 relative z-10">
+    <!-- CONTENIDO PRINCIPAL (Jinja Restablecido) -->
+    <main class="flex-grow pt-28 relative z-10">
         {% block content %}{% endblock %}
     </main>
 
-    <!-- FOOTER (Basado en el mockup de tu txt) -->
-    <footer class="bg-bec-dark border-t border-white/5 pt-16 pb-8 mt-20 relative z-10">
+    <!-- FOOTER -->
+    <footer class="bg-bec-dark border-t border-white/5 pt-16 pb-8 mt-10 relative z-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
                 <div class="col-span-1 md:col-span-2">
