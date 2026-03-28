@@ -11,7 +11,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 #copiar el de API
-COPY ./app ./app
+COPY . .
 
 #exponer el puerto
 EXPOSE 5000
