@@ -8,7 +8,7 @@ from app.security.security import get_current_user, get_admin_user, get_recepcio
 
 router = APIRouter()
 
-# --- Schemas ---
+#Schemas
 
 class DonacionCreate(BaseModel):
     Id_Usuario: int

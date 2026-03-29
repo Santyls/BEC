@@ -8,7 +8,7 @@ from app.security.security import get_current_user, get_admin_user
 
 router = APIRouter()
 
-# --- Schemas ---
+#Schemas
 
 class AlbergueCreate(BaseModel):
     Nombre_Albergue: str
@@ -40,7 +40,7 @@ def crear_albergue(
     db: Session = Depends(get_db), 
     current_user: Usuario = Depends(get_admin_user)
 ):
-    # Verificacion de Foraneas (Regla del Maestro)
+ 
     direccion_existe = db.query(Direccion).filter(Direccion.Id_Direccion == albergue_in.Id_Direccion).first()
     if not direccion_existe:
         raise HTTPException(status_code=400, detail="La Direccion especificada no existe")
@@ -87,7 +87,6 @@ def actualizar_albergue_completo(
     db: Session = Depends(get_db), 
     current_user: Usuario = Depends(get_admin_user)
 ):
-    # Verificacion de Foraneas
     direccion_existe = db.query(Direccion).filter(Direccion.Id_Direccion == albergue_in.Id_Direccion).first()
     if not direccion_existe:
         raise HTTPException(status_code=400, detail="La Direccion especificada no existe")
@@ -122,7 +121,6 @@ def modificar_albergue(
     
     update_data = albergue_in.model_dump(exclude_unset=True)
     
-    # Validar FK si se envió en el PATCH
     if "Id_Direccion" in update_data:
         direccion_existe = db.query(Direccion).filter(Direccion.Id_Direccion == update_data["Id_Direccion"]).first()
         if not direccion_existe:

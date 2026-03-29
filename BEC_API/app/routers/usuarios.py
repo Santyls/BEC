@@ -182,7 +182,6 @@ def modificar_usuario(
 
     update_data = usuario_in.model_dump(exclude_unset=True)
 
-    # Validar FKs solo si se enviaron en el PATCH
     if "Id_Rol" in update_data:
         # Solo admin puede cambiar rol
         if current_user.Id_Rol != 1:
@@ -207,7 +206,6 @@ def modificar_usuario(
         if not albergue_existe:
             raise HTTPException(status_code=400, detail="El Id_Albergue especificado no existe")
 
-    # Si se envió Password nuevo, hashear
     if "Password" in update_data:
         update_data["Password"] = obtener_password_hash(update_data["Password"])
 

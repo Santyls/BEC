@@ -59,7 +59,7 @@ services:
     networks:
       - bec_network
 
-  # 5. Base de Datos PostgreSQL para la API 
+  # Base de Datos PostgreSQL
   db_postgres:
     image: postgres:15-alpine
     container_name: bec_db_postgres

@@ -8,8 +8,7 @@ from app.models.models import Campana, Usuario, EstadoCampana
 from app.security.security import get_current_user, get_admin_user
 
 router = APIRouter()
-
-# --- Schemas ---
+#Schemas
 
 class CampanaCreate(BaseModel):
     Fecha_Inicio: date
@@ -44,7 +43,6 @@ def crear_campana(
     db: Session = Depends(get_db), 
     current_user: Usuario = Depends(get_admin_user)
 ):
-    # Validar FK
     estado_existe = db.query(EstadoCampana).filter(EstadoCampana.Id_Estado_Campana == campana_in.id_Estado_campana).first()
     if not estado_existe:
         raise HTTPException(status_code=400, detail="El Estado de Campaña especificado no existe")
