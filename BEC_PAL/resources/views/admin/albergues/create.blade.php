@@ -14,7 +14,7 @@
         </div>
     </div>
 
-    <form action="#" method="POST" class="glass rounded-2xl p-8 border border-slate-800 space-y-6">
+    <form action="{{ route('admin.albergues.store') }}" method="POST" class="glass rounded-2xl p-8 border border-slate-800 space-y-6">
         @csrf
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Datos Generales -->

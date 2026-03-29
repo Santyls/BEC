@@ -6,10 +6,23 @@
 {% block content %}
 <div class="max-w-6xl mx-auto space-y-8">
     
+    <!-- Panel Superior -->
+    <div class="bg-gradient-to-br from-emerald-600 to-teal-700 rounded-2xl p-8 text-white relative overflow-hidden shadow-2xl border border-emerald-500/30">
+        <i data-lucide="shield-check" class="absolute right-0 bottom-0 text-emerald-800/20 w-48 h-48 -mr-10 -mb-10 rotate-12"></i>
+        
+        <div class="relative z-10 flex flex-col md:flex-row items-center justify-between">
+            <div class="mb-4 md:mb-0">
+                <p class="text-emerald-100/80 uppercase tracking-widest text-[11px] font-bold mb-1">Recepción / ID: BEC-2026</p>
+                <h1 class="text-3xl font-black tracking-tight">Bienvenido al Turno</h1>
+                <p class="text-emerald-50 mt-2 max-w-lg">Sistema de Información BEC Activo. Estás gestionando los donativos y voluntarios en tiempo real conectándote directamente a la API central.</p>
+            </div>
+        </div>
+    </div>
+    
     <!-- Bienvenida -->
-    <div>
-        <h2 class="text-3xl font-bold text-white tracking-tight">Bienvenido al mostrador</h2>
-        <p class="text-slate-400 mt-1">Selecciona la acción rápida que deseas realizar con el ciudadano en ventanilla.</p>
+    <div class="mt-8">
+        <h2 class="text-3xl font-bold text-white tracking-tight">Acciones Rápidas</h2>
+        <p class="text-slate-400 mt-1">Selecciona la operación a realizar en ventanilla.</p>
     </div>
 
     <!-- Grid de Acciones Rápidas (El menú "bonito") -->

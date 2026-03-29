@@ -64,6 +64,13 @@
                     <p class="text-[10px] text-emerald-400">● En línea</p>
                 </div>
                 <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center font-bold text-white shadow-lg">A</div>
+                
+                <form method="POST" action="{{ route('logout') }}" class="ml-4 pl-4 border-l border-slate-700">
+                    @csrf
+                    <button type="submit" class="text-rose-400 hover:text-rose-300 transition-colors flex items-center" title="Cerrar sesion">
+                        <i data-lucide="log-out" class="w-5 h-5"></i>
+                    </button>
+                </form>
             </div>
         </header>
         
