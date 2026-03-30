@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, BigInteger, Float, Date, Time, T
 from sqlalchemy.sql import func
 from app.data.database import Base
 
-# --- Modelos SQLAlchemy Catálogos ---
+#Modelos de las categorias 
 
 class Rol(Base):
     __tablename__ = "roles"
@@ -54,7 +54,7 @@ class EstadoCampana(Base):
     Id_Estado_Campana = Column(Integer, primary_key=True, index=True)
     Nombre_Estado = Column(String(50), nullable=False)
 
-# --- Modelos Principales ---
+#Modelos Principales
 
 class Usuario(Base):
     __tablename__ = "usuarios"
@@ -99,6 +99,7 @@ class Donacion(Base):
     Id_Unidad = Column(Integer, ForeignKey("unidades.Id_Unidad"), nullable=False)
     Marca = Column(String(100), nullable=True)
     Id_Albergue = Column(Integer, ForeignKey("albergues.Id_Albergue"), nullable=False)
+    Fecha_Donacion = Column(Date, server_default=func.current_date(), nullable=False)
 
 class Voluntariado(Base):
     __tablename__ = "voluntariados"
