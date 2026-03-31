@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AlbergueController;
 use App\Http\Controllers\Admin\CampanaController;
 use App\Http\Controllers\Admin\VoluntariadoController;
 use App\Http\Controllers\Admin\DonacionController;
+use App\Http\Controllers\Admin\UsuarioController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -23,8 +24,13 @@ Route::prefix('admin')->name('admin.')->middleware('auth.api')->group(function (
         return view('admin.dashboard'); 
     })->name('dashboard');
 
-    // CRUD Usuarios
-    Route::get('/usuarios', function () { return view('admin.usuarios.index'); })->name('usuarios.index');
+    // CRUD Usuarios (proxy hacia BEC_API)
+    Route::prefix('usuarios')->name('usuarios.')->group(function () {
+        Route::get('/',         [UsuarioController::class, 'index'])->name('index');
+        Route::post('/',        [UsuarioController::class, 'store'])->name('store');
+        Route::put('/{id}',     [UsuarioController::class, 'update'])->name('update');
+        Route::delete('/{id}',  [UsuarioController::class, 'destroy'])->name('destroy');
+    });
 
     // CRUD Albergues
     Route::prefix('albergues')->name('albergues.')->group(function () {
