@@ -34,7 +34,7 @@ def login():
         except Exception:
             flash("Error conectando con la plataforma BEC.", "error")
 
-    return render_template('layout_ciudadano.html')  # El form de login lo haré parte del UI o en un archivo aparte
+    return render_template('login.html')  # El form de login lo haré parte del UI o en un archivo aparte
 
 @app.route('/logout', methods=['POST'])
 def logout():

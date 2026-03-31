@@ -98,15 +98,73 @@ def nueva_donacion():
     # Si es GET, mostramos formulario
     return render_template('donaciones/form.html')
 
-@app.route('/usuarios/nuevo')
+@app.route('/usuarios/nuevo', methods=['GET', 'POST'])
 @login_required
 def nuevo_usuario():
-    return render_template('home.html') # Placeholder
+    if request.method == 'POST':
+        nombre_full = request.form.get('nombre_completo', '').strip()
+        correo = request.form.get('correo')
+        password = request.form.get('password')
 
-@app.route('/voluntariados/asignar')
+        # Lógica simple para dividir el nombre completo en Nombre, Apellido_P, Apellido_M
+        partes = nombre_full.split()
+        nombre = partes[0] if len(partes) > 0 else "Sin Nombre"
+        apellido_p = partes[1] if len(partes) > 1 else " "
+        apellido_m = " ".join(partes[2:]) if len(partes) > 2 else " "
+
+        payload = {
+            "Nombre": nombre,
+            "Apellido_P": apellido_p,
+            "Apellido_M": apellido_m,
+            "Correo": correo,
+            "Password": password,
+            "Edad": 18,              # Default
+            "Id_Direccion": 1,       # Default (Debe existir en la BD)
+            "Tel": 0,                # Default
+            "Id_Genero": 1,          # Default (1 = Masculino generalmente)
+            "Id_Rol": 3              # Ciudadano
+        }
+
+        headers = {'Authorization': f"Bearer {session.get('jwt_token')}"}
+        
+        try:
+            r = requests.post(f"{API_URL}/usuarios/", json=payload, headers=headers)
+            if r.status_code == 201:
+                flash(f"¡Ciudadano {nombre} registrado con éxito!", "success")
+                return redirect(url_for('home'))
+            else:
+                error_detail = r.json().get('detail', r.text)
+                flash(f"Error al registrar: {error_detail}", "error")
+        except Exception as e:
+            flash(f"Error de comunicación con la API: {str(e)}", "error")
+
+    return render_template('usuarios/index.html')
+
+@app.route('/voluntariados/asignar', methods=['GET', 'POST'])
 @login_required
 def asignar_voluntariado():
-    return render_template('home.html') # Placeholder
+    headers = {'Authorization': f"Bearer {session.get('jwt_token')}"}
+    
+    if request.method == 'POST':
+        # Próximo paso: Implementar lógica de asignación
+        pass
+
+    # Para el GET, necesitamos cargar los usuarios (ciudadanos) y las campañas
+    usuarios = []
+    campanas = []
+    try:
+        r_u = requests.get(f"{API_URL}/usuarios/", headers=headers)
+        if r_u.status_code == 200:
+            # Filtramos solo por rol Ciudadano (Id_Rol == 3)
+            usuarios = [u for u in r_u.json() if u.get('Id_Rol') == 3]
+            
+        r_c = requests.get(f"{API_URL}/campanas/", headers=headers)
+        if r_c.status_code == 200:
+            campanas = r_c.json()
+    except Exception:
+        pass
+
+    return render_template('voluntariados/index.html', usuarios=usuarios, voluntariados=campanas)
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
