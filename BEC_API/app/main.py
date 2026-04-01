@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from app.data.database import engine
 from app.models.models import Base
-from app.routers import auth, usuarios, albergues, campanas, donaciones, voluntariados, predicciones
+from app.routers import auth, usuarios, albergues, campanas, donaciones, voluntariados, predicciones, catalogos
 from fastapi.middleware.cors import CORSMiddleware
 
 Base.metadata.create_all(bind=engine)
@@ -25,6 +25,7 @@ app.add_middleware(
 #
 app.include_router(auth.router)
 app.include_router(usuarios.router)
+app.include_router(catalogos.router, prefix="/catalogos", tags=["Catálogos"])
 app.include_router(albergues.router, prefix="/albergues", tags=["Albergues"])
 app.include_router(campanas.router, prefix="/campanas", tags=["Campañas"])
 app.include_router(donaciones.router, prefix="/donaciones", tags=["Donaciones"])
