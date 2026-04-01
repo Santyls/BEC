@@ -40,6 +40,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth.api')->group(function (
         Route::get('/estados/{id}/municipios',         [CatalogoController::class, 'municipios'])->name('municipios');
         Route::get('/municipios/{id}/colonias',        [CatalogoController::class, 'colonias'])->name('colonias');
         Route::post('/direcciones',                    [CatalogoController::class, 'storeDireccion'])->name('direcciones.store');
+        Route::get('/albergues',                       [CatalogoController::class, 'listarAlbergues'])->name('albergues');
     });
 
     // CRUD Albergues

@@ -66,4 +66,13 @@ class CatalogoController extends Controller
                 'message' => $res->json()['detail'] ?? 'Error al crear la dirección.',
               ], $res->status());
     }
+
+    /** GET /admin/catalogos/albergues */
+    public function listarAlbergues()
+    {
+        $res = Http::withToken(session('api_token'))->get("{$this->apiUrl}/albergues");
+        return $res->successful()
+            ? response()->json($res->json())
+            : response()->json([], $res->status());
+    }
 }

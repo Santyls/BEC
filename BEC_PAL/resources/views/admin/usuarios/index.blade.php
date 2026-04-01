@@ -285,8 +285,11 @@
                         <p class="field-error" id="err-rol">Selecciona un rol</p>
                     </div>
                     <div>
-                        <label class="field-label">ID Albergue (opcional)</label>
-                        <input id="field-albergue" name="Id_Albergue" type="number" min="1" class="field-input" placeholder="Dejar vacío si no aplica">
+                        <label class="field-label">Albergue (opcional)</label>
+                        <select id="field-albergue" name="Id_Albergue" class="field-input">
+                            <option value="">— Sin albergue —</option>
+                        </select>
+                        <p id="loading-albergues" class="text-xs text-slate-500 mt-1 hidden">Cargando albergues…</p>
                     </div>
                 </div>
             </div>
@@ -381,6 +384,7 @@ const ROUTE_ESTADOS        = '{{ route("admin.catalogos.estados") }}';
 const ROUTE_MUNICIPIOS_TPL = '{{ url("admin/catalogos/estados") }}/{id}/municipios';
 const ROUTE_COLONIAS_TPL   = '{{ url("admin/catalogos/municipios") }}/{id}/colonias';
 const ROUTE_DIR_STORE      = '{{ route("admin.catalogos.direcciones.store") }}';
+const ROUTE_ALBERGUES      = '{{ route("admin.catalogos.albergues") }}';
 
 const ROUTE_PATCH = '{{ url("admin/usuarios") }}/{id}';
 
@@ -607,6 +611,33 @@ function resetDireccionCascade() {
     });
 }
 
+// ═══════════════════════════════════════════════
+// CARGA DE ALBERGUES (select dinámico)
+// ═══════════════════════════════════════════════
+let alberguesCargados = false;
+
+async function cargarAlbergues() {
+    if (alberguesCargados) return;
+    const sel    = document.getElementById('field-albergue');
+    const loader = document.getElementById('loading-albergues');
+    loader.classList.remove('hidden');
+    try {
+        const albergues = await apiGet(ROUTE_ALBERGUES);
+        sel.innerHTML = '<option value="">— Sin albergue —</option>';
+        albergues.forEach(a => {
+            const opt = document.createElement('option');
+            opt.value       = a.Id_Albergue;
+            opt.textContent = a.Nombre_Albergue;
+            sel.appendChild(opt);
+        });
+        alberguesCargados = true;
+    } catch {
+        sel.innerHTML = '<option value="">Error al cargar albergues</option>';
+    } finally {
+        loader.classList.add('hidden');
+    }
+}
+
 async function cargarEstados() {
     if (estadosCargados) return;
     const sel = document.getElementById('field-estado');
@@ -712,7 +743,7 @@ document.getElementById('btn-nuevo-usuario').addEventListener('click', async () 
     resetDireccionCascade();
     document.getElementById('modal-submit-text').textContent = 'Crear Usuario';
     abrirModal('Nuevo Usuario', 'Campos marcados con * son obligatorios');
-    await cargarEstados();
+    await Promise.all([cargarEstados(), cargarAlbergues()]);
 });
 
 // ═══════════════════════════════════════════════
@@ -739,7 +770,9 @@ async function abrirEditar(id) {
     resetDireccionCascade();
     document.getElementById('modal-submit-text').textContent = 'Guardar Cambios';
     abrirModal('Editar Usuario', `Editando: ${u.Nombre} ${u.Apellido_P}`);
-    await cargarEstados();
+    await Promise.all([cargarEstados(), cargarAlbergues()]);
+    // Restaurar valor del albergue DESPUÉS de que las options estén listas
+    document.getElementById('field-albergue').value = u.Id_Albergue ?? '';
 }
 
 // ═══════════════════════════════════════════════
@@ -880,15 +913,12 @@ document.getElementById('form-usuario').addEventListener('submit', async (e) => 
         payload.Password = pass;
     }
 
-    // Include Address ID if we just created one OR if we are in edit mode and want to preserve current one (handled by API)
-    if (idDireccion) {
-        payload.Id_Direccion = idDireccion;
-    } else if (!editingId) {
-        payload.Id_Direccion = 1; // Default
-    }
+    // Dirección: usar el ID creado o null si no se proporcionó
+    payload.Id_Direccion = idDireccion ?? null;
 
+    // Albergue: usar el seleccionado o null
     const albergue = document.getElementById('field-albergue').value;
-    if (albergue) payload.Id_Albergue = parseInt(albergue);
+    payload.Id_Albergue = albergue ? parseInt(albergue) : null;
 
     try {
         const res = editingId
