@@ -95,16 +95,69 @@ def listar_voluntariados(db: Session = Depends(get_db), current_user: Usuario = 
     result = []
     for v in voluntariados:
         albergue_nombre = None
+        campana_nombre = None
         if v.Id_albergue:
             alb = db.query(Albergue).filter(Albergue.Id_Albergue == v.Id_albergue).first()
             if alb:
                 albergue_nombre = alb.Nombre_Albergue
+        if v.id_campana:
+            camp = db.query(Campana).filter(Campana.id_Campana == v.id_campana).first()
+            if camp:
+                campana_nombre = camp.Nombre_Campana
+                
         result.append({
             "Id_Voluntariado": v.Id_Voluntariado,
             "Nombre_Voluntariado": v.Nombre_Voluntariado,
             "Id_albergue": v.Id_albergue,
             "nombre_albergue": albergue_nombre,
             "id_campana": v.id_campana,
+            "nombre_campana": campana_nombre,
+            "Fecha_prog": v.Fecha_prog,
+            "Cupo_Max": v.Cupo_Max,
+            "Hora_inicio": v.Hora_inicio,
+            "Hora_Fin": v.Hora_Fin,
+            "Estado_Voluntariado": v.Estado_Voluntariado,
+            "Descripcion_Requisitos": v.Descripcion_Requisitos,
+        })
+    return result
+
+# ⚠️ IMPORTANTE: Esta ruta DEBE ir ANTES de GET /{id}
+# Si va después, FastAPI captura "inscripciones" como el parámetro {id} (int) y falla.
+@router.get("/inscripciones/me")
+def mis_inscripciones(
+    db: Session = Depends(get_db), 
+    current_user: Usuario = Depends(get_current_user)
+):
+    inscripciones = db.query(InscripcionVoluntariado).filter(
+        InscripcionVoluntariado.Id_Usuario == current_user.id_Usuario
+    ).all()
+
+    ids_voluntariados = [i.Id_Voluntariado for i in inscripciones]
+
+    mis_vols = db.query(Voluntariado).filter(
+        Voluntariado.Id_Voluntariado.in_(ids_voluntariados)
+    ).all()
+
+    result = []
+    for v in mis_vols:
+        albergue_nombre = None
+        campana_nombre = None
+        if v.Id_albergue:
+            alb = db.query(Albergue).filter(Albergue.Id_Albergue == v.Id_albergue).first()
+            if alb:
+                albergue_nombre = alb.Nombre_Albergue
+        if v.id_campana:
+            camp = db.query(Campana).filter(Campana.id_Campana == v.id_campana).first()
+            if camp:
+                campana_nombre = camp.Nombre_Campana
+                
+        result.append({
+            "Id_Voluntariado": v.Id_Voluntariado,
+            "Nombre_Voluntariado": v.Nombre_Voluntariado,
+            "Id_albergue": v.Id_albergue,
+            "nombre_albergue": albergue_nombre,
+            "id_campana": v.id_campana,
+            "nombre_campana": campana_nombre,
             "Fecha_prog": v.Fecha_prog,
             "Cupo_Max": v.Cupo_Max,
             "Hora_inicio": v.Hora_inicio,
@@ -220,40 +273,3 @@ def cancelar_inscripcion_voluntariado(
     db.commit()
     
     return {"mensaje": "Inscripción cancelada exitosamente", "status": 200}
-
-@router.get("/inscripciones/me")
-def mis_inscripciones(
-    db: Session = Depends(get_db), 
-    current_user: Usuario = Depends(get_current_user)
-):
-    inscripciones = db.query(InscripcionVoluntariado).filter(
-        InscripcionVoluntariado.Id_Usuario == current_user.id_Usuario
-    ).all()
-
-    ids_voluntariados = [i.Id_Voluntariado for i in inscripciones]
-
-    mis_vols = db.query(Voluntariado).filter(
-        Voluntariado.Id_Voluntariado.in_(ids_voluntariados)
-    ).all()
-
-    result = []
-    for v in mis_vols:
-        albergue_nombre = None
-        if v.Id_albergue:
-            alb = db.query(Albergue).filter(Albergue.Id_Albergue == v.Id_albergue).first()
-            if alb:
-                albergue_nombre = alb.Nombre_Albergue
-        result.append({
-            "Id_Voluntariado": v.Id_Voluntariado,
-            "Nombre_Voluntariado": v.Nombre_Voluntariado,
-            "Id_albergue": v.Id_albergue,
-            "nombre_albergue": albergue_nombre,
-            "id_campana": v.id_campana,
-            "Fecha_prog": v.Fecha_prog,
-            "Cupo_Max": v.Cupo_Max,
-            "Hora_inicio": v.Hora_inicio,
-            "Hora_Fin": v.Hora_Fin,
-            "Estado_Voluntariado": v.Estado_Voluntariado,
-            "Descripcion_Requisitos": v.Descripcion_Requisitos,
-        })
-    return result
