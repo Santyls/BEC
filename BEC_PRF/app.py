@@ -4,10 +4,13 @@ from functools import wraps
 import os
 
 app = Flask(__name__)
-# Usamos una clave secreta para firmar la cookie de la session de Flask
 app.secret_key = os.getenv('SECRET_KEY', 'super_secreta_prf_2026')
 
 API_URL = os.getenv('BEC_API_URL', 'http://bec_api_app:5000')
+
+# Catálogos locales (seed de la BD — evitan N+1 calls a la API)
+CATEGORIAS_MAP = {1: "Ropa", 2: "Alimentos", 3: "Cobijas", 4: "Higiene Personal", 5: "Medicamentos"}
+UNIDADES_MAP   = {1: "Piezas", 2: "Kilogramos (kg)", 3: "Litros (L)", 4: "Cajas", 5: "Paquetes"}
 
 # ==========================================
 # Decorador de Autenticación
@@ -67,36 +70,115 @@ def home():
     # Renderiza al dashboard
     return render_template('home.html')
 
+@app.route('/donaciones')
+@login_required
+def donaciones_list():
+    headers = {'Authorization': f"Bearer {session.get('jwt_token')}"}
+    donaciones = []
+
+    try:
+        # 1. Mapa id → nombre completo de todos los usuarios
+        r_u = requests.get(f"{API_URL}/usuarios/", headers=headers, timeout=5)
+        usuarios_map = {}
+        if r_u.status_code == 200:
+            for u in r_u.json():
+                uid = u.get('id_Usuario')
+                nombre = f"{u.get('Nombre','')} {u.get('Apellido_P','')} {(u.get('Apellido_M') or '')}".strip()
+                usuarios_map[uid] = nombre
+        elif r_u.status_code == 401:
+            session.clear()
+            return redirect(url_for('login'))
+
+        # 2. Obtener todas las donaciones y enriquecer
+        r_d = requests.get(f"{API_URL}/donaciones/", headers=headers, timeout=5)
+        if r_d.status_code == 200:
+            for d in r_d.json():
+                uid = d.get('Id_Usuario')
+                cat_id = d.get('id_Categoria')
+                uni_id = d.get('Id_Unidad')
+                fecha  = str(d.get('Fecha_Donacion', ''))
+                donaciones.append({
+                    "nombre_donante":   usuarios_map.get(uid, f"Ciudadano #{uid}"),
+                    "nombre_categoria": CATEGORIAS_MAP.get(cat_id, f"Categoría {cat_id}"),
+                    "Id_Condicion":     d.get('Id_Condicion', '—'),
+                    "Cantidad":         d.get('Cantidad', 0),
+                    "nombre_unidad":    UNIDADES_MAP.get(uni_id, ''),
+                    "Marca":            d.get('Marca') or '',
+                    # Fecha como DD/MM/AAAA (la API devuelve YYYY-MM-DD)
+                    "Fecha_Donacion":   f"{fecha[8:10]}/{fecha[5:7]}/{fecha[0:4]}" if len(fecha) == 10 else fecha,
+                })
+        elif r_d.status_code == 401:
+            session.clear()
+            return redirect(url_for('login'))
+        else:
+            flash("No se pudo cargar el historial de donaciones.", "error")
+
+    except Exception as e:
+        flash(f"Error de conexión con la API: {str(e)}", "error")
+
+    return render_template('donaciones/index.html', donaciones=donaciones)
+
+
 @app.route('/donaciones/nueva', methods=['GET', 'POST'])
 @login_required
 def nueva_donacion():
-    # Obtener catálogos desde la API para llenar los Selects del formulario
     headers = {'Authorization': f"Bearer {session.get('jwt_token')}"}
-    
-    # En la vida real harías gets a /categorias y /unidades si existieran los endpoints, 
-    # por ahora simulamos los IDs con un template estático y mandamos directo a donaciones.
-    
+
     if request.method == 'POST':
-        # Nota: El Id_Albergue no se manda. La API BEC lo saca del token JWT del recepcionista.
-        payload = {
-            "Id_Usuario": int(request.form.get('id_usuario')), # El ID del donante público
-            "id_Categoria": int(request.form.get('id_categoria')),
-            "Id_Condicion": request.form.get('condicion'),
-            "Cantidad": float(request.form.get('cantidad')),
-            "Id_Unidad": int(request.form.get('id_unidad')),
-            "Marca": request.form.get('marca') or None
-        }
+        id_usuario_str   = request.form.get('id_usuario', '').strip()
+        id_categoria_str = request.form.get('id_categoria', '').strip()
+        condicion        = request.form.get('condicion', '').strip()
+        cantidad_str     = request.form.get('cantidad', '').strip()
+        id_unidad_str    = request.form.get('id_unidad', '').strip()
+        marca            = request.form.get('marca', '').strip() or None
 
-        r = requests.post(f"{API_URL}/donaciones/", json=payload, headers=headers)
-        
-        if r.status_code == 201:
-            flash("¡Donativo registrado exitosamente!", "success")
-            return redirect(url_for('home'))
+        if not id_usuario_str or not id_usuario_str.lstrip('-').isdigit():
+            flash("Debes seleccionar un ciudadano válido de la lista.", "error")
+            return redirect(url_for('nueva_donacion'))
+
+        try:
+            payload = {
+                "Id_Usuario":   int(id_usuario_str),
+                "id_Categoria": int(id_categoria_str),
+                "Id_Condicion": condicion,
+                "Cantidad":     float(cantidad_str),
+                "Id_Unidad":    int(id_unidad_str),
+                "Marca":        marca,
+            }
+            r = requests.post(f"{API_URL}/donaciones/", json=payload, headers=headers, timeout=5)
+
+            if r.status_code == 201:
+                flash("¡Donativo registrado exitosamente!", "success")
+                return redirect(url_for('donaciones_list'))
+            else:
+                try:
+                    detail = r.json().get('detail', r.text)
+                except Exception:
+                    detail = f"Error {r.status_code} al registrar."
+                flash(f"Error al registrar: {detail}", "error")
+
+        except (ValueError, TypeError) as e:
+            flash(f"Datos inválidos en el formulario: {str(e)}", "error")
+        except Exception as e:
+            flash(f"Error de conexión con la API: {str(e)}", "error")
+
+        return redirect(url_for('nueva_donacion'))
+
+    # GET: cargar ciudadanos para el selector
+    usuarios = []
+    try:
+        r_u = requests.get(f"{API_URL}/usuarios/", headers=headers, timeout=5)
+        if r_u.status_code == 200:
+            usuarios = [u for u in r_u.json() if u.get('Id_Rol') == 3]
+        elif r_u.status_code == 401:
+            session.clear()
+            return redirect(url_for('login'))
         else:
-            flash(f"Error al registrar: {r.text}", "error")
+            flash("No se pudo cargar la lista de ciudadanos.", "error")
+    except Exception as e:
+        flash(f"Error al obtener ciudadanos: {str(e)}", "error")
 
-    # Si es GET, mostramos formulario
-    return render_template('donaciones/form.html')
+    return render_template('donaciones/form.html', usuarios=usuarios)
 
 @app.route('/usuarios/nuevo', methods=['GET', 'POST'])
 @login_required

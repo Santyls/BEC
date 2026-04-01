@@ -1,119 +1,131 @@
 {% extends 'layout.html' %}
 
-{% block title %}Recibir Donación{% endblock %}
-{% block header_title %}Recepción de Donaciones{% endblock %}
+{% block title %}Historial de Donaciones{% endblock %}
+{% block header_title %}Historial de Donaciones{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto">
-    
+<div class="max-w-6xl mx-auto">
+
+    <!-- Cabecera con acciones -->
     <div class="mb-8 flex items-center justify-between">
         <div>
             <h2 class="text-2xl font-bold text-white tracking-tight flex items-center">
-                <i data-lucide="package-plus" class="w-6 h-6 mr-3 text-emerald-400"></i>
-                Registrar Nueva Donación
+                <i data-lucide="package" class="w-6 h-6 mr-3 text-emerald-400"></i>
+                Donaciones Registradas
             </h2>
-            <p class="text-slate-400 mt-1 text-sm">Selecciona al ciudadano e ingresa los artículos donados.</p>
+            <p class="text-slate-400 mt-1 text-sm">
+                {{ donaciones | length }} registro{% if donaciones | length != 1 %}s{% endif %} en total
+            </p>
         </div>
-        <a href="{{ url_for('home') }}" class="px-4 py-2 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition-colors text-sm font-medium flex items-center">
-            <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i> Volver
+        <a href="{{ url_for('nueva_donacion') }}"
+            class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-sm shadow-lg hover:shadow-emerald-500/25 transition-all flex items-center gap-2">
+            <i data-lucide="plus" class="w-4 h-4"></i> Registrar Donación
         </a>
     </div>
 
-    <div class="glass rounded-2xl border border-slate-700/50 p-8 relative overflow-hidden">
-        <!-- Decoración -->
-        <div class="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
+    {% if donaciones %}
 
-        <form action="{{ url_for('nueva_donacion') }}" method="POST" class="relative z-10 space-y-8">
-            
-            <!-- SECCIÓN 1: CIUDADANO -->
-            <div class="space-y-4">
-                <h3 class="text-lg font-semibold text-white border-b border-slate-700/50 pb-2 flex items-center">
-                    <span class="bg-emerald-500/20 text-emerald-400 w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">1</span>
-                    Buscar Ciudadano
-                </h3>
-                
-                <div class="space-y-2">
-                    <label for="usuario_id" class="text-sm font-medium text-slate-300 ml-1">Selecciona al donante <span class="text-rose-500">*</span></label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i data-lucide="search" class="h-5 w-5 text-slate-500"></i>
-                        </div>
-                        <!-- En un entorno real esto sería un buscador dinámico (Select2 o similar). Aquí usamos un select estándar simulando la búsqueda -->
-                        <select id="usuario_id" name="usuario_id" required
-                            class="block w-full pl-10 pr-10 py-3 border border-slate-700 rounded-xl leading-5 bg-slate-900/50 text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 sm:text-sm appearance-none transition-all">
-                            <option value="" disabled selected>Escribe nombre o teléfono para buscar...</option>
-                            {% for u in usuarios %}
-                                <option value="{{ u.id }}">{{ u.nombre }} - Tel: {{ u.telefono }}</option>
-                            {% endfor %}
-                        </select>
-                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                            <i data-lucide="chevron-down" class="h-5 w-5 text-slate-500"></i>
-                        </div>
-                    </div>
-                    <p class="text-xs text-slate-500 ml-1 mt-1">¿No está registrado? <a href="{{ url_for('nuevo_usuario') }}" class="text-emerald-400 hover:text-emerald-300 underline">Dar de alta ciudadano</a></p>
-                </div>
-            </div>
-
-            <!-- SECCIÓN 2: DETALLES DE DONACIÓN -->
-            <div class="space-y-4">
-                <h3 class="text-lg font-semibold text-white border-b border-slate-700/50 pb-2 flex items-center">
-                    <span class="bg-emerald-500/20 text-emerald-400 w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">2</span>
-                    Artículos Donados
-                </h3>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Categoría -->
-                    <div class="space-y-2">
-                        <label for="categoria" class="text-sm font-medium text-slate-300 ml-1">Categoría</label>
-                        <select id="categoria" name="categoria" required
-                            class="block w-full px-3 py-3 border border-slate-700 rounded-xl leading-5 bg-slate-900/50 text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 sm:text-sm appearance-none transition-all">
-                            <option value="" disabled selected>Seleccione categoría...</option>
-                            {% for c in categorias %}
-                                <option value="{{ c.id }}">{{ c.nombre }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-
-                    <!-- Descripción -->
-                    <div class="space-y-2">
-                        <label for="descripcion" class="text-sm font-medium text-slate-300 ml-1">Descripción del Artículo</label>
-                        <input type="text" id="descripcion" name="descripcion" required
-                            class="block w-full px-3 py-3 border border-slate-700 rounded-xl leading-5 bg-slate-900/50 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 sm:text-sm transition-all"
-                            placeholder="Ej. Frijol negro, Suéter talla M, etc.">
-                    </div>
-
-                    <!-- Cantidad -->
-                    <div class="space-y-2">
-                        <label for="cantidad" class="text-sm font-medium text-slate-300 ml-1">Cantidad</label>
-                        <input type="number" id="cantidad" name="cantidad" min="0.1" step="0.1" required
-                            class="block w-full px-3 py-3 border border-slate-700 rounded-xl leading-5 bg-slate-900/50 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 sm:text-sm transition-all"
-                            placeholder="0">
-                    </div>
-
-                    <!-- Unidad de medida -->
-                    <div class="space-y-2">
-                        <label for="unidad" class="text-sm font-medium text-slate-300 ml-1">Unidad de Medida</label>
-                        <select id="unidad" name="unidad" required
-                            class="block w-full px-3 py-3 border border-slate-700 rounded-xl leading-5 bg-slate-900/50 text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 sm:text-sm appearance-none transition-all">
-                            {% for u in unidades %}
-                                <option value="{{ u.id }}">{{ u.nombre }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Botones de Acción -->
-            <div class="pt-6 border-t border-slate-700/50 flex justify-end space-x-4 mt-8">
-                <button type="reset" class="px-5 py-2.5 rounded-xl border border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white transition-colors text-sm font-medium">
-                    Limpiar
-                </button>
-                <button type="submit" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white shadow-lg shadow-emerald-500/25 transition-all text-sm font-bold flex items-center">
-                    <i data-lucide="check" class="w-4 h-4 mr-2"></i> Procesar Donación
-                </button>
-            </div>
-            
-        </form>
+    <!-- Filtro rápido por texto -->
+    <div class="mb-4">
+        <input type="text" id="filtroTabla" placeholder="Buscar por donante, categoría o condición..."
+            oninput="filtrarTabla(this.value)"
+            class="w-full md:w-80 px-4 py-2.5 bg-slate-900/60 border border-slate-700 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-white outline-none text-sm placeholder-slate-500 transition-colors">
     </div>
+
+    <!-- Tabla -->
+    <div class="glass border border-slate-700/50 rounded-2xl overflow-hidden shadow-2xl">
+        <table class="w-full text-sm" id="tablaDonaciones">
+            <thead>
+                <tr class="border-b border-slate-700 bg-slate-800/40">
+                    <th class="px-5 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Fecha</th>
+                    <th class="px-5 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Donante</th>
+                    <th class="px-5 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Categoría</th>
+                    <th class="px-5 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Cantidad</th>
+                    <th class="px-5 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Condición</th>
+                    <th class="px-5 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Marca</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60">
+                {% for d in donaciones %}
+                <tr class="fila-donacion hover:bg-slate-800/30 transition-colors">
+                    <td class="px-5 py-4 text-slate-300 whitespace-nowrap font-mono text-xs">
+                        {{ d.Fecha_Donacion }}
+                    </td>
+                    <td class="px-5 py-4">
+                        <div class="flex items-center gap-2">
+                            <div class="w-7 h-7 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="user" class="w-3.5 h-3.5 text-emerald-400"></i>
+                            </div>
+                            <span class="text-white font-medium">{{ d.nombre_donante }}</span>
+                        </div>
+                    </td>
+                    <td class="px-5 py-4">
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-700/60 text-slate-200 border border-slate-600/50">
+                            {{ d.nombre_categoria }}
+                        </span>
+                    </td>
+                    <td class="px-5 py-4 text-slate-200 whitespace-nowrap">
+                        <span class="font-bold text-white">{{ "%.2f" | format(d.Cantidad) }}</span>
+                        <span class="text-slate-400 text-xs ml-1">{{ d.nombre_unidad }}</span>
+                    </td>
+                    <td class="px-5 py-4">
+                        {% if d.Id_Condicion == 'Nuevo' %}
+                            <span class="px-2 py-0.5 rounded text-xs font-medium bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">Nuevo</span>
+                        {% elif d.Id_Condicion == 'Excelente' %}
+                            <span class="px-2 py-0.5 rounded text-xs font-medium bg-teal-500/15 text-teal-400 border border-teal-500/20">Excelente</span>
+                        {% elif d.Id_Condicion == 'Bueno' %}
+                            <span class="px-2 py-0.5 rounded text-xs font-medium bg-blue-500/15 text-blue-400 border border-blue-500/20">Bueno</span>
+                        {% else %}
+                            <span class="px-2 py-0.5 rounded text-xs font-medium bg-slate-600/40 text-slate-400 border border-slate-600/30">{{ d.Id_Condicion }}</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-5 py-4 text-slate-400 text-xs">
+                        {{ d.Marca if d.Marca else '—' }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Mensaje sin resultados tras filtro -->
+        <div id="sinResultados" class="hidden text-center py-10 border-t border-slate-800">
+            <i data-lucide="search-x" class="w-8 h-8 text-slate-600 mx-auto mb-2"></i>
+            <p class="text-slate-500 text-sm">Ningún registro coincide con la búsqueda.</p>
+        </div>
+    </div>
+
+    {% else %}
+    <!-- Estado vacío -->
+    <div class="glass border border-slate-700/50 rounded-2xl p-16 text-center">
+        <div class="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center mx-auto mb-4">
+            <i data-lucide="inbox" class="w-8 h-8 text-slate-500"></i>
+        </div>
+        <h3 class="text-white font-semibold text-lg mb-1">Sin donaciones registradas</h3>
+        <p class="text-slate-400 text-sm mb-6">Aún no hay donativos en el sistema. Registra el primero.</p>
+        <a href="{{ url_for('nueva_donacion') }}"
+            class="inline-flex items-center gap-2 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition-colors">
+            <i data-lucide="plus" class="w-4 h-4"></i> Registrar Donación
+        </a>
+    </div>
+    {% endif %}
+
 </div>
+
+<script>
+    function filtrarTabla(texto) {
+        const filas    = document.querySelectorAll('.fila-donacion');
+        const sinRes   = document.getElementById('sinResultados');
+        const query    = texto.trim().toLowerCase();
+        let visibles   = 0;
+
+        filas.forEach(fila => {
+            const texto = fila.textContent.toLowerCase();
+            const mostrar = query === '' || texto.includes(query);
+            fila.style.display = mostrar ? '' : 'none';
+            if (mostrar) visibles++;
+        });
+
+        if (sinRes) sinRes.classList.toggle('hidden', visibles > 0 || query === '');
+    }
+</script>
 {% endblock %}
