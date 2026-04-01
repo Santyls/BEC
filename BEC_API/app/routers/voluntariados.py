@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from typing import List, Optional
 from datetime import date, time
 from app.data.database import get_db
-from app.models.models import Voluntariado, Usuario, Albergue, Campana
+from app.models.models import Voluntariado, Usuario, Albergue, Campana, InscripcionVoluntariado
 from app.security.security import get_current_user, get_admin_user
 
 router = APIRouter()
@@ -152,3 +152,67 @@ def eliminar_voluntariado(id: int, db: Session = Depends(get_db), current_user: 
         "mensaje": f"Voluntariado eliminado por {current_user.Nombre}", 
         "status": 200
     }
+
+# --- Inscripciones a Voluntariados ---
+@router.post("/{id}/inscribirse")
+def inscribirse_voluntariado(
+    id: int, 
+    db: Session = Depends(get_db), 
+    current_user: Usuario = Depends(get_current_user)
+):
+    voluntariado = db.query(Voluntariado).filter(Voluntariado.Id_Voluntariado == id).first()
+    if not voluntariado:
+        raise HTTPException(status_code=404, detail="Voluntariado no encontrado")
+        
+    inscripcion_existente = db.query(InscripcionVoluntariado).filter(
+        InscripcionVoluntariado.Id_Usuario == current_user.id_Usuario,
+        InscripcionVoluntariado.Id_Voluntariado == id
+    ).first()
+    
+    if inscripcion_existente:
+        raise HTTPException(status_code=400, detail="Ya estás inscrito a este voluntariado")
+        
+    nueva_inscripcion = InscripcionVoluntariado(
+        Id_Usuario=current_user.id_Usuario,
+        Id_Voluntariado=id
+    )
+    db.add(nueva_inscripcion)
+    db.commit()
+    
+    return {"mensaje": "Inscrito exitosamente", "status": 201}
+
+@router.delete("/{id}/cancelar-inscripcion")
+def cancelar_inscripcion_voluntariado(
+    id: int, 
+    db: Session = Depends(get_db), 
+    current_user: Usuario = Depends(get_current_user)
+):
+    inscripcion = db.query(InscripcionVoluntariado).filter(
+        InscripcionVoluntariado.Id_Usuario == current_user.id_Usuario,
+        InscripcionVoluntariado.Id_Voluntariado == id
+    ).first()
+    
+    if not inscripcion:
+        raise HTTPException(status_code=404, detail="No estás inscrito a este voluntariado")
+        
+    db.delete(inscripcion)
+    db.commit()
+    
+    return {"mensaje": "Inscripción cancelada exitosamente", "status": 200}
+
+@router.get("/inscripciones/me")
+def mis_inscripciones(
+    db: Session = Depends(get_db), 
+    current_user: Usuario = Depends(get_current_user)
+):
+    inscripciones = db.query(InscripcionVoluntariado).filter(
+        InscripcionVoluntariado.Id_Usuario == current_user.id_Usuario
+    ).all()
+    
+    ids_voluntariados = [i.Id_Voluntariado for i in inscripciones]
+    
+    mis_vols = db.query(Voluntariado).filter(
+        Voluntariado.Id_Voluntariado.in_(ids_voluntariados)
+    ).all()
+    
+    return mis_vols

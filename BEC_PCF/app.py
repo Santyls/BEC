@@ -157,8 +157,6 @@ def ciudadano_home():
         
         if r.status_code == 200:
             campanas_reales = r.json()
-        elif r.status_code == 401:
-            flash("Debes iniciar sesión para ver la información en tiempo real.", "warning")
             
     except Exception as e:
         print(f"Error fetching campanas: {e}")
@@ -406,8 +404,93 @@ def ciudadano_donaciones():
 
 @app.route('/mis-voluntariados')
 def ciudadano_voluntariados():
-    if 'jwt_token' not in session: return redirect(url_for('login'))
-    return render_template('ciudadano_voluntariados.html')
+    if 'jwt_token' not in session:
+        return redirect(url_for('login'))
+
+    headers = {'Authorization': f"Bearer {session.get('jwt_token')}"}
+    todos_voluntariados = []
+    mis_voluntariados   = []
+
+    try:
+        r_todos = requests.get(f"{API_URL}/voluntariados/", headers=headers, timeout=5)
+        if r_todos.status_code == 200:
+            todos_voluntariados = r_todos.json()
+        elif r_todos.status_code == 401:
+            session.clear()
+            return redirect(url_for('login'))
+
+        r_mis = requests.get(f"{API_URL}/voluntariados/inscripciones/me", headers=headers, timeout=5)
+        if r_mis.status_code == 200:
+            mis_voluntariados = r_mis.json()
+    except Exception as e:
+        flash(f"Error al cargar voluntariados: {str(e)}", "error")
+
+    ids_inscritos = {v['Id_Voluntariado'] for v in mis_voluntariados}
+    voluntariados_disponibles = [
+        v for v in todos_voluntariados
+        if v['Id_Voluntariado'] not in ids_inscritos
+        and v.get('Estado_Voluntariado') == 'Activo'
+    ]
+
+    return render_template('ciudadano_voluntariados.html',
+                           mis_voluntariados=mis_voluntariados,
+                           voluntariados_disponibles=voluntariados_disponibles)
+
+
+@app.route('/inscribirse', methods=['POST'])
+def inscribirse_voluntariado():
+    if 'jwt_token' not in session:
+        return redirect(url_for('login'))
+
+    headers = {'Authorization': f"Bearer {session.get('jwt_token')}"}
+    id_voluntariado = request.form.get('Id_Voluntariado')
+
+    try:
+        r = requests.post(
+            f"{API_URL}/voluntariados/{id_voluntariado}/inscribirse",
+            headers=headers,
+            timeout=5
+        )
+        if r.status_code == 201:
+            flash("¡Te has inscrito exitosamente al voluntariado!", "success")
+        else:
+            try:
+                detail = r.json().get('detail', 'Error al inscribirse.')
+            except Exception:
+                detail = f"Error {r.status_code} al inscribirse."
+            flash(f"Error: {detail}", "error")
+    except Exception as e:
+        flash(f"Error de conexión: {str(e)}", "error")
+
+    return redirect(url_for('ciudadano_voluntariados'))
+
+
+@app.route('/cancelar-inscripcion', methods=['POST'])
+def cancelar_inscripcion():
+    if 'jwt_token' not in session:
+        return redirect(url_for('login'))
+
+    headers = {'Authorization': f"Bearer {session.get('jwt_token')}"}
+    id_voluntariado = request.form.get('Id_Voluntariado')
+
+    try:
+        r = requests.delete(
+            f"{API_URL}/voluntariados/{id_voluntariado}/cancelar-inscripcion",
+            headers=headers,
+            timeout=5
+        )
+        if r.status_code == 200:
+            flash("Inscripción cancelada exitosamente.", "success")
+        else:
+            try:
+                detail = r.json().get('detail', 'Error al cancelar.')
+            except Exception:
+                detail = f"Error {r.status_code} al cancelar."
+            flash(f"Error: {detail}", "error")
+    except Exception as e:
+        flash(f"Error de conexión: {str(e)}", "error")
+
+    return redirect(url_for('ciudadano_voluntariados'))
 
 
 # En tu archivo de Flask

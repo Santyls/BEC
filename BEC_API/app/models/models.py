@@ -113,3 +113,10 @@ class Voluntariado(Base):
     Hora_Fin = Column(Time, nullable=False)
     Estado_Voluntariado = Column(String(50), nullable=False)
     Descripcion_Requisitos = Column(Text, nullable=False)
+
+class InscripcionVoluntariado(Base):
+    __tablename__ = "inscripciones_voluntariados"
+    Id_Inscripcion = Column(Integer, primary_key=True, index=True)
+    Id_Usuario = Column(Integer, ForeignKey("usuarios.id_Usuario"), nullable=False)
+    Id_Voluntariado = Column(Integer, ForeignKey("voluntariados.Id_Voluntariado"), nullable=False)
+    Fecha_Inscripcion = Column(TIMESTAMP(timezone=True), server_default=func.now())
