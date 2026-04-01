@@ -41,13 +41,15 @@ Route::prefix('admin')->name('admin.')->middleware('auth.api')->group(function (
         Route::get('/municipios/{id}/colonias',        [CatalogoController::class, 'colonias'])->name('colonias');
         Route::post('/direcciones',                    [CatalogoController::class, 'storeDireccion'])->name('direcciones.store');
         Route::get('/albergues',                       [CatalogoController::class, 'listarAlbergues'])->name('albergues');
+        Route::get('/campanas',                        [CatalogoController::class, 'listarCampanas'])->name('campanas');
     });
 
-    // CRUD Albergues
+    // CRUD Albergues (proxy hacia BEC_API)
     Route::prefix('albergues')->name('albergues.')->group(function () {
-        Route::get('/', [AlbergueController::class, 'index'])->name('index');
-        Route::get('/crear', function () { return view('admin.albergues.create'); })->name('create');
-        Route::post('/crear', [AlbergueController::class, 'store'])->name('store');
+        Route::get('/',        [AlbergueController::class, 'index'])->name('index');
+        Route::post('/',       [AlbergueController::class, 'store'])->name('store');
+        Route::patch('/{id}',  [AlbergueController::class, 'patch'])->name('patch');
+        Route::delete('/{id}', [AlbergueController::class, 'destroy'])->name('destroy');
     });
 
     // CRUD Campañas
@@ -57,11 +59,12 @@ Route::prefix('admin')->name('admin.')->middleware('auth.api')->group(function (
         Route::post('/crear', [CampanaController::class, 'store'])->name('store');
     });
 
-    // CRUD Voluntariados
+    // CRUD Voluntariados (proxy hacia BEC_API)
     Route::prefix('voluntariados')->name('voluntariados.')->group(function () {
-        Route::get('/', [VoluntariadoController::class, 'index'])->name('index');
-        Route::get('/crear', function () { return view('admin.voluntariados.create'); })->name('create');
-        Route::post('/crear', [VoluntariadoController::class, 'store'])->name('store');
+        Route::get('/',        [VoluntariadoController::class, 'index'])->name('index');
+        Route::post('/',       [VoluntariadoController::class, 'store'])->name('store');
+        Route::patch('/{id}',  [VoluntariadoController::class, 'patch'])->name('patch');
+        Route::delete('/{id}', [VoluntariadoController::class, 'destroy'])->name('destroy');
     });
 
     // CRUD Donaciones

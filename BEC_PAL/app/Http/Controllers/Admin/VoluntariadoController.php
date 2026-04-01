@@ -12,39 +12,82 @@ class VoluntariadoController extends Controller
 
     public function __construct()
     {
-        // En docker, el contenedor backend se llama bec_api_app y expone el 5000
         $this->apiUrl = rtrim(env('BEC_API_URL', 'http://bec_api_app:5000'), '/');
     }
 
-    public function index()
+    /** GET /admin/voluntariados — Vista o JSON para fetch JS */
+    public function index(Request $request)
     {
-        $response = Http::withToken(session('api_token'))->get("{$this->apiUrl}/voluntariados/");
-
-        if ($response->successful()) {
-            return view('admin.voluntariados.index', ['voluntariados' => $response->json()]);
+        if ($request->boolean('json') || $request->wantsJson()) {
+            $res = Http::withToken(session('api_token'))->get("{$this->apiUrl}/voluntariados/");
+            return $res->successful()
+                ? response()->json($res->json())
+                : response()->json([], $res->status());
         }
 
-        return view('admin.voluntariados.index', ['voluntariados' => [], 'error' => 'No se pudo conectar con la API para obtener los voluntariados.']);
+        return view('admin.voluntariados.index');
     }
 
+    /** POST /admin/voluntariados — Crear voluntariado */
     public function store(Request $request)
     {
         $payload = [
-            'Nombre_Voluntariado' => $request->nombre,
-            'Requisitos' => $request->descripcion ?? 'N/A',
-            'Id_Albergue' => (int)$request->albergue_id,
-            'Fecha_Voluntariado' => $request->fecha,
-            'Hora_Inicio' => $request->hora_inicio,
-            'Hora_Fin' => $request->hora_fin,
-            'Cupo_Maximo' => (int)$request->cupo,
+            'Nombre_Voluntariado'   => $request->Nombre_Voluntariado,
+            'Fecha_prog'            => $request->Fecha_prog,
+            'Hora_inicio'           => $request->Hora_inicio,
+            'Hora_Fin'              => $request->Hora_Fin,
+            'Estado_Voluntariado'   => $request->Estado_Voluntariado,
+            'Descripcion_Requisitos'=> $request->Descripcion_Requisitos,
+            'Id_albergue'           => $request->Id_albergue  !== null ? (int) $request->Id_albergue  : null,
+            'id_campana'            => $request->id_campana   !== null ? (int) $request->id_campana   : null,
+            'Cupo_Max'              => $request->Cupo_Max     !== null ? (int) $request->Cupo_Max     : null,
         ];
 
-        $response = Http::withToken(session('api_token'))->post("{$this->apiUrl}/voluntariados/", $payload);
+        $res = Http::withToken(session('api_token'))
+            ->post("{$this->apiUrl}/voluntariados/", $payload);
 
-        if ($response->successful()) {
-            return redirect()->route('admin.voluntariados.index')->with('success', 'Voluntariado creado exitosamente.');
+        return $res->successful()
+            ? response()->json(['success' => true,  'message' => 'Voluntariado creado exitosamente.', 'data' => $res->json()])
+            : response()->json(['success' => false, 'message' => $res->json()['detail'] ?? 'Error al crear el voluntariado.'], $res->status());
+    }
+
+    /** PATCH /admin/voluntariados/{id} — Editar voluntariado */
+    public function patch(Request $request, $id)
+    {
+        // Solo enviar los campos que vienen en el request (PATCH semántico)
+        $payload = [];
+
+        $campos = ['Nombre_Voluntariado', 'Fecha_prog', 'Hora_inicio', 'Hora_Fin',
+                   'Estado_Voluntariado', 'Descripcion_Requisitos', 'Id_albergue', 'id_campana', 'Cupo_Max'];
+
+        foreach ($campos as $campo) {
+            if ($request->has($campo)) {
+                $val = $request->input($campo);
+                // Castear enteros donde corresponde
+                if (in_array($campo, ['Id_albergue', 'id_campana', 'Cupo_Max'])) {
+                    $payload[$campo] = $val !== null ? (int) $val : null;
+                } else {
+                    $payload[$campo] = $val;
+                }
+            }
         }
 
-        return back()->with('error', 'Error desde la API al crear el voluntariado: ' . $response->body());
+        $res = Http::withToken(session('api_token'))
+            ->patch("{$this->apiUrl}/voluntariados/{$id}", $payload);
+
+        return $res->successful()
+            ? response()->json(['success' => true,  'message' => 'Voluntariado actualizado.',  'data' => $res->json()])
+            : response()->json(['success' => false, 'message' => $res->json()['detail'] ?? 'Error al actualizar.'], $res->status());
+    }
+
+    /** DELETE /admin/voluntariados/{id} — Eliminar voluntariado */
+    public function destroy($id)
+    {
+        $res = Http::withToken(session('api_token'))
+            ->delete("{$this->apiUrl}/voluntariados/{$id}");
+
+        return $res->successful()
+            ? response()->json(['success' => true,  'message' => 'Voluntariado eliminado.'])
+            : response()->json(['success' => false, 'message' => $res->json()['detail'] ?? 'Error al eliminar.'], $res->status());
     }
 }

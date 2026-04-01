@@ -75,4 +75,13 @@ class CatalogoController extends Controller
             ? response()->json($res->json())
             : response()->json([], $res->status());
     }
+
+    /** GET /admin/catalogos/campanas */
+    public function listarCampanas()
+    {
+        $res = Http::withToken(session('api_token'))->get("{$this->apiUrl}/campanas");
+        return $res->successful()
+            ? response()->json($res->json())
+            : response()->json([], $res->status());
+    }
 }
