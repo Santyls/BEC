@@ -92,14 +92,10 @@
                             {% endif %}
                         </div>
                         <p class="text-sm text-slate-400 flex flex-wrap items-center gap-x-4 gap-y-2 mt-2">
-                            <span class="flex items-center gap-1.5"><i data-lucide="calendar"
-                                    class="w-4 h-4 text-slate-500"></i> {{ mi_voluntariado.Fecha_prog }}</span>
-                            <span class="flex items-center gap-1.5"><i data-lucide="clock"
-                                    class="w-4 h-4 text-slate-500"></i> {{ mi_voluntariado.Hora_inicio }} - {{
-                                mi_voluntariado.Hora_Fin }}</span>
-                            <span class="flex items-center gap-1.5"><i data-lucide="map-pin"
-                                    class="w-4 h-4 text-slate-500"></i> {{ mi_voluntariado.nombre_albergue or 'Sin
-                                albergue asignado' }}</span>
+                            <span class="flex items-center gap-1.5"><i data-lucide="flag" class="w-4 h-4 text-slate-500"></i> {{ mi_voluntariado.nombre_campana or 'Sin campaña' }}</span>
+                            <span class="flex items-center gap-1.5"><i data-lucide="calendar" class="w-4 h-4 text-slate-500"></i> {{ mi_voluntariado.Fecha_prog }}</span>
+                            <span class="flex items-center gap-1.5"><i data-lucide="clock" class="w-4 h-4 text-slate-500"></i> {{ mi_voluntariado.Hora_inicio }} - {{ mi_voluntariado.Hora_Fin }}</span>
+                            <span class="flex items-center gap-1.5"><i data-lucide="map-pin" class="w-4 h-4 text-slate-500"></i> {{ mi_voluntariado.nombre_albergue or 'Sin albergue asignado' }}</span>
                         </p>
                     </div>
                 </div>
@@ -173,16 +169,17 @@
                 </div>
                 <div class="space-y-2 mb-4">
                     <p class="text-sm text-slate-400 flex items-center gap-2">
+                        <i data-lucide="flag" class="w-4 h-4 text-slate-500"></i> {{ v.nombre_campana or 'Sin campaña' }}
+                    </p>
+                    <p class="text-sm text-slate-400 flex items-center gap-2">
                         <i data-lucide="calendar" class="w-4 h-4 text-slate-500"></i> {{ v.Fecha_prog }}
                     </p>
                     <p class="text-sm text-slate-400 flex items-center gap-2">
-                        <i data-lucide="clock" class="w-4 h-4 text-slate-500"></i> {{ v.Hora_inicio }} – {{ v.Hora_Fin
-                        }}
+                        <i data-lucide="clock" class="w-4 h-4 text-slate-500"></i> {{ v.Hora_inicio }} – {{ v.Hora_Fin }}
                     </p>
                     {% if v.Id_albergue %}
                     <p class="text-sm text-slate-400 flex items-center gap-2">
-                        <i data-lucide="map-pin" class="w-4 h-4 text-slate-500"></i> {{ v.nombre_albergue or 'Sin
-                        albergue asignado' }}
+                        <i data-lucide="map-pin" class="w-4 h-4 text-slate-500"></i> {{ v.nombre_albergue or 'Sin albergue asignado' }}
                     </p>
                     {% endif %}
                 </div>
