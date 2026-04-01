@@ -85,6 +85,71 @@
     </div>
 </section>
 
+<!-- CAMPAÑAS ACTIVAS (Conectadas a la API) -->
+<section class="py-24 relative z-10 bg-bec-dark/50 border-y border-white/5">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Campañas Activas</h2>
+            <p class="text-slate-400 max-w-2xl mx-auto">Encuentra una causa que te apasione y contribuye a generar un impacto real en nuestra comunidad.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% if campanas %}
+                {% for c in campanas %}
+                <!-- Card de Campaña Dinámica -->
+                <div class="glass-panel rounded-3xl overflow-hidden hover:-translate-y-2 transition-transform duration-300 group border border-slate-700/50 hover:border-bec-accent/50 shadow-lg relative">
+                    <!-- Estado -->
+                    <div class="absolute top-4 right-4 z-20">
+                        {% if c.id_Estado_campana == 2 %}
+                        <span class="bg-emerald-500/20 text-emerald-400 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider backdrop-blur-md border border-emerald-500/30 flex items-center shadow-lg">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-2 animate-pulse"></span> Activa
+                        </span>
+                        {% elif c.id_Estado_campana == 1 %}
+                        <span class="bg-blue-500/20 text-blue-400 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider backdrop-blur-md border border-blue-500/30 shadow-lg">
+                            Programada
+                        </span>
+                        {% else %}
+                        <span class="bg-slate-700/80 text-slate-300 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider backdrop-blur-md border border-slate-600 shadow-lg">
+                            Finalizada
+                        </span>
+                        {% endif %}
+                    </div>
+
+                    <div class="h-48 bg-gradient-to-br from-bec-base to-bec-primary relative overflow-hidden group-hover:after:opacity-100 after:content-[''] after:absolute after:inset-0 after:bg-bec-accent/20 after:opacity-0 after:transition-opacity after:duration-500">
+                        <i data-lucide="megaphone" class="absolute right-[-20%] bottom-[-20%] w-64 h-64 text-slate-800/30 rotate-[-15deg] transition-transform duration-700 group-hover:rotate-0 group-hover:scale-110"></i>
+                    </div>
+                    
+                    <div class="p-8 relative z-10 bg-bec-base/90">
+                        <h3 class="text-xl font-bold text-white mb-3 group-hover:text-bec-accent transition-colors">{{ c.Nombre_Campana }}</h3>
+                        <p class="text-slate-400 mb-6 text-sm line-clamp-3 leading-relaxed" title="{{ c.Descripcion_Objetivos }}">
+                            {{ c.Descripcion_Objetivos }}
+                        </p>
+                        
+                        <div class="space-y-3 mb-8 bg-slate-900/50 p-4 rounded-xl border border-slate-800">
+                            <div class="flex items-center text-sm text-slate-300">
+                                <i data-lucide="calendar" class="w-4 h-4 text-bec-accent mr-3"></i> 
+                                <span>Del {{ c.Fecha_Inicio }} al {{ c.Fecha_Fin }}</span>
+                            </div>
+                        </div>
+
+                        <a href="#" class="inline-flex items-center justify-center w-full bg-white/5 hover:bg-bec-accent text-white hover:text-bec-dark border border-white/10 hover:border-bec-accent py-3.5 px-6 rounded-xl font-semibold transition-all shadow-lg hover:shadow-[0_0_20px_rgba(91,192,190,0.3)]">
+                            Ver Detalles y Ubicaciones
+                            <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-span-full py-12 text-center glass-panel rounded-3xl border border-slate-700/50">
+                    <i data-lucide="info" class="w-12 h-12 text-slate-600 mx-auto mb-4"></i>
+                    <h3 class="text-xl font-bold text-white mb-2">No se encontraron Campañas Activas</h3>
+                    <p class="text-slate-400">Actualmente no hay campañas listadas en el sistema. Regresa más tarde.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
 <!-- SECCIÓN: SERVICIOS / VISTAS RÁPIDAS -->
 <section class="py-24 border-t border-white/5 relative bg-bec-base/20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

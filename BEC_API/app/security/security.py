@@ -8,7 +8,6 @@ from sqlalchemy.orm import Session
 from app.data.database import get_db
 from app.models.models import Usuario
 
-# --- Configuraciones Secretas (Deben ir en el entorno docker) ---
 SECRET_KEY = "super_secret_key_bec_api_change_me_in_production"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
@@ -16,7 +15,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
-# --- Utilidades de Autenticación ---
+#Utilidades de Autenticación
 def verificar_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
@@ -29,7 +28,7 @@ def crear_token_acceso(data: dict, expires_delta: Optional[timedelta] = None) ->
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
-# --- Dependencias de Seguridad y Roles ---
+#Dependencias de Seguridad y Roles
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> Usuario:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,

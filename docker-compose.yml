@@ -11,7 +11,7 @@ services:
       - ./BEC_API:/app
     environment:
       # Credenciales BD y llave secreta JWT
-      - DATABASE_URL=postgresql://bec_user:bec_password@db_postgres:5432/bec_db
+      - DATABASE_URL=postgresql://postgres:12345@db_postgres:5432/BEC
       - SECRET_KEY=BEC_Sistemas_Inteligentes_2026_Secret
     depends_on:
       # La API espera a que la BD esté lista
@@ -59,15 +59,15 @@ services:
     networks:
       - bec_network
 
-  # 5. Base de Datos PostgreSQL para la API 
+  # Base de Datos PostgreSQL
   db_postgres:
     image: postgres:15-alpine
     container_name: bec_db_postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: bec_user
-      POSTGRES_PASSWORD: bec_password
-      POSTGRES_DB: bec_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_DB: BEC
     ports:
       - "5432:5432"
     volumes:
