@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\VoluntariadoController;
 use App\Http\Controllers\Admin\DonacionController;
 use App\Http\Controllers\Admin\UsuarioController;
 use App\Http\Controllers\Admin\CatalogoController;
+use App\Http\Controllers\Admin\PrediccionController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -21,9 +22,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // Protegemos el panel de administración
 Route::prefix('admin')->name('admin.')->middleware('auth.api')->group(function () {
     
-    Route::get('/dashboard', function () { 
-        return view('admin.dashboard'); 
-    })->name('dashboard');
+    Route::get('/dashboard', [PrediccionController::class, 'dashboard'])->name('dashboard');
 
     // CRUD Usuarios (proxy hacia BEC_API)
     Route::prefix('usuarios')->name('usuarios.')->group(function () {
@@ -76,4 +75,10 @@ Route::prefix('admin')->name('admin.')->middleware('auth.api')->group(function (
 
     // Reportes
     Route::get('/reportes', function () { return view('admin.reportes.index'); })->name('reportes.index');
+
+    // Predicciones (Modelo ML)
+    Route::prefix('predicciones')->name('predicciones.')->group(function () {
+        Route::get('/',       [PrediccionController::class, 'index'])->name('index');
+        Route::get('/datos',  [PrediccionController::class, 'getDatosPrediccion'])->name('datos');
+    });
 });
