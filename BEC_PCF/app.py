@@ -412,6 +412,8 @@ def ciudadano_voluntariados():
 
 # En tu archivo de Flask
 import os
-if __name__ == "__main__":
+
+if __name__ == '__main__':
+    # Esto lee el puerto de Railway (8080) o usa 5000 si estás en tu PC
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
