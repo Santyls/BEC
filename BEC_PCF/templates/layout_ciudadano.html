@@ -52,10 +52,10 @@
                 <!-- Logo -->
                 <div class="flex items-center">
                     <a href="{{ url_for('ciudadano_home') }}" class="flex items-center gap-3 group">
-                        <div class="w-10 h-10 bg-bec-base rounded-xl border border-bec-accent/30 flex items-center justify-center group-hover:border-bec-accent transition-colors shadow-[0_0_15px_rgba(91,192,190,0.2)] group-hover:shadow-[0_0_20px_rgba(91,192,190,0.4)]">
-                            <i data-lucide="globe" class="text-bec-accent w-6 h-6"></i>
-                        </div>
-                        <span class="font-bold text-xl tracking-wide text-white">BEC<span class="text-bec-accent">_Portal</span></span>
+                        <img src="{{ url_for('static', filename='img/bec_circular_logo_modern_1775078876192.png') }}"
+                             alt="BEC Logo"
+                             class="w-10 h-10 rounded-full object-cover shadow-[0_0_15px_rgba(91,192,190,0.3)] group-hover:shadow-[0_0_22px_rgba(91,192,190,0.55)] transition-shadow duration-300">
+                        <span class="font-mono font-bold text-xl tracking-widest text-white group-hover:text-bec-accent transition-colors duration-200">BEC</span>
                     </a>
                 </div>
 
@@ -125,10 +125,10 @@
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
                 <div class="col-span-1 md:col-span-2">
                     <a href="#" class="flex items-center gap-2 mb-4">
-                        <div class="w-8 h-8 bg-bec-base rounded-lg border border-bec-accent/30 flex items-center justify-center">
-                            <i data-lucide="globe" class="text-bec-accent w-4 h-4"></i>
-                        </div>
-                        <span class="font-bold text-lg text-white">Blue Earth Coders</span>
+                        <img src="{{ url_for('static', filename='img/bec_circular_logo_modern_1775078876192.png') }}"
+                             alt="BEC Logo"
+                             class="w-8 h-8 rounded-full object-cover">
+                        <span class="font-mono font-bold text-lg tracking-widest text-white">BEC</span>
                     </a>
                     <p class="text-slate-400 max-w-sm text-sm">Sistema integral de asistencia ciudadana. Conectando voluntad con necesidad a través de la tecnología.</p>
                 </div>
