@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from typing import List, Optional
 from datetime import date, time
 from app.data.database import get_db
-from app.models.models import Voluntariado, Usuario, Albergue, Campana
+from app.models.models import Voluntariado, Usuario, Albergue, Campana, InscripcionVoluntariado
 from app.security.security import get_current_user, get_admin_user
 
 router = APIRouter()
@@ -91,7 +91,81 @@ def crear_voluntariado(
 
 @router.get("/")
 def listar_voluntariados(db: Session = Depends(get_db), current_user: Usuario = Depends(get_current_user)):
-    return db.query(Voluntariado).all()
+    voluntariados = db.query(Voluntariado).all()
+    result = []
+    for v in voluntariados:
+        albergue_nombre = None
+        campana_nombre = None
+        if v.Id_albergue:
+            alb = db.query(Albergue).filter(Albergue.Id_Albergue == v.Id_albergue).first()
+            if alb:
+                albergue_nombre = alb.Nombre_Albergue
+        if v.id_campana:
+            camp = db.query(Campana).filter(Campana.id_Campana == v.id_campana).first()
+            if camp:
+                campana_nombre = camp.Nombre_Campana
+                
+        result.append({
+            "Id_Voluntariado": v.Id_Voluntariado,
+            "Nombre_Voluntariado": v.Nombre_Voluntariado,
+            "Id_albergue": v.Id_albergue,
+            "nombre_albergue": albergue_nombre,
+            "id_campana": v.id_campana,
+            "nombre_campana": campana_nombre,
+            "Fecha_prog": v.Fecha_prog,
+            "Cupo_Max": v.Cupo_Max,
+            "Hora_inicio": v.Hora_inicio,
+            "Hora_Fin": v.Hora_Fin,
+            "Estado_Voluntariado": v.Estado_Voluntariado,
+            "Descripcion_Requisitos": v.Descripcion_Requisitos,
+        })
+    return result
+
+# ⚠️ IMPORTANTE: Esta ruta DEBE ir ANTES de GET /{id}
+# Si va después, FastAPI captura "inscripciones" como el parámetro {id} (int) y falla.
+@router.get("/inscripciones/me")
+def mis_inscripciones(
+    db: Session = Depends(get_db), 
+    current_user: Usuario = Depends(get_current_user)
+):
+    inscripciones = db.query(InscripcionVoluntariado).filter(
+        InscripcionVoluntariado.Id_Usuario == current_user.id_Usuario
+    ).all()
+
+    ids_voluntariados = [i.Id_Voluntariado for i in inscripciones]
+
+    mis_vols = db.query(Voluntariado).filter(
+        Voluntariado.Id_Voluntariado.in_(ids_voluntariados)
+    ).all()
+
+    result = []
+    for v in mis_vols:
+        albergue_nombre = None
+        campana_nombre = None
+        if v.Id_albergue:
+            alb = db.query(Albergue).filter(Albergue.Id_Albergue == v.Id_albergue).first()
+            if alb:
+                albergue_nombre = alb.Nombre_Albergue
+        if v.id_campana:
+            camp = db.query(Campana).filter(Campana.id_Campana == v.id_campana).first()
+            if camp:
+                campana_nombre = camp.Nombre_Campana
+                
+        result.append({
+            "Id_Voluntariado": v.Id_Voluntariado,
+            "Nombre_Voluntariado": v.Nombre_Voluntariado,
+            "Id_albergue": v.Id_albergue,
+            "nombre_albergue": albergue_nombre,
+            "id_campana": v.id_campana,
+            "nombre_campana": campana_nombre,
+            "Fecha_prog": v.Fecha_prog,
+            "Cupo_Max": v.Cupo_Max,
+            "Hora_inicio": v.Hora_inicio,
+            "Hora_Fin": v.Hora_Fin,
+            "Estado_Voluntariado": v.Estado_Voluntariado,
+            "Descripcion_Requisitos": v.Descripcion_Requisitos,
+        })
+    return result
 
 @router.get("/{id}")
 def obtener_voluntariado(id: int, db: Session = Depends(get_db), current_user: Usuario = Depends(get_current_user)):
@@ -152,3 +226,50 @@ def eliminar_voluntariado(id: int, db: Session = Depends(get_db), current_user: 
         "mensaje": f"Voluntariado eliminado por {current_user.Nombre}", 
         "status": 200
     }
+
+# --- Inscripciones a Voluntariados ---
+@router.post("/{id}/inscribirse", status_code=status.HTTP_201_CREATED)
+def inscribirse_voluntariado(
+    id: int, 
+    db: Session = Depends(get_db), 
+    current_user: Usuario = Depends(get_current_user)
+):
+    voluntariado = db.query(Voluntariado).filter(Voluntariado.Id_Voluntariado == id).first()
+    if not voluntariado:
+        raise HTTPException(status_code=404, detail="Voluntariado no encontrado")
+        
+    inscripcion_existente = db.query(InscripcionVoluntariado).filter(
+        InscripcionVoluntariado.Id_Usuario == current_user.id_Usuario,
+        InscripcionVoluntariado.Id_Voluntariado == id
+    ).first()
+    
+    if inscripcion_existente:
+        raise HTTPException(status_code=400, detail="Ya estás inscrito a este voluntariado")
+        
+    nueva_inscripcion = InscripcionVoluntariado(
+        Id_Usuario=current_user.id_Usuario,
+        Id_Voluntariado=id
+    )
+    db.add(nueva_inscripcion)
+    db.commit()
+    
+    return {"mensaje": "Inscrito exitosamente", "status": 201}
+
+@router.delete("/{id}/cancelar-inscripcion")
+def cancelar_inscripcion_voluntariado(
+    id: int, 
+    db: Session = Depends(get_db), 
+    current_user: Usuario = Depends(get_current_user)
+):
+    inscripcion = db.query(InscripcionVoluntariado).filter(
+        InscripcionVoluntariado.Id_Usuario == current_user.id_Usuario,
+        InscripcionVoluntariado.Id_Voluntariado == id
+    ).first()
+    
+    if not inscripcion:
+        raise HTTPException(status_code=404, detail="No estás inscrito a este voluntariado")
+        
+    db.delete(inscripcion)
+    db.commit()
+    
+    return {"mensaje": "Inscripción cancelada exitosamente", "status": 200}

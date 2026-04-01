@@ -23,7 +23,7 @@ class CatalogoController extends Controller
     /** GET /admin/catalogos/estados */
     public function estados()
     {
-        $res = Http::withToken(session('api_token'))->get("{$this->apiUrl}/estados");
+        $res = Http::withToken(session('api_token'))->get("{$this->apiUrl}/catalogos/estados");
         return $res->successful()
             ? response()->json($res->json())
             : response()->json([], $res->status());
@@ -33,7 +33,7 @@ class CatalogoController extends Controller
     public function municipios($idEstado)
     {
         $res = Http::withToken(session('api_token'))
-            ->get("{$this->apiUrl}/estados/{$idEstado}/municipios");
+            ->get("{$this->apiUrl}/catalogos/estados/{$idEstado}/municipios");
         return $res->successful()
             ? response()->json($res->json())
             : response()->json([], $res->status());
@@ -43,7 +43,7 @@ class CatalogoController extends Controller
     public function colonias($idMunicipio)
     {
         $res = Http::withToken(session('api_token'))
-            ->get("{$this->apiUrl}/municipios/{$idMunicipio}/colonias");
+            ->get("{$this->apiUrl}/catalogos/municipios/{$idMunicipio}/colonias");
         return $res->successful()
             ? response()->json($res->json())
             : response()->json([], $res->status());
@@ -53,7 +53,7 @@ class CatalogoController extends Controller
     public function storeDireccion(Request $request)
     {
         $res = Http::withToken(session('api_token'))
-            ->post("{$this->apiUrl}/direcciones", [
+            ->post("{$this->apiUrl}/catalogos/direcciones", [
                 'Id_Colonia'  => (int) $request->Id_Colonia,
                 'Calle'       => $request->Calle,
                 'No_exterior' => $request->No_exterior,
