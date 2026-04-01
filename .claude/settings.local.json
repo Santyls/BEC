@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(php artisan:*)",
-      "Bash(docker exec bec_pal_app:*)"
-    ]
-  }
-}
