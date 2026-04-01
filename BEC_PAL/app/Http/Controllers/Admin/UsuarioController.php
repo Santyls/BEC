@@ -114,6 +114,25 @@ class UsuarioController extends Controller
     }
 
     /**
+     * Actualiza parcialmente un usuario (PATCH).
+     * Ideal para editar sin cambiar la contraseña.
+     */
+    public function patch(Request $request, $id)
+    {
+        $response = Http::withToken(session('api_token'))
+            ->patch("{$this->apiUrl}/usuarios/{$id}", $request->all());
+
+        if ($response->successful()) {
+            return response()->json(['success' => true, 'message' => 'Usuario actualizado correctamente.']);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => $response->json()['detail'] ?? 'Error al actualizar el usuario.',
+        ], $response->status());
+    }
+
+    /**
      * Elimina un usuario (DELETE).
      * Llamado via Fetch desde la tabla.
      */

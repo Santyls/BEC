@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\CampanaController;
 use App\Http\Controllers\Admin\VoluntariadoController;
 use App\Http\Controllers\Admin\DonacionController;
 use App\Http\Controllers\Admin\UsuarioController;
+use App\Http\Controllers\Admin\CatalogoController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -29,7 +30,16 @@ Route::prefix('admin')->name('admin.')->middleware('auth.api')->group(function (
         Route::get('/',         [UsuarioController::class, 'index'])->name('index');
         Route::post('/',        [UsuarioController::class, 'store'])->name('store');
         Route::put('/{id}',     [UsuarioController::class, 'update'])->name('update');
+        Route::patch('/{id}',   [UsuarioController::class, 'patch'])->name('patch');
         Route::delete('/{id}',  [UsuarioController::class, 'destroy'])->name('destroy');
+    });
+
+    // Proxy de catálogos hacia BEC_API (sin CORS)
+    Route::prefix('catalogos')->name('catalogos.')->group(function () {
+        Route::get('/estados',                         [CatalogoController::class, 'estados'])->name('estados');
+        Route::get('/estados/{id}/municipios',         [CatalogoController::class, 'municipios'])->name('municipios');
+        Route::get('/municipios/{id}/colonias',        [CatalogoController::class, 'colonias'])->name('colonias');
+        Route::post('/direcciones',                    [CatalogoController::class, 'storeDireccion'])->name('direcciones.store');
     });
 
     // CRUD Albergues
