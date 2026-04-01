@@ -30,7 +30,7 @@ def predecir_demanda(
     if pd is None:
         raise HTTPException(status_code=500, detail="Librerías de análisis de datos no están instaladas (pandas, statsmodels).")
 
-    # 1. Obtener datos históricos de la BD (Solo Ropa=1, Cobijas=3 para invierno)
+    # 1. Obtener datos históricos de la BD
     resultados = (
         db.query(
             Donacion.Fecha_Donacion, 
