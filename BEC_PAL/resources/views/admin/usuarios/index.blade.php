@@ -202,147 +202,158 @@
             @csrf
             <input type="hidden" id="field-id" name="id">
 
-            {{-- ── SECCIÓN 1: Datos personales ── --}}
-            <div class="form-section">
-                <p class="form-section-title">
-                    <span class="step-badge">1</span> Datos Personales
-                </p>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                    <div>
-                        <label class="field-label">Nombre *</label>
-                        <input id="field-nombre" name="Nombre" type="text" class="field-input" placeholder="Juan">
-                        <p class="field-error" id="err-nombre">Campo requerido</p>
-                    </div>
-                    <div>
-                        <label class="field-label">Apellido Paterno *</label>
-                        <input id="field-apellido-p" name="Apellido_P" type="text" class="field-input" placeholder="García">
-                        <p class="field-error" id="err-apellido-p">Campo requerido</p>
-                    </div>
-                    <div>
-                        <label class="field-label">Apellido Materno *</label>
-                        <input id="field-apellido-m" name="Apellido_M" type="text" class="field-input" placeholder="López">
-                        <p class="field-error" id="err-apellido-m">Campo requerido</p>
-                    </div>
+            {{-- ── TARJETA 1: DATOS PERSONALES ── --}}
+            <div class="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-5 shadow-lg">
+                <div class="flex items-center gap-3 mb-5 border-b border-slate-700/50 pb-3">
+                    <div class="w-8 h-8 rounded-full bg-blue-600 font-bold text-white flex items-center justify-center shadow-lg shadow-blue-500/30 flex-shrink-0">1</div>
+                    <h4 class="text-sm font-black text-white tracking-widest uppercase">Datos Personales</h4>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <label class="field-label">Edad *</label>
-                        <input id="field-edad" name="Edad" type="number" min="1" max="120" class="field-input" placeholder="25">
-                        <p class="field-error" id="err-edad">Edad inválida (1-120)</p>
+                <div class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="field-label">Nombre *</label>
+                            <input id="field-nombre" name="Nombre" type="text" class="field-input" placeholder="Juan">
+                            <p class="field-error" id="err-nombre">Campo requerido</p>
+                        </div>
+                        <div>
+                            <label class="field-label">Apellido Paterno *</label>
+                            <input id="field-apellido-p" name="Apellido_P" type="text" class="field-input" placeholder="García">
+                            <p class="field-error" id="err-apellido-p">Campo requerido</p>
+                        </div>
+                        <div>
+                            <label class="field-label">Apellido Materno *</label>
+                            <input id="field-apellido-m" name="Apellido_M" type="text" class="field-input" placeholder="López">
+                            <p class="field-error" id="err-apellido-m">Campo requerido</p>
+                        </div>
                     </div>
-                    <div>
-                        <label class="field-label">Teléfono *</label>
-                        <input id="field-tel" name="Tel" type="number" class="field-input" placeholder="4421234567">
-                        <p class="field-error" id="err-tel">Campo requerido</p>
-                    </div>
-                    <div>
-                        <label class="field-label">Género *</label>
-                        <select id="field-genero" name="Id_Genero" class="field-input">
-                            <option value="">Seleccionar…</option>
-                            <option value="1">Masculino</option>
-                            <option value="2">Femenino</option>
-                            <option value="3">Otro</option>
-                        </select>
-                        <p class="field-error" id="err-genero">Selecciona un género</p>
-                    </div>
-                </div>
-            </div>
 
-            {{-- ── SECCIÓN 2: Cuenta ── --}}
-            <div class="form-section">
-                <p class="form-section-title">
-                    <span class="step-badge">2</span> Cuenta y Acceso
-                </p>
-                <div class="mb-4">
-                    <label class="field-label">Correo Electrónico *</label>
-                    <input id="field-correo" name="Correo" type="email" class="field-input" placeholder="usuario@ejemplo.com">
-                    <p class="field-error" id="err-correo">Ingresa un correo válido</p>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div>
-                        <label class="field-label">Contraseña *</label>
-                        <input id="field-password" name="Password" type="password" class="field-input" placeholder="Mínimo 6 caracteres">
-                        <p class="field-error" id="err-password">Mínimo 6 caracteres</p>
-                    </div>
-                    <div>
-                        <label class="field-label">Confirmar Contraseña *</label>
-                        <input id="field-password-confirm" type="password" class="field-input" placeholder="Repite la contraseña">
-                        <p class="field-error" id="err-password-confirm">Las contraseñas no coinciden</p>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="field-label">Rol *</label>
-                        <select id="field-rol" name="Id_Rol" class="field-input">
-                            <option value="">Seleccionar…</option>
-                            <option value="1">Administrador</option>
-                            <option value="2">Recepcionista</option>
-                            <option value="3">Ciudadano</option>
-                        </select>
-                        <p class="field-error" id="err-rol">Selecciona un rol</p>
-                    </div>
-                    <div>
-                        <label class="field-label">Albergue (opcional)</label>
-                        <select id="field-albergue" name="Id_Albergue" class="field-input">
-                            <option value="">— Sin albergue —</option>
-                        </select>
-                        <p id="loading-albergues" class="text-xs text-slate-500 mt-1 hidden">Cargando albergues…</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="field-label">Edad *</label>
+                            <input id="field-edad" name="Edad" type="number" min="1" max="120" class="field-input" placeholder="25">
+                            <p class="field-error" id="err-edad">Edad inválida (1-120)</p>
+                        </div>
+                        <div>
+                            <label class="field-label">Teléfono *</label>
+                            <input id="field-tel" name="Tel" type="number" class="field-input" placeholder="4421234567">
+                            <p class="field-error" id="err-tel">Campo requerido</p>
+                        </div>
+                        <div>
+                            <label class="field-label">Género *</label>
+                            <select id="field-genero" name="Id_Genero" class="field-input">
+                                <option value="">Seleccionar…</option>
+                                <option value="1">Masculino</option>
+                                <option value="2">Femenino</option>
+                                <option value="3">Otro</option>
+                            </select>
+                            <p class="field-error" id="err-genero">Selecciona un género</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            {{-- ── SECCIÓN 3: Dirección (opcional, en cascada) ── --}}
-            <div class="form-section">
-                <p class="form-section-title">
-                    <span class="step-badge">3</span> Datos de Dirección
-                    <span class="ml-auto text-[10px] font-normal text-slate-500 normal-case tracking-normal">(Opcional — se crea antes del usuario)</span>
-                </p>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    {{-- Estado --}}
+            {{-- ── TARJETA 2: CUENTA Y ACCESO ── --}}
+            <div class="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-5 shadow-lg">
+                <div class="flex items-center gap-3 mb-5 border-b border-slate-700/50 pb-3">
+                    <div class="w-8 h-8 rounded-full bg-blue-600 font-bold text-white flex items-center justify-center shadow-lg shadow-blue-500/30 flex-shrink-0">2</div>
+                    <h4 class="text-sm font-black text-white tracking-widest uppercase">Cuenta y Acceso</h4>
+                </div>
+                
+                <div class="space-y-4">
                     <div>
-                        <label class="field-label">Estado</label>
-                        <select id="field-estado" class="field-input">
-                            <option value="">— Selecciona un estado —</option>
+                        <label class="field-label">Correo Electrónico *</label>
+                        <input id="field-correo" name="Correo" type="email" class="field-input" placeholder="usuario@ejemplo.com">
+                        <p class="field-error" id="err-correo">Ingresa un correo válido</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="field-label">Contraseña *</label>
+                            <input id="field-password" name="Password" type="password" class="field-input" placeholder="Mínimo 6 caracteres">
+                            <p class="field-error" id="err-password">Mínimo 6 caracteres</p>
+                        </div>
+                        <div>
+                            <label class="field-label">Confirmar Contraseña *</label>
+                            <input id="field-password-confirm" type="password" class="field-input" placeholder="Repite la contraseña">
+                            <p class="field-error" id="err-password-confirm">Las contraseñas no coinciden</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="field-label">Rol *</label>
+                            <select id="field-rol" name="Id_Rol" class="field-input">
+                                <option value="">Seleccionar…</option>
+                                <option value="1">Administrador</option>
+                                <option value="2">Recepcionista</option>
+                                <option value="3">Ciudadano</option>
+                            </select>
+                            <p class="field-error" id="err-rol">Selecciona un rol</p>
+                        </div>
+                        <div>
+                            <label class="field-label">Albergue (Opcional)</label>
+                            <select id="field-albergue" name="Id_Albergue" class="field-input">
+                                <option value="">— Sin albergue —</option>
+                            </select>
+                            <p id="loading-albergues" class="text-xs text-slate-500 mt-1 hidden">Cargando albergues…</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- ── TARJETA 3: DATOS DE DIRECCIÓN ── --}}
+            <div class="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-5 shadow-lg">
+                <div class="flex items-center justify-between mb-5 border-b border-slate-700/50 pb-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-blue-600 font-bold text-white flex items-center justify-center shadow-lg shadow-blue-500/30 flex-shrink-0">3</div>
+                        <h4 class="text-sm font-black text-white tracking-widest uppercase">Datos de Dirección</h4>
+                    </div>
+                    <span class="text-[10px] text-slate-400 font-medium">(Opcional — se crea antes del usuario)</span>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="field-label">Estado</label>
+                            <select id="field-estado" class="field-input">
+                                <option value="">— Selecciona un estado —</option>
+                            </select>
+                            <p id="loading-estados" class="text-xs text-slate-500 mt-1 hidden">Cargando estados…</p>
+                        </div>
+                        <div>
+                            <label class="field-label">Municipio</label>
+                            <select id="field-municipio" class="field-input" disabled>
+                                <option value="">— Elige primero un Estado —</option>
+                            </select>
+                            <p id="loading-municipios" class="text-xs text-slate-500 mt-1 hidden">Cargando municipios…</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="field-label">Colonia</label>
+                        <select id="field-colonia" class="field-input" disabled>
+                            <option value="">— Elige primero un Municipio —</option>
                         </select>
-                        <p id="loading-estados" class="text-xs text-slate-500 mt-1 hidden">Cargando estados…</p>
+                        <p id="loading-colonias" class="text-xs text-slate-500 mt-1 hidden">Cargando colonias…</p>
                     </div>
-                    {{-- Municipio --}}
-                    <div>
-                        <label class="field-label">Municipio</label>
-                        <select id="field-municipio" class="field-input" disabled>
-                            <option value="">— Elige primero un Estado —</option>
-                        </select>
-                        <p id="loading-municipios" class="text-xs text-slate-500 mt-1 hidden">Cargando municipios…</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="field-label">Calle</label>
+                            <input id="field-calle" name="Calle" type="text" class="field-input" placeholder="Ej. Av. Hidalgo" disabled>
+                        </div>
+                        <div>
+                            <label class="field-label">Número Exterior</label>
+                            <input id="field-no-ext" name="No_exterior" type="text" class="field-input" placeholder="Ej. 145-B" disabled>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-t border-slate-700/50 flex items-start gap-2 text-slate-500">
+                        <i data-lucide="info" class="w-4 h-4 flex-shrink-0 mt-0.5"></i>
+                        <p class="text-xs">Si llenas Estado + Municipio + Colonia + Calle + No. Ext., se creará la dirección automáticamente al guardar.</p>
                     </div>
                 </div>
-
-                <div class="mb-4">
-                    <label class="field-label">Colonia</label>
-                    <select id="field-colonia" class="field-input" disabled>
-                        <option value="">— Elige primero un Municipio —</option>
-                    </select>
-                    <p id="loading-colonias" class="text-xs text-slate-500 mt-1 hidden">Cargando colonias…</p>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="field-label">Calle</label>
-                        <input id="field-calle" name="Calle" type="text" class="field-input" placeholder="Ej. Av. Hidalgo" disabled>
-                    </div>
-                    <div>
-                        <label class="field-label">Número Exterior</label>
-                        <input id="field-no-ext" name="No_exterior" type="text" class="field-input" placeholder="Ej. 145-B" disabled>
-                    </div>
-                </div>
-
-                <p class="text-xs text-slate-600 mt-3 flex items-center gap-1.5">
-                    <i data-lucide="info" class="w-3 h-3 flex-shrink-0 text-slate-500"></i>
-                    Si llenas Estado + Municipio + Colonia + Calle + No. Ext., se creará la dirección automáticamente al guardar.
-                </p>
             </div>
 
             {{-- Error de API --}}

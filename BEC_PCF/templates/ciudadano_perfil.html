@@ -3,226 +3,278 @@
 {% block title %}Mi Perfil{% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-
-    <!-- Encabezado -->
-    <div class="mb-10">
-        <h1 class="text-3xl font-bold text-white mb-2">Mi Perfil</h1>
-        <p class="text-slate-400">Consulta tu información personal y actualiza tus datos de domicilio.</p>
-    </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-        <!-- ========================================== -->
-        <!-- COLUMNA IZQUIERDA: Información Personal    -->
-        <!-- ========================================== -->
-        <div class="lg:col-span-1 space-y-6">
-            <div class="glass-panel rounded-2xl p-6 border border-white/10 text-center relative overflow-hidden">
-                <!-- Fondo decorativo -->
-                <div class="absolute -top-10 -right-10 w-32 h-32 bg-bec-accent/10 rounded-full blur-2xl"></div>
-
-                <!-- Avatar -->
-                <div
-                    class="relative w-24 h-24 mx-auto bg-bec-dark border-2 border-bec-accent/50 rounded-full flex items-center justify-center mb-4 shadow-[0_0_15px_rgba(91,192,190,0.2)]">
-                    <i data-lucide="user" class="w-10 h-10 text-bec-accent"></i>
-                    <!-- Insignia pequeña -->
-                    <div class="absolute bottom-0 right-0 w-6 h-6 bg-status-success rounded-full border-2 border-bec-base flex items-center justify-center"
-                        title="Cuenta Activa">
-                        <i data-lucide="check" class="w-3 h-3 text-white"></i>
-                    </div>
-                </div>
-
-                <h2 class="text-xl font-bold text-white mb-1">Juan Perez Ciudadano</h2>
-                <p class="text-sm text-slate-400 mb-6">juan.perez@gmail.com</p>
-
-                <div class="w-full h-px bg-white/10 mb-6"></div>
-
-                <!-- Datos de solo lectura -->
-                <div class="space-y-4 text-left">
-                    <div>
-                        <p class="text-xs text-slate-500 uppercase tracking-wider mb-1">Rol de Usuario</p>
-                        <p class="text-sm font-medium text-white flex items-center gap-2">
-                            <i data-lucide="shield-check" class="w-4 h-4 text-bec-accent"></i> Ciudadano Voluntario
-                        </p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-slate-500 uppercase tracking-wider mb-1">Miembro desde</p>
-                        <p class="text-sm font-medium text-white flex items-center gap-2">
-                            <i data-lucide="calendar-days" class="w-4 h-4 text-slate-400"></i> Marzo 2026
-                        </p>
-                    </div>
-                </div>
-
-                <div class="mt-8 bg-status-info/10 border border-status-info/20 rounded-lg p-4 text-left">
-                    <p class="text-xs text-status-info flex gap-2">
-                        <i data-lucide="info" class="w-4 h-4 flex-shrink-0"></i>
-                        Para modificar tu nombre o correo electrónico, contacta al soporte de BEC.
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- ========================================== -->
-        <!-- COLUMNA DERECHA: Formulario de Domicilio   -->
-        <!-- ========================================== -->
-        <div class="lg:col-span-2">
-            <div class="glass-panel rounded-2xl p-8 border border-white/10 relative">
-
-                <div class="flex items-center gap-3 mb-8">
-                    <div
-                        class="w-10 h-10 rounded-lg bg-bec-accent/10 border border-bec-accent/20 flex items-center justify-center flex-shrink-0">
-                        <i data-lucide="map-pin" class="w-5 h-5 text-bec-accent"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-bold text-white">Datos de Domicilio</h3>
-                        <p class="text-sm text-slate-400">Mantén tu dirección actualizada para la logística de
-                            donaciones.</p>
-                    </div>
-                </div>
-
-                <form id="formDomicilio" onsubmit="guardarDomicilio(event)">
-                    <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
-
-                        <!-- Calle -->
-                        <div class="md:col-span-12">
-                            <label class="block text-sm font-medium text-slate-300 mb-2">Calle</label>
-                            <input type="text" value="Av. Universidad" required
-                                class="w-full bg-bec-dark/50 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-bec-accent focus:ring-1 focus:ring-bec-accent transition-colors"
-                                placeholder="Ej. Calle Primavera">
-                        </div>
-
-                        <!-- Número Exterior -->
-                        <div class="md:col-span-6">
-                            <label class="block text-sm font-medium text-slate-300 mb-2">Número Exterior</label>
-                            <input type="text" value="123" required
-                                class="w-full bg-bec-dark/50 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-bec-accent focus:ring-1 focus:ring-bec-accent transition-colors"
-                                placeholder="Ej. 123">
-                        </div>
-
-                        <!-- Número Interior -->
-                        <div class="md:col-span-6">
-                            <label class="block text-sm font-medium text-slate-300 mb-2">Número Interior <span
-                                    class="text-slate-500 font-normal">(Opcional)</span></label>
-                            <input type="text" value="Apt 4B"
-                                class="w-full bg-bec-dark/50 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-bec-accent focus:ring-1 focus:ring-bec-accent transition-colors"
-                                placeholder="Ej. Int 4">
-                        </div>
-
-                        <!-- Código Postal -->
-                        <div class="md:col-span-4">
-                            <label class="block text-sm font-medium text-slate-300 mb-2">Código Postal</label>
-                            <div class="relative">
-                                <input type="text" value="76000" required maxlength="5" pattern="[0-9]{5}"
-                                    class="w-full bg-bec-dark/50 border border-white/10 rounded-lg pl-10 pr-4 py-2.5 text-white focus:outline-none focus:border-bec-accent focus:ring-1 focus:ring-bec-accent transition-colors"
-                                    placeholder="00000">
-                                <i data-lucide="hash" class="w-4 h-4 text-slate-500 absolute left-3 top-3"></i>
-                            </div>
-                        </div>
-
-                        <!-- Estado -->
-                        <div class="md:col-span-4">
-                            <label class="block text-sm font-medium text-slate-300 mb-2">Estado</label>
-                            <select required
-                                class="w-full bg-bec-dark/50 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-bec-accent focus:ring-1 focus:ring-bec-accent transition-colors appearance-none">
-                                <option value="" disabled>Seleccione...</option>
-                                <option value="22" selected>Querétaro</option>
-                                <option value="9">Ciudad de México</option>
-                                <option value="15">Estado de México</option>
-                            </select>
-                        </div>
-
-                        <!-- Municipio -->
-                        <div class="md:col-span-4">
-                            <label class="block text-sm font-medium text-slate-300 mb-2">Municipio / Alcaldía</label>
-                            <select required
-                                class="w-full bg-bec-dark/50 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-bec-accent focus:ring-1 focus:ring-bec-accent transition-colors appearance-none">
-                                <option value="" disabled>Seleccione...</option>
-                                <option value="1" selected>Querétaro</option>
-                                <option value="2">Corregidora</option>
-                                <option value="3">El Marqués</option>
-                            </select>
-                        </div>
-
-                        <!-- Colonia -->
-                        <div class="md:col-span-12">
-                            <label class="block text-sm font-medium text-slate-300 mb-2">Colonia</label>
-                            <select required
-                                class="w-full bg-bec-dark/50 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-bec-accent focus:ring-1 focus:ring-bec-accent transition-colors appearance-none">
-                                <option value="" disabled>Seleccione...</option>
-                                <option value="1" selected>Centro Histórico</option>
-                                <option value="2">Juriquilla</option>
-                                <option value="3">El Refugio</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Divisor -->
-                    <div class="w-full h-px bg-white/10 my-8"></div>
-
-                    <!-- Botones de Acción -->
-                    <div class="flex items-center justify-end gap-4">
-                        <button type="button"
-                            class="px-6 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 transition-colors border border-transparent hover:border-white/10">
-                            Deshacer cambios
-                        </button>
-                        <button type="submit" id="btnGuardar"
-                            class="bg-bec-accent hover:bg-bec-accent/80 text-bec-dark font-bold px-6 py-2.5 rounded-lg flex items-center gap-2 transition-all shadow-[0_0_15px_rgba(91,192,190,0.3)] hover:shadow-[0_0_20px_rgba(91,192,190,0.5)]">
-                            <i data-lucide="save" class="w-4 h-4"></i>
-                            Guardar Domicilio
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- ========================================== -->
-<!-- NOTIFICACIÓN TIPO TOAST (ÉXITO)            -->
-<!-- ========================================== -->
-<div id="toastExito"
-    class="fixed bottom-6 right-6 transform translate-y-20 opacity-0 transition-all duration-300 z-50 pointer-events-none">
-    <div class="bg-status-success text-white px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3">
-        <i data-lucide="check-circle-2" class="w-6 h-6"></i>
-        <div>
-            <p class="font-bold text-sm">¡Actualización Exitosa!</p>
-            <p class="text-xs text-white/80">Tu domicilio ha sido guardado correctamente.</p>
-        </div>
-    </div>
-</div>
-
-<!-- ========================================== -->
-<!-- SCRIPTS LOCALES                            -->
-<!-- ========================================== -->
-<script>
-    function guardarDomicilio(event) {
-        event.preventDefault(); // Evita que la página se recargue
-
-        const btn = document.getElementById('btnGuardar');
-        const iconoOriginal = btn.innerHTML;
-
-        // Estado de carga
-        btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Guardando...`;
-        btn.classList.add('opacity-75', 'cursor-not-allowed');
-        lucide.createIcons();
-
-        // Simulamos petición al servidor
-        setTimeout(() => {
-            // Restaurar botón
-            btn.innerHTML = iconoOriginal;
-            btn.classList.remove('opacity-75', 'cursor-not-allowed');
-            lucide.createIcons();
-
-            // Mostrar notificación Toast
-            const toast = document.getElementById('toastExito');
-            toast.classList.remove('translate-y-20', 'opacity-0');
-
-            // Ocultar notificación después de 3 segundos
-            setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0');
-            }, 3000);
-
-        }, 1200);
+<style>
+    /* ── Form fields ── */
+    .field-label {
+        display:block; font-size:.7rem; font-weight:700;
+        color:#94a3b8; text-transform:uppercase; letter-spacing:.08em; margin-bottom:.4rem;
     }
+    .field-input {
+        width:100%; background:#0f172a; border:1px solid #334155;
+        color:#e2e8f0; font-size:.875rem; border-radius:.5rem;
+        padding:.65rem 1rem; outline:none; transition: border-color .2s;
+        appearance: none;
+    }
+    .field-input:focus { border-color:#3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,.12); }
+    .field-input.error { border-color:#f43f5e; }
+    .field-input:disabled { opacity:.45; cursor:not-allowed; }
+    
+    select.field-input {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right .85rem center;
+        padding-right: 2.25rem;
+    }
+    
+    /* ── Utilities ── */
+    .fade-in { animation: fadeIn 0.4s ease-in-out; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+</style>
+
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 fade-in">
+    <!-- Encabezado -->
+    <div class="mb-10 text-center">
+        <h1 class="text-3xl font-black text-white mb-2 tracking-wide">MI PERFIL</h1>
+        <p class="text-slate-400 text-sm">Actualiza tu información, acceso y datos de domicilio para la plataforma BEC.</p>
+    </div>
+
+    <!-- El formulario envia a la ruta ciudadano_perfil mediante POST -->
+    <form id="formPerfil" method="POST" action="{{ url_for('ciudadano_perfil') }}" class="space-y-6">
+        
+        <!-- ── TARJETA 1: DATOS PERSONALES ── -->
+        <div class="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 shadow-lg">
+            <div class="flex items-center gap-3 mb-6 border-b border-slate-700/50 pb-4">
+                <div class="w-8 h-8 rounded-full bg-blue-600 font-bold text-white flex items-center justify-center shadow-lg shadow-blue-500/30 flex-shrink-0">1</div>
+                <h4 class="text-sm font-black text-white tracking-widest uppercase">Datos Personales</h4>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <div>
+                    <label class="field-label">Nombre *</label>
+                    <input name="Nombre" type="text" class="field-input" value="{{ usuario.Nombre | default('') }}" required>
+                </div>
+                <div>
+                    <label class="field-label">Apellido Paterno *</label>
+                    <input name="Apellido_P" type="text" class="field-input" value="{{ usuario.Apellido_P | default('') }}" required>
+                </div>
+                <div>
+                    <label class="field-label">Apellido Materno *</label>
+                    <input name="Apellido_M" type="text" class="field-input" value="{{ usuario.Apellido_M | default('') }}" required>
+                </div>
+                <div>
+                    <label class="field-label">Teléfono</label>
+                    <input name="Tel" type="number" class="field-input" value="{{ usuario.Tel if usuario.Tel else '' }}" placeholder="A 10 dígitos">
+                </div>
+                <div>
+                    <label class="field-label">Edad</label>
+                    <input name="Edad" type="number" class="field-input" value="{{ usuario.Edad if usuario.Edad else '' }}">
+                </div>
+            </div>
+        </div>
+
+        <!-- ── TARJETA 2: CUENTA Y ACCESO ── -->
+        <div class="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 shadow-lg">
+            <div class="flex items-center gap-3 mb-6 border-b border-slate-700/50 pb-4">
+                <div class="w-8 h-8 rounded-full bg-blue-600 font-bold text-white flex items-center justify-center shadow-lg shadow-blue-500/30 flex-shrink-0">2</div>
+                <h4 class="text-sm font-black text-white tracking-widest uppercase">Cuenta y Acceso</h4>
+            </div>
+            
+            <div class="space-y-5">
+                <!-- Correo Electrónico (Solo Lectura) -->
+                <div>
+                    <label class="field-label flex items-center gap-2">
+                        Correo Electrónico <i data-lucide="lock" class="w-3 h-3 text-slate-500"></i>
+                    </label>
+                    <input type="email" value="{{ usuario.Correo }}" class="field-input" readonly disabled title="El correo no se puede editar">
+                    <p class="text-[10px] text-slate-500 mt-1">Tu correo electrónico es la llave de tu cuenta y no puede modificarse por seguridad.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <label class="field-label">Nueva Contraseña</label>
+                        <input name="new_password" type="password" class="field-input" placeholder="Déjalo en blanco para mantener la actual">
+                    </div>
+                    <div>
+                        <label class="field-label">Confirmar Contraseña</label>
+                        <input name="confirm_password" type="password" class="field-input" placeholder="Repite la nueva contraseña">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── TARJETA 3: DATOS DE DIRECCIÓN ── -->
+        <div class="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 shadow-lg">
+            <div class="flex items-center justify-between mb-6 border-b border-slate-700/50 pb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-blue-600 font-bold text-white flex items-center justify-center shadow-lg shadow-blue-500/30 flex-shrink-0">3</div>
+                    <h4 class="text-sm font-black text-white tracking-widest uppercase">Datos de Dirección</h4>
+                </div>
+                <span class="text-[10px] text-slate-400 font-medium bg-slate-800 px-2 py-1 rounded">(Opcional)</span>
+            </div>
+
+            <div class="space-y-5">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <label class="field-label">Estado</label>
+                        <select id="sel_estado" class="field-input">
+                            <option value="">— Selecciona un estado —</option>
+                            {% for est in estados %}
+                                <option value="{{ est.Id_Estado }}" {% if id_estado_pre == est.Id_Estado %}selected{% endif %}>{{ est.Nombre_Estado }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="field-label">Municipio</label>
+                        <select id="sel_municipio" class="field-input" {% if not municipios_pre %}disabled{% endif %}>
+                            {% if municipios_pre %}
+                                <option value="">— Selecciona un municipio —</option>
+                                {% for mun in municipios_pre %}
+                                    <option value="{{ mun.Id_Municipio }}" {% if id_municipio_pre == mun.Id_Municipio %}selected{% endif %}>{{ mun.Nombre_Municipio }}</option>
+                                {% endfor %}
+                            {% else %}
+                                <option value="">— Elige primero un Estado —</option>
+                            {% endif %}
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="field-label">Colonia</label>
+                    <select id="sel_colonia" name="Id_Colonia" class="field-input" {% if not colonias_pre %}disabled{% endif %}>
+                        {% if colonias_pre %}
+                            <option value="">— Selecciona una colonia —</option>
+                            {% for col in colonias_pre %}
+                                <option value="{{ col.Id_Colonia }}" {% if usuario.direccion and usuario.direccion.Id_Colonia == col.Id_Colonia %}selected{% endif %}>{{ col.Nombre_Colonia }} (CP {{ col.Cp }})</option>
+                            {% endfor %}
+                        {% else %}
+                            <option value="">— Elige primero un Municipio —</option>
+                        {% endif %}
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <label class="field-label">Calle</label>
+                        <input id="inp_calle" name="Calle" type="text" class="field-input" placeholder="Ej. Av. Hidalgo" 
+                               value="{% if usuario.direccion %}{{ usuario.direccion.Calle }}{% endif %}" 
+                               {% if not usuario.direccion %}disabled{% endif %}>
+                    </div>
+                    <div>
+                        <label class="field-label">Número Exterior</label>
+                        <input id="inp_no_ext" name="No_exterior" type="text" class="field-input" placeholder="Ej. 145-B" 
+                               value="{% if usuario.direccion %}{{ usuario.direccion.No_exterior }}{% endif %}" 
+                               {% if not usuario.direccion %}disabled{% endif %}>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="pt-4 flex items-center justify-end gap-4">
+            <a href="{{ url_for('ciudadano_perfil') }}"
+                class="px-5 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">
+                Deshacer cambios
+            </a>
+            <button type="submit" id="btnGuardar"
+                class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2.5 rounded-xl font-bold text-sm flex items-center transition-all shadow-lg shadow-blue-500/20">
+                <i data-lucide="save" class="w-4 h-4 mr-2"></i> Guardar Cambios
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    const selEstado    = document.getElementById('sel_estado');
+    const selMunicipio = document.getElementById('sel_municipio');
+    const selColonia   = document.getElementById('sel_colonia');
+    const inpCalle     = document.getElementById('inp_calle');
+    const inpNoExt     = document.getElementById('inp_no_ext');
+
+    // Cambió el estado
+    selEstado.addEventListener('change', async function() {
+        const idEstado = this.value;
+        selMunicipio.innerHTML = '<option value="">— Cargando municipios... —</option>';
+        selColonia.innerHTML   = '<option value="">— Elige primero un Municipio —</option>';
+        selMunicipio.disabled  = true;
+        selColonia.disabled    = true;
+        
+        inpCalle.disabled = true; 
+        inpNoExt.disabled = true;
+        
+        if(!idEstado) {
+            selMunicipio.innerHTML = '<option value="">— Elige primero un Estado —</option>';
+            return;
+        }
+
+        try {
+            const res = await fetch(`/api/municipios/${idEstado}`);
+            const data = await res.json();
+            
+            selMunicipio.innerHTML = '<option value="">— Selecciona un municipio —</option>';
+            data.forEach(m => {
+                const opt = document.createElement('option');
+                opt.value = m.Id_Municipio;
+                opt.textContent = m.Nombre_Municipio;
+                selMunicipio.appendChild(opt);
+            });
+            selMunicipio.disabled = false;
+        } catch(e) {
+            console.error("Error al cargar municipios");
+            selMunicipio.innerHTML = '<option value="">Error al cargar</option>';
+        }
+    });
+
+    // Cambió el municipio
+    selMunicipio.addEventListener('change', async function() {
+        const idMun = this.value;
+        selColonia.innerHTML = '<option value="">— Cargando colonias... —</option>';
+        selColonia.disabled  = true;
+        
+        inpCalle.disabled = true; 
+        inpNoExt.disabled = true;
+        
+        if(!idMun) {
+            selColonia.innerHTML = '<option value="">— Elige primero un Municipio —</option>';
+            return;
+        }
+
+        try {
+            const res = await fetch(`/api/colonias/${idMun}`);
+            const data = await res.json();
+            
+            selColonia.innerHTML = '<option value="">— Selecciona una colonia —</option>';
+            data.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.Id_Colonia;
+                opt.textContent = `${c.Nombre_Colonia} (CP ${c.Cp})`;
+                selColonia.appendChild(opt);
+            });
+            selColonia.disabled = false;
+        } catch(e) {
+            console.error("Error al cargar colonias");
+            selColonia.innerHTML = '<option value="">Error al cargar</option>';
+        }
+    });
+
+    // Cambió la colonia
+    selColonia.addEventListener('change', function() {
+        const tieneColonia = !!this.value;
+        inpCalle.disabled = !tieneColonia;
+        inpNoExt.disabled = !tieneColonia;
+        
+        if(tieneColonia && !inpCalle.value) inpCalle.required = true;
+        if(tieneColonia && !inpNoExt.value) inpNoExt.required = true;
+    });
+
+    // Interacción on Submit
+    document.getElementById('formPerfil').addEventListener('submit', function() {
+        if(this.checkValidity()){
+            const btn = document.getElementById('btnGuardar');
+            btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 mr-2 animate-spin"></i> Guardando...`;
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
+            lucide.createIcons();
+        }
+    });
 </script>
+
 {% endblock %}

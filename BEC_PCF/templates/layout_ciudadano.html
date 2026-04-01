@@ -89,7 +89,7 @@
                         </form>
                     {% else %}
                         <a href="{{ url_for('login') }}" class="text-slate-300 hover:text-white font-medium px-3 py-2 transition-colors text-sm">Ingresar</a>
-                        <a href="#" class="bg-bec-accent text-bec-dark px-6 py-2.5 rounded-xl font-semibold hover:bg-cyan-400 hover:shadow-[0_0_20px_rgba(91,192,190,0.4)] transition-all text-sm">
+                        <a href="{{ url_for('register') }}" class="bg-bec-accent text-bec-dark px-6 py-2.5 rounded-xl font-semibold hover:bg-cyan-400 hover:shadow-[0_0_20px_rgba(91,192,190,0.4)] transition-all text-sm">
                             Registrarse
                         </a>
                     {% endif %}
