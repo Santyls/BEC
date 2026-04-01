@@ -399,8 +399,25 @@ def api_colonias(municipio_id):
 
 @app.route('/mis-donaciones')
 def ciudadano_donaciones():
-    if 'jwt_token' not in session: return redirect(url_for('login'))
-    return render_template('ciudadano_donaciones.html')
+    if 'jwt_token' not in session:
+        return redirect(url_for('login'))
+
+    headers = {'Authorization': f"Bearer {session.get('jwt_token')}"}
+    donaciones = []
+
+    try:
+        r = requests.get(f"{API_URL}/donaciones/me", headers=headers, timeout=5)
+        if r.status_code == 200:
+            donaciones = r.json()
+        elif r.status_code == 401:
+            session.clear()
+            return redirect(url_for('login'))
+        else:
+            flash("No se pudo cargar tu historial de donaciones.", "warning")
+    except Exception as e:
+        flash(f"Error al cargar donaciones: {str(e)}", "error")
+
+    return render_template('ciudadano_donaciones.html', donaciones=donaciones)
 
 @app.route('/mis-voluntariados')
 def ciudadano_voluntariados():

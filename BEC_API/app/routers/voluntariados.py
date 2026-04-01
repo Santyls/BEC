@@ -91,7 +91,28 @@ def crear_voluntariado(
 
 @router.get("/")
 def listar_voluntariados(db: Session = Depends(get_db), current_user: Usuario = Depends(get_current_user)):
-    return db.query(Voluntariado).all()
+    voluntariados = db.query(Voluntariado).all()
+    result = []
+    for v in voluntariados:
+        albergue_nombre = None
+        if v.Id_albergue:
+            alb = db.query(Albergue).filter(Albergue.Id_Albergue == v.Id_albergue).first()
+            if alb:
+                albergue_nombre = alb.Nombre_Albergue
+        result.append({
+            "Id_Voluntariado": v.Id_Voluntariado,
+            "Nombre_Voluntariado": v.Nombre_Voluntariado,
+            "Id_albergue": v.Id_albergue,
+            "nombre_albergue": albergue_nombre,
+            "id_campana": v.id_campana,
+            "Fecha_prog": v.Fecha_prog,
+            "Cupo_Max": v.Cupo_Max,
+            "Hora_inicio": v.Hora_inicio,
+            "Hora_Fin": v.Hora_Fin,
+            "Estado_Voluntariado": v.Estado_Voluntariado,
+            "Descripcion_Requisitos": v.Descripcion_Requisitos,
+        })
+    return result
 
 @router.get("/{id}")
 def obtener_voluntariado(id: int, db: Session = Depends(get_db), current_user: Usuario = Depends(get_current_user)):
@@ -154,7 +175,7 @@ def eliminar_voluntariado(id: int, db: Session = Depends(get_db), current_user: 
     }
 
 # --- Inscripciones a Voluntariados ---
-@router.post("/{id}/inscribirse")
+@router.post("/{id}/inscribirse", status_code=status.HTTP_201_CREATED)
 def inscribirse_voluntariado(
     id: int, 
     db: Session = Depends(get_db), 
@@ -208,11 +229,31 @@ def mis_inscripciones(
     inscripciones = db.query(InscripcionVoluntariado).filter(
         InscripcionVoluntariado.Id_Usuario == current_user.id_Usuario
     ).all()
-    
+
     ids_voluntariados = [i.Id_Voluntariado for i in inscripciones]
-    
+
     mis_vols = db.query(Voluntariado).filter(
         Voluntariado.Id_Voluntariado.in_(ids_voluntariados)
     ).all()
-    
-    return mis_vols
+
+    result = []
+    for v in mis_vols:
+        albergue_nombre = None
+        if v.Id_albergue:
+            alb = db.query(Albergue).filter(Albergue.Id_Albergue == v.Id_albergue).first()
+            if alb:
+                albergue_nombre = alb.Nombre_Albergue
+        result.append({
+            "Id_Voluntariado": v.Id_Voluntariado,
+            "Nombre_Voluntariado": v.Nombre_Voluntariado,
+            "Id_albergue": v.Id_albergue,
+            "nombre_albergue": albergue_nombre,
+            "id_campana": v.id_campana,
+            "Fecha_prog": v.Fecha_prog,
+            "Cupo_Max": v.Cupo_Max,
+            "Hora_inicio": v.Hora_inicio,
+            "Hora_Fin": v.Hora_Fin,
+            "Estado_Voluntariado": v.Estado_Voluntariado,
+            "Descripcion_Requisitos": v.Descripcion_Requisitos,
+        })
+    return result

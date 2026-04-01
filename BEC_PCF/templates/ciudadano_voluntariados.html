@@ -43,22 +43,22 @@
     <!-- Lista de Mis Voluntariados -->
     <div class="space-y-4" id="listaVoluntariados">
         {% if mis_voluntariados %}
-            {% for mi_voluntariado in mis_voluntariados %}
-            {% set status = 'proximo' if mi_voluntariado.Estado_Voluntariado == 'Activo' else ('completado' if mi_voluntariado.Estado_Voluntariado == 'Completado' else 'cancelado') %}
+        {% for mi_voluntariado in mis_voluntariados %}
+        {% set status = 'proximo' if mi_voluntariado.Estado_Voluntariado == 'Activo' else ('completado' if
+        mi_voluntariado.Estado_Voluntariado == 'Completado' else 'cancelado') %}
 
-            <div class="voluntariado-card glass-panel rounded-2xl p-6 border transition-colors
+        <div class="voluntariado-card glass-panel rounded-2xl p-6 border transition-colors
                         {% if status == 'proximo' %}
                             border-status-info/30 hover:border-status-info/60
                         {% elif status == 'completado' %}
                             border-status-success/20 hover:border-status-success/40 opacity-80
                         {% else %}
                             border-slate-700/50 opacity-60 grayscale hover:grayscale-0
-                        {% endif %}"
-                data-status="{{ status }}">
+                        {% endif %}" data-status="{{ status }}">
 
-                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                    <div class="flex items-start gap-4">
-                        <div class="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                <div class="flex items-start gap-4">
+                    <div class="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0
                                     {% if status == 'proximo' %}
                                         bg-status-info/10 border border-status-info/30 text-status-info
                                     {% elif status == 'completado' %}
@@ -66,62 +66,73 @@
                                     {% else %}
                                         bg-slate-800 border-slate-600 text-slate-400
                                     {% endif %}">
+                        {% if status == 'proximo' %}
+                        <i data-lucide="calendar-clock" class="w-7 h-7"></i>
+                        {% elif status == 'completado' %}
+                        <i data-lucide="check-circle-2" class="w-7 h-7"></i>
+                        {% else %}
+                        <i data-lucide="ban" class="w-7 h-7"></i>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-3 mb-1">
+                            <h3
+                                class="text-lg font-semibold text-white {{ 'line-through decoration-slate-500 text-slate-300' if status == 'cancelado' else '' }}">
+                                {{ mi_voluntariado.Nombre_Voluntariado }}
+                            </h3>
                             {% if status == 'proximo' %}
-                                <i data-lucide="calendar-clock" class="w-7 h-7"></i>
+                            <span
+                                class="px-2 py-0.5 rounded text-xs font-medium bg-status-info/20 text-status-info border border-status-info/20">Próximo</span>
                             {% elif status == 'completado' %}
-                                <i data-lucide="check-circle-2" class="w-7 h-7"></i>
+                            <span
+                                class="px-2 py-0.5 rounded text-xs font-medium bg-status-success/20 text-status-success border border-status-success/20">Completado</span>
                             {% else %}
-                                <i data-lucide="ban" class="w-7 h-7"></i>
+                            <span
+                                class="px-2 py-0.5 rounded text-xs font-medium bg-slate-800 text-slate-400 border border-slate-700">Cancelado</span>
                             {% endif %}
                         </div>
-                        <div>
-                            <div class="flex items-center gap-3 mb-1">
-                                <h3 class="text-lg font-semibold text-white {{ 'line-through decoration-slate-500 text-slate-300' if status == 'cancelado' else '' }}">
-                                    {{ mi_voluntariado.Nombre_Voluntariado }}
-                                </h3>
-                                {% if status == 'proximo' %}
-                                    <span class="px-2 py-0.5 rounded text-xs font-medium bg-status-info/20 text-status-info border border-status-info/20">Próximo</span>
-                                {% elif status == 'completado' %}
-                                    <span class="px-2 py-0.5 rounded text-xs font-medium bg-status-success/20 text-status-success border border-status-success/20">Completado</span>
-                                {% else %}
-                                    <span class="px-2 py-0.5 rounded text-xs font-medium bg-slate-800 text-slate-400 border border-slate-700">Cancelado</span>
-                                {% endif %}
-                            </div>
-                            <p class="text-sm text-slate-400 flex flex-wrap items-center gap-x-4 gap-y-2 mt-2">
-                                <span class="flex items-center gap-1.5"><i data-lucide="calendar" class="w-4 h-4 text-slate-500"></i> {{ mi_voluntariado.Fecha_prog }}</span>
-                                <span class="flex items-center gap-1.5"><i data-lucide="clock" class="w-4 h-4 text-slate-500"></i> {{ mi_voluntariado.Hora_inicio }} - {{ mi_voluntariado.Hora_Fin }}</span>
-                                <span class="flex items-center gap-1.5"><i data-lucide="map-pin" class="w-4 h-4 text-slate-500"></i> Albergue ID: {{ mi_voluntariado.Id_albergue }}</span>
-                            </p>
-                        </div>
+                        <p class="text-sm text-slate-400 flex flex-wrap items-center gap-x-4 gap-y-2 mt-2">
+                            <span class="flex items-center gap-1.5"><i data-lucide="calendar"
+                                    class="w-4 h-4 text-slate-500"></i> {{ mi_voluntariado.Fecha_prog }}</span>
+                            <span class="flex items-center gap-1.5"><i data-lucide="clock"
+                                    class="w-4 h-4 text-slate-500"></i> {{ mi_voluntariado.Hora_inicio }} - {{
+                                mi_voluntariado.Hora_Fin }}</span>
+                            <span class="flex items-center gap-1.5"><i data-lucide="map-pin"
+                                    class="w-4 h-4 text-slate-500"></i> {{ mi_voluntariado.nombre_albergue or 'Sin
+                                albergue asignado' }}</span>
+                        </p>
                     </div>
+                </div>
 
-                    <div class="flex flex-wrap items-center gap-3 flex-shrink-0">
-                        {% if status == 'proximo' %}
-                        <button onclick="abrirModalCancelar({{ mi_voluntariado.Id_Voluntariado }}, '{{ mi_voluntariado.Nombre_Voluntariado | replace("'", "\\'") }}')"
-                            class="text-status-danger hover:text-white bg-status-danger/10 hover:bg-status-danger/20 border border-status-danger/20 px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2">
-                            <i data-lucide="x-circle" class="w-4 h-4"></i> Cancelar Asistencia
-                        </button>
-                        {% endif %}
-                        <button onclick="abrirModalDetalles({{ mi_voluntariado.Id_Voluntariado }}, '{{ mi_voluntariado.Nombre_Voluntariado | replace("'", "\\'") }}', '{{ status }}', false, '{{ mi_voluntariado.Fecha_prog }}', '{{ mi_voluntariado.Hora_inicio }}', '{{ mi_voluntariado.Hora_Fin }}', '{{ mi_voluntariado.Id_albergue or "" }}')"
-                            class="text-slate-300 hover:text-bec-dark bg-white/5 hover:bg-bec-accent border border-white/10 hover:border-bec-accent px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2">
-                            Ver Detalles <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                        </button>
-                    </div>
+                <div class="flex flex-wrap items-center gap-3 flex-shrink-0">
+                    {% if status == 'proximo' %}
+                    <button
+                        onclick="abrirModalCancelar({{ mi_voluntariado.Id_Voluntariado }}, '{{ mi_voluntariado.Nombre_Voluntariado | replace("'", "\\'") }}')"
+                        class="text-status-danger hover:text-white bg-status-danger/10 hover:bg-status-danger/20 border border-status-danger/20 px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2">
+                        <i data-lucide="x-circle" class="w-4 h-4"></i> Cancelar Asistencia
+                    </button>
+                    {% endif %}
+                    <button
+                        onclick="abrirModalDetalles({{ mi_voluntariado.Id_Voluntariado }}, '{{ mi_voluntariado.Nombre_Voluntariado | replace("'", "\\'") }}', '{{ status }}', false, '{{ mi_voluntariado.Fecha_prog }}', '{{ mi_voluntariado.Hora_inicio }}', '{{ mi_voluntariado.Hora_Fin }}', '{{ mi_voluntariado.nombre_albergue or "" }}')"
+                        class="text-slate-300 hover:text-bec-dark bg-white/5 hover:bg-bec-accent border border-white/10 hover:border-bec-accent px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2">
+                        Ver Detalles <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
                 </div>
             </div>
-            {% endfor %}
+        </div>
+        {% endfor %}
         {% else %}
-            <div class="text-center py-10 bg-white/5 rounded-2xl border border-white/10">
-                <div class="w-16 h-16 rounded-full bg-white/10 mx-auto flex items-center justify-center mb-4">
-                    <i data-lucide="inbox" class="w-8 h-8 text-slate-400"></i>
-                </div>
-                <h3 class="text-white text-lg font-medium mb-2">Aún no tienes voluntariados</h3>
-                <p class="text-slate-400 text-sm max-w-sm mx-auto">Cuando te anotes a alguna campaña, aparecerá aquí.</p>
-                <button onclick="abrirPanelVoluntariados()"
-                    class="mt-6 px-6 py-2 bg-bec-accent text-bec-dark rounded-lg font-bold shadow-lg hover:bg-bec-accent/80 transition-colors inline-block">
-                    Explorar Campañas
-                </button>
+        <div class="text-center py-10 bg-white/5 rounded-2xl border border-white/10">
+            <div class="w-16 h-16 rounded-full bg-white/10 mx-auto flex items-center justify-center mb-4">
+                <i data-lucide="inbox" class="w-8 h-8 text-slate-400"></i>
             </div>
+            <h3 class="text-white text-lg font-medium mb-2">Aún no tienes voluntariados</h3>
+            <p class="text-slate-400 text-sm max-w-sm mx-auto">Cuando te anotes a alguna campaña, aparecerá aquí.</p>
+            <button onclick="abrirPanelVoluntariados()"
+                class="mt-6 px-6 py-2 bg-bec-accent text-bec-dark rounded-lg font-bold shadow-lg hover:bg-bec-accent/80 transition-colors inline-block">
+                Explorar Campañas
+            </button>
+        </div>
         {% endif %}
     </div>
 </div>
@@ -153,36 +164,40 @@
         <!-- Lista dinámica de disponibles -->
         <div class="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
             {% if voluntariados_disponibles %}
-                {% for v in voluntariados_disponibles %}
-                <div class="bg-white/5 border border-white/10 rounded-xl p-5 hover:border-bec-accent/50 transition-colors">
-                    <div class="flex justify-between items-start mb-3">
-                        <h3 class="font-semibold text-white text-lg">{{ v.Nombre_Voluntariado }}</h3>
-                        <span class="bg-bec-accent/20 text-bec-accent text-xs px-2 py-1 rounded font-medium border border-bec-accent/30">Activo</span>
-                    </div>
-                    <div class="space-y-2 mb-4">
-                        <p class="text-sm text-slate-400 flex items-center gap-2">
-                            <i data-lucide="calendar" class="w-4 h-4 text-slate-500"></i> {{ v.Fecha_prog }}
-                        </p>
-                        <p class="text-sm text-slate-400 flex items-center gap-2">
-                            <i data-lucide="clock" class="w-4 h-4 text-slate-500"></i> {{ v.Hora_inicio }} – {{ v.Hora_Fin }}
-                        </p>
-                        {% if v.Id_albergue %}
-                        <p class="text-sm text-slate-400 flex items-center gap-2">
-                            <i data-lucide="map-pin" class="w-4 h-4 text-slate-500"></i> Albergue ID: {{ v.Id_albergue }}
-                        </p>
-                        {% endif %}
-                    </div>
-                    <button onclick="abrirModalDetalles({{ v.Id_Voluntariado }}, '{{ v.Nombre_Voluntariado | replace("'", "\\'") }}', 'disponible', true, '{{ v.Fecha_prog }}', '{{ v.Hora_inicio }}', '{{ v.Hora_Fin }}', '{{ v.Id_albergue or "" }}')"
-                        class="w-full text-center text-sm font-medium bg-white/5 hover:bg-bec-accent hover:text-bec-dark text-slate-300 py-2 rounded-lg border border-white/10 transition-colors flex items-center justify-center gap-2">
-                        Ver Detalles e Inscribirse
-                    </button>
+            {% for v in voluntariados_disponibles %}
+            <div class="bg-white/5 border border-white/10 rounded-xl p-5 hover:border-bec-accent/50 transition-colors">
+                <div class="flex justify-between items-start mb-3">
+                    <h3 class="font-semibold text-white text-lg">{{ v.Nombre_Voluntariado }}</h3>
+                    <span
+                        class="bg-bec-accent/20 text-bec-accent text-xs px-2 py-1 rounded font-medium border border-bec-accent/30">Activo</span>
                 </div>
-                {% endfor %}
+                <div class="space-y-2 mb-4">
+                    <p class="text-sm text-slate-400 flex items-center gap-2">
+                        <i data-lucide="calendar" class="w-4 h-4 text-slate-500"></i> {{ v.Fecha_prog }}
+                    </p>
+                    <p class="text-sm text-slate-400 flex items-center gap-2">
+                        <i data-lucide="clock" class="w-4 h-4 text-slate-500"></i> {{ v.Hora_inicio }} – {{ v.Hora_Fin
+                        }}
+                    </p>
+                    {% if v.Id_albergue %}
+                    <p class="text-sm text-slate-400 flex items-center gap-2">
+                        <i data-lucide="map-pin" class="w-4 h-4 text-slate-500"></i> {{ v.nombre_albergue or 'Sin
+                        albergue asignado' }}
+                    </p>
+                    {% endif %}
+                </div>
+                <button
+                    onclick="abrirModalDetalles({{ v.Id_Voluntariado }}, '{{ v.Nombre_Voluntariado | replace("'", "\\'") }}', 'disponible', true, '{{ v.Fecha_prog }}', '{{ v.Hora_inicio }}', '{{ v.Hora_Fin }}', '{{ v.nombre_albergue or "" }}')"
+                    class="w-full text-center text-sm font-medium bg-white/5 hover:bg-bec-accent hover:text-bec-dark text-slate-300 py-2 rounded-lg border border-white/10 transition-colors flex items-center justify-center gap-2">
+                    Ver Detalles e Inscribirse
+                </button>
+            </div>
+            {% endfor %}
             {% else %}
-                <div class="text-center py-12">
-                    <i data-lucide="check-circle-2" class="w-12 h-12 text-bec-accent/40 mx-auto mb-3"></i>
-                    <p class="text-slate-400 text-sm">No hay voluntariados disponibles en este momento.</p>
-                </div>
+            <div class="text-center py-12">
+                <i data-lucide="check-circle-2" class="w-12 h-12 text-bec-accent/40 mx-auto mb-3"></i>
+                <p class="text-slate-400 text-sm">No hay voluntariados disponibles en este momento.</p>
+            </div>
             {% endif %}
         </div>
     </div>
@@ -204,22 +219,27 @@
             </button>
 
             <!-- Izquierda: Descripción -->
-            <div class="w-full md:w-1/2 bg-bec-dark/60 p-8 border-b md:border-b-0 md:border-r border-white/5 flex flex-col">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-bec-accent/10 border border-bec-accent/30 text-bec-accent text-xs font-semibold mb-6 uppercase tracking-widest w-fit">
+            <div
+                class="w-full md:w-1/2 bg-bec-dark/60 p-8 border-b md:border-b-0 md:border-r border-white/5 flex flex-col">
+                <div
+                    class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-bec-accent/10 border border-bec-accent/30 text-bec-accent text-xs font-semibold mb-6 uppercase tracking-widest w-fit">
                     <i data-lucide="info" class="w-3 h-3"></i> Información de Campaña
                 </div>
                 <h2 id="modalTitulo" class="text-2xl font-bold text-white mb-4">—</h2>
                 <div class="text-slate-300 text-sm leading-relaxed space-y-4 mb-6 flex-grow">
-                    <p>Esta campaña está destinada a brindar apoyo directo a las comunidades. Tu participación es vital para lograr los objetivos de asistencia social del albergue.</p>
+                    <p>Esta campaña está destinada a brindar apoyo directo a las comunidades. Tu participación es vital
+                        para lograr los objetivos de asistencia social del albergue.</p>
                     <p>
                         <strong>Actividades principales:</strong><br>
                         • Recepción y organización.<br>
                         • Apoyo logístico y distribución.<br>
                         • Atención a beneficiarios.
                     </p>
-                    <div class="bg-status-warning/10 border border-status-warning/20 p-3 rounded-lg flex items-start gap-3 mt-4">
+                    <div
+                        class="bg-status-warning/10 border border-status-warning/20 p-3 rounded-lg flex items-start gap-3 mt-4">
                         <i data-lucide="alert-circle" class="w-5 h-5 text-status-warning flex-shrink-0 mt-0.5"></i>
-                        <p class="text-xs text-status-warning">Se recomienda llevar ropa cómoda, zapatos cerrados e hidratación personal.</p>
+                        <p class="text-xs text-status-warning">Se recomienda llevar ropa cómoda, zapatos cerrados e
+                            hidratación personal.</p>
                     </div>
                 </div>
             </div>
@@ -231,7 +251,8 @@
                 </h3>
                 <div class="space-y-6">
                     <div class="flex gap-4">
-                        <div class="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0 border border-white/10">
+                        <div
+                            class="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0 border border-white/10">
                             <i data-lucide="calendar" class="w-5 h-5 text-bec-accent"></i>
                         </div>
                         <div>
@@ -241,7 +262,8 @@
                         </div>
                     </div>
                     <div class="flex gap-4">
-                        <div class="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0 border border-white/10">
+                        <div
+                            class="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0 border border-white/10">
                             <i data-lucide="map-pin" class="w-5 h-5 text-bec-accent"></i>
                         </div>
                         <div>
@@ -268,11 +290,13 @@
         <div class="bg-bec-base border border-bec-accent/30 w-full max-w-md rounded-2xl shadow-[0_0_30px_rgba(91,192,190,0.15)] overflow-hidden pointer-events-auto transform scale-95 opacity-0 transition-all duration-300"
             id="modalInscribirContent">
             <div class="p-6 text-center">
-                <div class="w-16 h-16 bg-bec-accent/10 text-bec-accent rounded-full flex items-center justify-center mx-auto mb-4 border border-bec-accent/20">
+                <div
+                    class="w-16 h-16 bg-bec-accent/10 text-bec-accent rounded-full flex items-center justify-center mx-auto mb-4 border border-bec-accent/20">
                     <i data-lucide="check-circle" class="w-8 h-8"></i>
                 </div>
                 <h3 class="text-xl font-bold text-white mb-2">¡Únete a la causa!</h3>
-                <p class="text-slate-400 text-sm mb-6">¿Estás seguro de que deseas anotarte? El albergue contará con tu asistencia en la fecha indicada.</p>
+                <p class="text-slate-400 text-sm mb-6">¿Estás seguro de que deseas anotarte? El albergue contará con tu
+                    asistencia en la fecha indicada.</p>
                 <div class="flex gap-3">
                     <button onclick="cerrarModalInscribir()"
                         class="flex-1 bg-white/5 hover:bg-white/10 text-white font-medium py-2.5 rounded-lg transition-colors border border-white/10">
@@ -297,16 +321,20 @@
         <div class="bg-bec-base border border-status-danger/30 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden pointer-events-auto transform scale-95 opacity-0 transition-all duration-300"
             id="modalConfirmarContent">
             <div class="p-6 text-center">
-                <div class="w-16 h-16 bg-status-danger/10 text-status-danger rounded-full flex items-center justify-center mx-auto mb-4">
+                <div
+                    class="w-16 h-16 bg-status-danger/10 text-status-danger rounded-full flex items-center justify-center mx-auto mb-4">
                     <i data-lucide="alert-triangle" class="w-8 h-8"></i>
                 </div>
                 <h3 class="text-xl font-bold text-white mb-2">¿Cancelar asistencia?</h3>
-                <p class="text-slate-400 text-sm mb-6">Estás a punto de cancelar tu participación en este voluntariado. ¿Deseas proceder?</p>
+                <p class="text-slate-400 text-sm mb-6">Estás a punto de cancelar tu participación en este voluntariado.
+                    ¿Deseas proceder?</p>
                 <div class="flex gap-3">
                     <button onclick="cerrarModalCancelar()"
-                        class="flex-1 bg-white/5 hover:bg-white/10 text-white font-medium py-2.5 rounded-lg border border-white/10">No, mantener</button>
+                        class="flex-1 bg-white/5 hover:bg-white/10 text-white font-medium py-2.5 rounded-lg border border-white/10">No,
+                        mantener</button>
                     <button onclick="ejecutarCancelacion()"
-                        class="flex-1 bg-status-danger hover:bg-red-600 text-white font-bold py-2.5 rounded-lg shadow-[0_0_15px_rgba(239,68,68,0.3)]">Sí, cancelar</button>
+                        class="flex-1 bg-status-danger hover:bg-red-600 text-white font-bold py-2.5 rounded-lg shadow-[0_0_15px_rgba(239,68,68,0.3)]">Sí,
+                        cancelar</button>
                 </div>
             </div>
         </div>
@@ -322,16 +350,28 @@
 </form>
 
 <style>
-    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
 </style>
 
 <script>
     // ── Estado global ────────────────────────────────────────────────────────
     let voluntariadoIdSeleccionado = null;
-    let voluntariadoIdACancelar    = null;
+    let voluntariadoIdACancelar = null;
 
     // 1. Filtros de pestañas
     function filtrarVoluntariados(estado, botonClickeado) {
@@ -345,12 +385,12 @@
         document.querySelectorAll('.voluntariado-card').forEach(tarjeta => {
             tarjeta.style.display =
                 (estado === 'todos' || tarjeta.getAttribute('data-status') === estado)
-                ? 'block' : 'none';
+                    ? 'block' : 'none';
         });
     }
 
     // 2. Panel lateral
-    const panel        = document.getElementById('panelVoluntariados');
+    const panel = document.getElementById('panelVoluntariados');
     const panelOverlay = document.getElementById('panelOverlay');
     const panelContent = document.getElementById('panelContent');
 
@@ -375,17 +415,17 @@
 
     // 3. Modal de detalles
     // Firma: (id, titulo, estado, esModoInscripcion, fecha, horaInicio, horaFin, idAlbergue)
-    const modalDetalles     = document.getElementById('modalDetalles');
+    const modalDetalles = document.getElementById('modalDetalles');
     const modalDetallesBody = document.getElementById('modalDetallesBody');
     const modalFooterAccion = document.getElementById('modalFooterAccion');
 
     function abrirModalDetalles(id, titulo, estado, esModoInscripcion, fecha, horaInicio, horaFin, idAlbergue) {
         voluntariadoIdSeleccionado = id;
 
-        document.getElementById('modalTitulo').innerText    = titulo      || '—';
-        document.getElementById('modalFecha').innerText     = fecha       || '—';
-        document.getElementById('modalHoras').innerText     = (horaInicio && horaFin) ? `${horaInicio} – ${horaFin}` : '—';
-        document.getElementById('modalUbicacion').innerText = idAlbergue  ? `Albergue ID: ${idAlbergue}` : 'Sin asignar';
+        document.getElementById('modalTitulo').innerText = titulo || '—';
+        document.getElementById('modalFecha').innerText = fecha || '—';
+        document.getElementById('modalHoras').innerText = (horaInicio && horaFin) ? `${horaInicio} – ${horaFin}` : '—';
+        document.getElementById('modalUbicacion').innerText = idAlbergue || 'Sin asignar';
 
         modalFooterAccion.innerHTML = '';
 
@@ -435,7 +475,7 @@
     }
 
     // 4. Modal de confirmación de inscripción
-    const modalInscribir        = document.getElementById('modalConfirmarInscripcion');
+    const modalInscribir = document.getElementById('modalConfirmarInscripcion');
     const modalInscribirContent = document.getElementById('modalInscribirContent');
 
     function abrirModalInscribir() {
@@ -463,7 +503,7 @@
     }
 
     // 5. Modal de confirmación de cancelación
-    const modalConfirmar        = document.getElementById('modalConfirmar');
+    const modalConfirmar = document.getElementById('modalConfirmar');
     const modalConfirmarContent = document.getElementById('modalConfirmarContent');
 
     function abrirModalCancelar(id, nombre) {

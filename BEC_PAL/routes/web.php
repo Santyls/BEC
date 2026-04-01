@@ -74,8 +74,9 @@ Route::prefix('admin')->name('admin.')->middleware('auth.api')->group(function (
     });
 
     // Reportes
-    Route::get('/reportes', [\App\Http\Controllers\Admin\ReporteController::class, 'index'])->name('reportes.index');
-    Route::post('/reportes/generar', [\App\Http\Controllers\Admin\ReporteController::class, 'generar'])->name('reportes.generar');
+    Route::get('/reportes',         [\App\Http\Controllers\Admin\ReporteController::class, 'index'])->name('reportes.index');
+    Route::get('/reportes/datos',   [\App\Http\Controllers\Admin\ReporteController::class, 'datos'])->name('reportes.datos');
+    Route::post('/reportes/generar',[\App\Http\Controllers\Admin\ReporteController::class, 'generar'])->name('reportes.generar');
 
     // Predicciones (Modelo ML)
     Route::prefix('predicciones')->name('predicciones.')->group(function () {

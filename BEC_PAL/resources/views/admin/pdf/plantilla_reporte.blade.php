@@ -1,195 +1,92 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Reporte de {{ ucfirst($tipo) }}</title>
-    <style>
-        body {
-            font-family: DejaVu Sans, Arial, sans-serif;
-            font-size: 11px;
-            color: #1e293b;
-            margin: 0;
-            padding: 24px 30px 50px 30px;
-        }
-
-        /* ── Membrete ─────────────────────────── */
-        .header-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; border-bottom: 3px solid #1d4ed8; padding-bottom: 10px; }
-        .header-org { font-size: 18px; font-weight: bold; color: #1d4ed8; text-transform: uppercase; letter-spacing: 1px; }
-        .header-sub { font-size: 10px; color: #64748b; margin-top: 3px; }
-        .header-fecha { text-align: right; font-size: 10px; color: #64748b; vertical-align: top; }
-        .header-fecha strong { display: block; color: #1e293b; margin-bottom: 2px; }
-
-        /* ── Título ───────────────────────────── */
-        .titulo { text-align: center; font-size: 14px; font-weight: bold; text-transform: uppercase;
-                  color: #0f172a; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 14px; }
-        .subtitulo { text-align: center; font-size: 10px; color: #94a3b8; margin-bottom: 16px; margin-top: -10px; }
-
-        /* ── Stats ────────────────────────────── */
-        .stats-table { width: 100%; border-collapse: collapse; margin-bottom: 18px; }
-        .stats-table td { border: 1px solid #e2e8f0; background: #f8fafc; text-align: center; padding: 10px 8px; }
-        .stat-value { font-size: 22px; font-weight: bold; color: #1d4ed8; }
-        .stat-value.verde { color: #15803d; }
-        .stat-value.rojo  { color: #b91c1c; }
-        .stat-label { font-size: 9px; text-transform: uppercase; color: #64748b; margin-top: 3px; letter-spacing: 0.4px; }
-
-        /* ── Sección ──────────────────────────── */
-        .section-label { font-size: 10px; font-weight: bold; text-transform: uppercase; color: #1d4ed8;
-                         border-left: 3px solid #1d4ed8; padding-left: 6px; margin-bottom: 8px; }
-
-        /* ── Tabla de datos ───────────────────── */
-        table.datos { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        table.datos th { background-color: #1d4ed8; color: #fff; font-size: 10px; text-transform: uppercase;
-                         padding: 7px 8px; text-align: left; letter-spacing: 0.3px; }
-        table.datos td { border: 1px solid #e2e8f0; padding: 6px 8px; color: #334155; vertical-align: middle; }
-        table.datos tr.par td { background-color: #f8fafc; }
-
-        /* ── Badges ───────────────────────────── */
-        .badge { padding: 2px 6px; border-radius: 3px; font-size: 9px; font-weight: bold; text-transform: uppercase; }
-        .badge-activo   { background: #dcfce7; color: #15803d; }
-        .badge-inactivo { background: #fee2e2; color: #b91c1c; }
-        .badge-nuevo    { background: #dbeafe; color: #1d4ed8; }
-        .badge-bueno    { background: #fef9c3; color: #854d0e; }
-        .badge-regular  { background: #fce7f3; color: #9d174d; }
-        .id-cell { font-family: monospace; color: #64748b; font-size: 10px; }
-
-        /* ── Estado vacío ─────────────────────── */
-        .empty { text-align: center; padding: 30px; color: #64748b; font-size: 12px;
-                 border: 1px dashed #cbd5e1; background: #f8fafc; }
-
-        /* ── Footer ───────────────────────────── */
-        .footer { text-align: center; font-size: 9px; color: #94a3b8;
-                  border-top: 1px solid #e2e8f0; padding-top: 8px; margin-top: 20px; }
-    </style>
+<meta charset="UTF-8">
+<title>Reporte {{ ucfirst($tipo) }}</title>
+<style>
+body { font-family: DejaVu Sans, sans-serif; font-size: 10px; color: #222; margin: 20px; }
+h1   { font-size: 16px; color: #1d4ed8; margin: 0 0 2px 0; }
+.sub { font-size: 9px; color: #666; margin-bottom: 14px; }
+.hr  { border: none; border-top: 2px solid #1d4ed8; margin-bottom: 12px; }
+.stat-wrap { margin-bottom: 14px; }
+.stat-box  { display: inline-block; border: 1px solid #ccc; padding: 6px 12px; margin-right: 8px; text-align: center; min-width: 80px; background: #f8fafc; }
+.stat-val  { font-size: 18px; font-weight: bold; color: #1d4ed8; }
+.stat-lbl  { font-size: 8px; color: #666; text-transform: uppercase; }
+table { width: 100%; border-collapse: collapse; margin-top: 6px; }
+th    { background: #1d4ed8; color: #fff; padding: 6px 7px; text-align: left; font-size: 9px; text-transform: uppercase; }
+td    { border: 1px solid #ddd; padding: 5px 7px; }
+.par  { background: #f1f5f9; }
+.foot { font-size: 8px; color: #999; text-align: center; margin-top: 18px; border-top: 1px solid #ddd; padding-top: 6px; }
+</style>
 </head>
 <body>
 
-{{-- Membrete --}}
-<table class="header-table">
-    <tr>
-        <td style="vertical-align: middle; padding-bottom: 10px;">
-            <div class="header-org">BEC &mdash; Blue Earth Coders</div>
-            <div class="header-sub">Sistema de Administración y Gestión &bull; BEC_PAL</div>
-        </td>
-        <td class="header-fecha" style="padding-bottom: 10px; width: 200px;">
-            <strong>Generado el:</strong>
-            {{ $fecha }}
-        </td>
-    </tr>
-</table>
+<h1>BEC &mdash; Blue Earth Coders</h1>
+<div class="sub">Sistema de Administración &bull; BEC_PAL &bull; Generado: {{ $fecha }}</div>
+<hr class="hr">
 
-{{-- Título dinámico --}}
-<div class="titulo">Consolidado de {{ ucfirst($tipo) }}</div>
-<div class="subtitulo">Reporte oficial del período actual &bull; Confidencial</div>
+<h2 style="font-size:13px;margin-bottom:10px;">Consolidado de {{ ucfirst($tipo) }}</h2>
 
-{{-- Estadísticas de resumen --}}
+{{-- Stats --}}
+<div class="stat-wrap">
 @if($tipo === 'donaciones')
-<table class="stats-table">
-    <tr>
-        <td style="width: 33%;">
-            <div class="stat-value">{{ $stats['total'] }}</div>
-            <div class="stat-label">Total registros</div>
-        </td>
-        <td style="width: 33%;">
-            <div class="stat-value">{{ number_format($stats['cantidad_total'], 0) }}</div>
-            <div class="stat-label">Unidades totales</div>
-        </td>
-        <td style="width: 33%;">
-            <div class="stat-value">{{ count($stats['por_condicion']) }}</div>
-            <div class="stat-label">Tipos de condición</div>
-        </td>
-    </tr>
-</table>
+  <span class="stat-box"><div class="stat-val">{{ $stats['total'] }}</div><div class="stat-lbl">Registros</div></span>
+  <span class="stat-box"><div class="stat-val">{{ number_format($stats['cantidad_total'],0) }}</div><div class="stat-lbl">Unidades</div></span>
+  @foreach($stats['por_condicion'] as $k => $v)
+  <span class="stat-box"><div class="stat-val">{{ $v }}</div><div class="stat-lbl">{{ $k }}</div></span>
+  @endforeach
 @elseif($tipo === 'voluntariados')
-<table class="stats-table">
-    <tr>
-        <td style="width: 33%;">
-            <div class="stat-value">{{ $stats['total'] }}</div>
-            <div class="stat-label">Total voluntariados</div>
-        </td>
-        <td style="width: 33%;">
-            <div class="stat-value verde">{{ $stats['activos'] }}</div>
-            <div class="stat-label">Activos</div>
-        </td>
-        <td style="width: 33%;">
-            <div class="stat-value rojo">{{ $stats['inactivos'] }}</div>
-            <div class="stat-label">Inactivos</div>
-        </td>
-    </tr>
-</table>
+  <span class="stat-box"><div class="stat-val">{{ $stats['total'] }}</div><div class="stat-lbl">Total</div></span>
+  <span class="stat-box"><div class="stat-val">{{ $stats['activos'] }}</div><div class="stat-lbl">Activos</div></span>
+  <span class="stat-box"><div class="stat-val">{{ $stats['inactivos'] }}</div><div class="stat-lbl">Inactivos</div></span>
 @endif
-
-{{-- Tabla de detalle --}}
-<div class="section-label">Detalle de registros</div>
-
-@if(empty($datos))
-    <div class="empty">No hay registros disponibles para este reporte.</div>
-@else
-    <table class="datos">
-        <thead>
-            @if($tipo === 'donaciones')
-            <tr>
-                <th style="width:6%">#ID</th>
-                <th style="width:13%">Categoría</th>
-                <th style="width:14%">Cantidad</th>
-                <th style="width:12%">U. Medida</th>
-                <th style="width:14%">Condición</th>
-                <th style="width:20%">Marca</th>
-                <th style="width:21%">Albergue</th>
-            </tr>
-            @elseif($tipo === 'voluntariados')
-            <tr>
-                <th style="width:27%">Nombre</th>
-                <th style="width:13%">Fecha Prog.</th>
-                <th style="width:13%">Inicio</th>
-                <th style="width:13%">Fin</th>
-                <th style="width:14%">Estado</th>
-                <th style="width:10%">Cupo Máx.</th>
-                <th style="width:10%">Campaña</th>
-            </tr>
-            @endif
-        </thead>
-        <tbody>
-            @if($tipo === 'donaciones')
-                @foreach($datos as $i => $item)
-                @php
-                    $cond = strtolower($item['Id_Condicion'] ?? '');
-                    $bc   = match($cond) { 'nuevo' => 'badge-nuevo', 'bueno' => 'badge-bueno', 'regular' => 'badge-regular', default => '' };
-                @endphp
-                <tr class="{{ $i % 2 === 1 ? 'par' : '' }}">
-                    <td class="id-cell">#{{ $item['Id_Donacion'] ?? 'N/A' }}</td>
-                    <td>{{ $item['id_Categoria'] ?? 'N/A' }}</td>
-                    <td><strong>{{ number_format((float)($item['Cantidad'] ?? 0), 2) }}</strong></td>
-                    <td>{{ $item['Id_Unidad'] ?? '-' }}</td>
-                    <td><span class="badge {{ $bc }}">{{ $item['Id_Condicion'] ?? 'N/A' }}</span></td>
-                    <td>{{ $item['Marca'] ?? '-' }}</td>
-                    <td class="id-cell">{{ $item['Id_Albergue'] ?? '-' }}</td>
-                </tr>
-                @endforeach
-            @elseif($tipo === 'voluntariados')
-                @foreach($datos as $i => $item)
-                @php
-                    $est = strtolower($item['Estado_Voluntariado'] ?? '');
-                    $bc  = $est === 'activo' ? 'badge-activo' : 'badge-inactivo';
-                @endphp
-                <tr class="{{ $i % 2 === 1 ? 'par' : '' }}">
-                    <td><strong>{{ $item['Nombre_Voluntariado'] ?? 'Sin nombre' }}</strong></td>
-                    <td>{{ $item['Fecha_prog'] ?? 'N/A' }}</td>
-                    <td class="id-cell">{{ $item['Hora_inicio'] ?? '-' }}</td>
-                    <td class="id-cell">{{ $item['Hora_Fin'] ?? '-' }}</td>
-                    <td><span class="badge {{ $bc }}">{{ strtoupper($item['Estado_Voluntariado'] ?? 'N/A') }}</span></td>
-                    <td style="text-align:center">{{ $item['Cupo_Max'] ?? '-' }}</td>
-                    <td class="id-cell">{{ $item['id_campana'] ?? '-' }}</td>
-                </tr>
-                @endforeach
-            @endif
-        </tbody>
-    </table>
-@endif
-
-{{-- Footer --}}
-<div class="footer">
-    Documento generado automáticamente &bull; <strong>BEC_PAL &mdash; Blue Earth Coders</strong> &bull; {{ $fecha }} &bull; Confidencial
 </div>
 
+{{-- Tabla --}}
+@if(empty($datos))
+  <p style="color:#666;text-align:center;padding:20px;">Sin registros disponibles.</p>
+@else
+<table>
+  <thead>
+  @if($tipo === 'donaciones')
+    <tr><th>#</th><th>Categoria</th><th>Cantidad</th><th>Unidad</th><th>Condicion</th><th>Marca</th><th>Albergue</th></tr>
+  @else
+    <tr><th>Nombre</th><th>Fecha</th><th>Inicio</th><th>Fin</th><th>Estado</th><th>Cupo</th><th>Campana</th></tr>
+  @endif
+  </thead>
+  <tbody>
+  @if($tipo === 'donaciones')
+    @foreach($datos as $i => $r)
+    <tr class="{{ $i%2?'par':'' }}">
+      <td>{{ $r['Id_Donacion'] ?? '-' }}</td>
+      <td>{{ $r['id_Categoria'] ?? '-' }}</td>
+      <td>{{ number_format((float)($r['Cantidad']??0),2) }}</td>
+      <td>{{ $r['Id_Unidad'] ?? '-' }}</td>
+      <td>{{ $r['Id_Condicion'] ?? '-' }}</td>
+      <td>{{ $r['Marca'] ?? '-' }}</td>
+      <td>{{ $r['Id_Albergue'] ?? '-' }}</td>
+    </tr>
+    @endforeach
+  @else
+    @foreach($datos as $i => $r)
+    <tr class="{{ $i%2?'par':'' }}">
+      <td>{{ $r['Nombre_Voluntariado'] ?? '-' }}</td>
+      <td>{{ $r['Fecha_prog'] ?? '-' }}</td>
+      <td>{{ $r['Hora_inicio'] ?? '-' }}</td>
+      <td>{{ $r['Hora_Fin'] ?? '-' }}</td>
+      <td>{{ $r['Estado_Voluntariado'] ?? '-' }}</td>
+      <td>{{ $r['Cupo_Max'] ?? '-' }}</td>
+      <td>{{ $r['id_campana'] ?? '-' }}</td>
+    </tr>
+    @endforeach
+  @endif
+  </tbody>
+</table>
+@if(count($datos) >= 200)
+  <p style="color:#666;font-size:9px;margin-top:6px;">* Reporte limitado a 200 registros. Descarga el CSV para el listado completo.</p>
+@endif
+@endif
+
+<div class="foot">BEC_PAL &mdash; Blue Earth Coders &bull; {{ $fecha }} &bull; Confidencial</div>
 </body>
 </html>
