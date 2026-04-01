@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Admin') - BEC</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -11,6 +12,7 @@
         .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
         .sidebar-item-active { background: rgba(59, 130, 246, 0.1); color: #60a5fa; border-left: 4px solid #3b82f6; }
     </style>
+    @stack('styles')
 </head>
 <body class="flex h-screen overflow-hidden">
     <!-- BARRA LATERAL -->
@@ -82,5 +84,6 @@
     <script>
         lucide.createIcons();
     </script>
+    @stack('scripts')
 </body>
 </html>

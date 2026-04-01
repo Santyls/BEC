@@ -9,7 +9,7 @@ from app.security.security import get_current_user, get_admin_user
 
 router = APIRouter()
 
-# --- Schemas ---
+#Schemas
 
 class VoluntariadoCreate(BaseModel):
     Nombre_Voluntariado: str
@@ -113,7 +113,6 @@ def actualizar_voluntariado(
         
     update_data = voluntariado_in.model_dump(exclude_unset=True)
     
-    # Validacion foraneas
     if "Id_albergue" in update_data and update_data["Id_albergue"] is not None:
         albergue_existe = db.query(Albergue).filter(Albergue.Id_Albergue == update_data["Id_albergue"]).first()
         if not albergue_existe:

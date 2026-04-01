@@ -34,7 +34,7 @@ class Colonia(Base):
 
 class Direccion(Base):
     __tablename__ = "direcciones"
-    Id_Direccion = Column(Integer, primary_key=True, index=True)
+    Id_Direccion = Column(Integer, primary_key=True, index=True, autoincrement=True)
     Id_Colonia = Column(Integer, ForeignKey("colonias.Id_Colonia"), nullable=False)
     Calle = Column(String(100), nullable=False)
     No_exterior = Column(String(20), nullable=False)
@@ -65,7 +65,7 @@ class Usuario(Base):
     Correo = Column(String(100), unique=True, index=True, nullable=False)
     Password = Column(String(250), nullable=False)
     Edad = Column(Integer, nullable=False)
-    Id_Direccion = Column(Integer, nullable=False)  # Podría ser FK a direcciones también
+    Id_Direccion = Column(Integer, ForeignKey("direcciones.Id_Direccion"), nullable=True)  # Opcional — dirección del usuario
     Id_Albergue = Column(Integer, ForeignKey("albergues.Id_Albergue"), nullable=True)
     Id_Rol = Column(Integer, nullable=False)        # FK lógica a roles
     Tel = Column(BigInteger, nullable=False)

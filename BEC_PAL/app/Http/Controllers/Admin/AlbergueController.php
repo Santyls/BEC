@@ -12,36 +12,67 @@ class AlbergueController extends Controller
 
     public function __construct()
     {
-        $this->apiUrl = env('BEC_API_URL', 'http://bec_api_app:5000');
+        $this->apiUrl = rtrim(env('BEC_API_URL', 'http://bec_api_app:5000'), '/');
     }
 
-    public function index()
+    /** GET /admin/albergues — Vista principal o JSON para fetch JS */
+    public function index(Request $request)
     {
-        // Consumir la API usando el token almacenado en sesión
-        $response = Http::withToken(session('api_token'))->get("{$this->apiUrl}/albergues/");
+        $res = Http::withToken(session('api_token'))->get("{$this->apiUrl}/albergues/");
 
-        if ($response->successful()) {
-            $albergues = $response->json();
-            return view('admin.albergues.index', compact('albergues'));
+        if ($request->boolean('json') || $request->wantsJson()) {
+            return $res->successful()
+                ? response()->json($res->json())
+                : response()->json([], $res->status());
         }
 
-        return view('admin.albergues.index', ['albergues' => [], 'error' => 'No se pudo conectar con la API para obtener los albergues.']);
+        return view('admin.albergues.index');
     }
 
+    /** POST /admin/albergues — Crear albergue (proxy) */
     public function store(Request $request)
     {
-        $response = Http::withToken(session('api_token'))->post("{$this->apiUrl}/albergues/", [
-            'Nombre_Albergue' => $request->nombre,
-            'Capacidad_Max' => $request->capacidad ? (int)$request->capacidad : null,
-            'Tel_Contacto' => (int)$request->telefono,
-            // Asumimos que colonia_id mapea a un Id_Direccion existente de momento para propósitos prácticos de la UI de pruebas.
-            'Id_Direccion' => (int)$request->colonia_id, 
-        ]);
+        $payload = [
+            'Nombre_Albergue' => $request->Nombre_Albergue,
+            'Capacidad_Max'   => (int) $request->Capacidad_Max,
+            'Tel_Contacto'    => (int) $request->Tel_Contacto,
+            'Id_Direccion'    => (int) $request->Id_Direccion,
+        ];
 
-        if ($response->successful()) {
-            return redirect()->route('admin.albergues.index')->with('success', 'Albergue creado exitosamente.');
-        }
+        $res = Http::withToken(session('api_token'))
+            ->post("{$this->apiUrl}/albergues/", $payload);
 
-        return back()->with('error', 'Error desde la API al crear: ' . $response->body());
+        return $res->successful()
+            ? response()->json(['success' => true,  'message' => 'Albergue creado exitosamente.', 'data' => $res->json()])
+            : response()->json(['success' => false, 'message' => $res->json()['detail'] ?? 'Error al crear el albergue.'], $res->status());
+    }
+
+    /** PATCH /admin/albergues/{id} — Editar albergue (proxy) */
+    public function patch(Request $request, $id)
+    {
+        $payload = array_filter([
+            'Nombre_Albergue' => $request->Nombre_Albergue,
+            'Capacidad_Max'   => $request->Capacidad_Max  ? (int) $request->Capacidad_Max  : null,
+            'Tel_Contacto'    => $request->Tel_Contacto   ? (int) $request->Tel_Contacto   : null,
+            'Id_Direccion'    => $request->Id_Direccion   ? (int) $request->Id_Direccion   : null,
+        ], fn($v) => !is_null($v));
+
+        $res = Http::withToken(session('api_token'))
+            ->patch("{$this->apiUrl}/albergues/{$id}", $payload);
+
+        return $res->successful()
+            ? response()->json(['success' => true,  'message' => 'Albergue actualizado.',  'data' => $res->json()])
+            : response()->json(['success' => false, 'message' => $res->json()['detail'] ?? 'Error al actualizar el albergue.'], $res->status());
+    }
+
+    /** DELETE /admin/albergues/{id} — Eliminar albergue (proxy) */
+    public function destroy($id)
+    {
+        $res = Http::withToken(session('api_token'))
+            ->delete("{$this->apiUrl}/albergues/{$id}");
+
+        return $res->successful()
+            ? response()->json(['success' => true,  'message' => 'Albergue eliminado.'])
+            : response()->json(['success' => false, 'message' => $res->json()['detail'] ?? 'Error al eliminar el albergue.'], $res->status());
     }
 }
