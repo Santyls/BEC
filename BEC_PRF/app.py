@@ -1,29 +1,170 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for, session, flash
+import requests
+from functools import wraps
+import os
 
 app = Flask(__name__)
+# Usamos una clave secreta para firmar la cookie de la session de Flask
+app.secret_key = os.getenv('SECRET_KEY', 'super_secreta_prf_2026')
 
-# --- RUTAS DEL RECEPCIONISTA ---
+API_URL = os.getenv('BEC_API_URL', 'http://bec_api_app:5000')
 
+# ==========================================
+# Decorador de Autenticación
+# ==========================================
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'jwt_token' not in session:
+            flash("Debes iniciar turno para acceder.", "error")
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+# ==========================================
+# RUTAS DE LOGIN
+# ==========================================
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if 'jwt_token' in session:
+        return redirect(url_for('home'))
+
+    if request.method == 'POST':
+        correo = request.form.get('correo')
+        password = request.form.get('password')
+
+        # Hacemos POST a BEC_API enviando como formulario (OAuth2 expected config)
+        try:
+            r = requests.post(f"{API_URL}/login", data={
+                'username': correo,
+                'password': password
+            })
+            
+            if r.status_code == 200:
+                data = r.json()
+                session['jwt_token'] = data.get('access_token')
+                session['correo'] = correo
+                return redirect(url_for('home'))
+            else:
+                flash("Credenciales inválidas. Verifica tu información.", "error")
+        except requests.exceptions.ConnectionError:
+            flash("Error de conexión crítica con el Servidor Central (BEC API).", "error")
+
+    return render_template('login.html')
+
+@app.route('/logout', methods=['POST'])
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
+
+# ==========================================
+# RUTAS DEL RECEPCIONISTA (Protegidas)
+# ==========================================
 @app.route('/')
+@app.route('/home')
+@login_required
 def home():
-    # Renderiza el dashboard principal del recepcionista
+    # Renderiza al dashboard
     return render_template('home.html')
 
-@app.route('/usuarios/nuevo')
-def nuevo_usuario():
-    # Vista para registrar ciudadano (rol asignado por defecto en BD)
-    return render_template('usuarios/index.html') # Placeholder
-
-@app.route('/donaciones/nueva')
+@app.route('/donaciones/nueva', methods=['GET', 'POST'])
+@login_required
 def nueva_donacion():
-    # Vista para registrar donativo vinculado a un ciudadano
-    return render_template('donaciones/index.html') # Placeholder
+    # Obtener catálogos desde la API para llenar los Selects del formulario
+    headers = {'Authorization': f"Bearer {session.get('jwt_token')}"}
+    
+    # En la vida real harías gets a /categorias y /unidades si existieran los endpoints, 
+    # por ahora simulamos los IDs con un template estático y mandamos directo a donaciones.
+    
+    if request.method == 'POST':
+        # Nota: El Id_Albergue no se manda. La API BEC lo saca del token JWT del recepcionista.
+        payload = {
+            "Id_Usuario": int(request.form.get('id_usuario')), # El ID del donante público
+            "id_Categoria": int(request.form.get('id_categoria')),
+            "Id_Condicion": request.form.get('condicion'),
+            "Cantidad": float(request.form.get('cantidad')),
+            "Id_Unidad": int(request.form.get('id_unidad')),
+            "Marca": request.form.get('marca') or None
+        }
 
-@app.route('/voluntariados/asignar')
+        r = requests.post(f"{API_URL}/donaciones/", json=payload, headers=headers)
+        
+        if r.status_code == 201:
+            flash("¡Donativo registrado exitosamente!", "success")
+            return redirect(url_for('home'))
+        else:
+            flash(f"Error al registrar: {r.text}", "error")
+
+    # Si es GET, mostramos formulario
+    return render_template('donaciones/form.html')
+
+@app.route('/usuarios/nuevo', methods=['GET', 'POST'])
+@login_required
+def nuevo_usuario():
+    if request.method == 'POST':
+        nombre_full = request.form.get('nombre_completo', '').strip()
+        correo = request.form.get('correo')
+        password = request.form.get('password')
+
+        # Lógica simple para dividir el nombre completo en Nombre, Apellido_P, Apellido_M
+        partes = nombre_full.split()
+        nombre = partes[0] if len(partes) > 0 else "Sin Nombre"
+        apellido_p = partes[1] if len(partes) > 1 else " "
+        apellido_m = " ".join(partes[2:]) if len(partes) > 2 else " "
+
+        payload = {
+            "Nombre": nombre,
+            "Apellido_P": apellido_p,
+            "Apellido_M": apellido_m,
+            "Correo": correo,
+            "Password": password,
+            "Edad": 18,              # Default
+            "Id_Direccion": 1,       # Default (Debe existir en la BD)
+            "Tel": 0,                # Default
+            "Id_Genero": 1,          # Default (1 = Masculino generalmente)
+            "Id_Rol": 3              # Ciudadano
+        }
+
+        headers = {'Authorization': f"Bearer {session.get('jwt_token')}"}
+        
+        try:
+            r = requests.post(f"{API_URL}/usuarios/", json=payload, headers=headers)
+            if r.status_code == 201:
+                flash(f"¡Ciudadano {nombre} registrado con éxito!", "success")
+                return redirect(url_for('home'))
+            else:
+                error_detail = r.json().get('detail', r.text)
+                flash(f"Error al registrar: {error_detail}", "error")
+        except Exception as e:
+            flash(f"Error de comunicación con la API: {str(e)}", "error")
+
+    return render_template('usuarios/index.html')
+
+@app.route('/voluntariados/asignar', methods=['GET', 'POST'])
+@login_required
 def asignar_voluntariado():
-    # Vista para apuntar ciudadano a voluntariado
-    return render_template('voluntariados/index.html') # Placeholder
+    headers = {'Authorization': f"Bearer {session.get('jwt_token')}"}
+    
+    if request.method == 'POST':
+        # Próximo paso: Implementar lógica de asignación
+        pass
+
+    # Para el GET, necesitamos cargar los usuarios (ciudadanos) y las campañas
+    usuarios = []
+    campanas = []
+    try:
+        r_u = requests.get(f"{API_URL}/usuarios/", headers=headers)
+        if r_u.status_code == 200:
+            # Filtramos solo por rol Ciudadano (Id_Rol == 3)
+            usuarios = [u for u in r_u.json() if u.get('Id_Rol') == 3]
+            
+        r_c = requests.get(f"{API_URL}/campanas/", headers=headers)
+        if r_c.status_code == 200:
+            campanas = r_c.json()
+    except Exception:
+        pass
+
+    return render_template('voluntariados/index.html', usuarios=usuarios, voluntariados=campanas)
 
 if __name__ == '__main__':
-    # Ejecuta el servidor en el puerto 5000
-    app.run(debug=True, port=5000)
+    app.run(debug=True, host='0.0.0.0', port=5000)

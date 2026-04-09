@@ -80,10 +80,19 @@
 
                 <!-- Botones Acceso -->
                 <div class="hidden md:flex items-center space-x-4 z-10">
-                    <a href="#" class="text-slate-300 hover:text-white font-medium px-3 py-2 transition-colors text-sm">Ingresar</a>
-                    <a href="#" class="bg-bec-accent text-bec-dark px-6 py-2.5 rounded-xl font-semibold hover:bg-cyan-400 hover:shadow-[0_0_20px_rgba(91,192,190,0.4)] transition-all text-sm">
-                        Registrarse
-                    </a>
+                    {% if 'jwt_token' in session %}
+                        <span class="text-bec-accent font-medium px-3 py-2 text-sm">{{ session.get('correo') }}</span>
+                        <form action="{{ url_for('logout') }}" method="POST" class="inline">
+                            <button type="submit" class="bg-rose-500/20 text-rose-400 border border-rose-500/30 px-6 py-2.5 rounded-xl font-semibold hover:bg-rose-500 hover:text-white hover:shadow-[0_0_20px_rgba(244,63,94,0.4)] transition-all text-sm">
+                                Salir
+                            </button>
+                        </form>
+                    {% else %}
+                        <a href="{{ url_for('login') }}" class="text-slate-300 hover:text-white font-medium px-3 py-2 transition-colors text-sm">Ingresar</a>
+                        <a href="{{ url_for('register') }}" class="bg-bec-accent text-bec-dark px-6 py-2.5 rounded-xl font-semibold hover:bg-cyan-400 hover:shadow-[0_0_20px_rgba(91,192,190,0.4)] transition-all text-sm">
+                            Registrarse
+                        </a>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -91,6 +100,20 @@
 
     <!-- CONTENIDO PRINCIPAL (Jinja Restablecido) -->
     <main class="flex-grow pt-28 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-4">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="p-4 rounded-xl text-sm font-medium border shadow-lg
+                            {% if category == 'error' %}bg-rose-500/10 border-rose-500/50 text-rose-400
+                            {% elif category == 'warning' %}bg-amber-500/10 border-amber-500/50 text-amber-400
+                            {% else %}bg-bec-accent/10 border-bec-accent/50 text-bec-accent{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
         {% block content %}{% endblock %}
     </main>
 

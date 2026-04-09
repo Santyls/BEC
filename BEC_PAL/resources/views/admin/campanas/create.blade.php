@@ -14,7 +14,7 @@
         </div>
     </div>
 
-    <form action="#" method="POST" class="glass rounded-2xl p-8 border border-slate-800 space-y-6">
+    <form action="{{ route('admin.campanas.store') }}" method="POST" class="glass rounded-2xl p-8 border border-slate-800 space-y-6">
         @csrf
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             
@@ -36,9 +36,9 @@
             <div>
                 <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Estado</label>
                 <select name="estado" class="w-full bg-slate-900 border border-slate-700 text-slate-200 text-sm rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500">
-                    <option value="programada">Programada (Futura)</option>
-                    <option value="activa">Activa</option>
-                    <option value="finalizada">Finalizada</option>
+                    <option value="1">Programada (Futura)</option>
+                    <option value="2">Activa</option>
+                    <option value="3">Finalizada</option>
                 </select>
             </div>
 

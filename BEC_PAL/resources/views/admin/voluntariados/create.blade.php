@@ -20,7 +20,7 @@
     </div>
 
     <!-- Formulario -->
-    <form action="#" method="POST" class="glass rounded-2xl p-8 border border-slate-800">
+    <form action="{{ route('admin.voluntariados.store') }}" method="POST" class="glass rounded-2xl p-8 border border-slate-800">
         @csrf
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">

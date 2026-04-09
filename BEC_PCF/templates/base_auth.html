@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BEC | {% block title %}Blue Earth Coders{% endblock %}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bec: {
+                            dark:    '#1E3A5F',
+                            primary: '#3B82F6',
+                            light:   '#60A5FA',
+                            pale:    '#DBEAFE',
+                        }
+                    },
+                    fontFamily: {
+                        sans:    ['Inter', 'sans-serif'],
+                        display: ['Poppins', 'sans-serif'],
+                    },
+                    animation: {
+                        'blob':     'blob 7s infinite',
+                        'fade-in':  'fadeIn 0.5s ease-out',
+                        'slide-up': 'slideUp 0.5s ease-out',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%':   { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%':  { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%':  { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
+                        fadeIn: {
+                            '0%':   { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%':   { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)',      opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Poppins', sans-serif; }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1E3A5F; }
+        ::-webkit-scrollbar-thumb { background: #3B82F6; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #60A5FA; }
+    </style>
+</head>
+<body class="antialiased text-gray-800 bg-gray-100">
+
+    {# ── Mensajes Flash de Flask ── #}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="fixed top-6 right-4 z-50 space-y-2" id="flash-container">
+            {% for category, message in messages %}
+                {% if category == 'success' %}
+                    <div class="flex items-center gap-3 bg-green-500/90 backdrop-blur-md text-white px-6 py-3 rounded-xl shadow-2xl border border-white/20 animate-fade-in">
+                        <span>✅</span> <span>{{ message }}</span>
+                    </div>
+                {% elif category == 'error' %}
+                    <div class="flex items-center gap-3 bg-rose-500/90 backdrop-blur-md text-white px-6 py-3 rounded-xl shadow-2xl border border-white/20 animate-fade-in">
+                        <span>❌</span> <span>{{ message }}</span>
+                    </div>
+                {% else %}
+                    <div class="flex items-center gap-3 bg-amber-500/90 backdrop-blur-md text-white px-6 py-3 rounded-xl shadow-2xl border border-white/20 animate-fade-in">
+                        <span>⚠️</span> <span>{{ message }}</span>
+                    </div>
+                {% endif %}
+            {% endfor %}
+            </div>
+            <script>
+                setTimeout(() => {
+                    const el = document.getElementById('flash-container');
+                    if (el) el.style.transition = 'opacity 0.5s', el.style.opacity = '0', setTimeout(() => el.remove(), 500);
+                }, 4000);
+            </script>
+        {% endif %}
+    {% endwith %}
+
+    <div class="pt-0">
+        {% block content %}{% endblock %}
+    </div>
+
+</body>
+</html>
