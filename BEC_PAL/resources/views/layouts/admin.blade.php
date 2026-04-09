@@ -53,6 +53,9 @@
             <a href="{{ route('admin.reportes.index') }}" class="flex items-center p-3 rounded-lg transition-colors {{ request()->routeIs('admin.reportes.*') ? 'sidebar-item-active' : 'text-slate-400 hover:bg-slate-800' }}">
                 <i data-lucide="pie-chart" class="w-5 h-5 mr-3"></i> Reportes
             </a>
+            <a href="{{ route('admin.predicciones.index') }}" class="flex items-center p-3 rounded-lg transition-colors {{ request()->routeIs('admin.predicciones.*') ? 'sidebar-item-active' : 'text-slate-400 hover:bg-slate-800' }}">
+                <i data-lucide="brain-circuit" class="w-5 h-5 mr-3"></i> Predicciones
+            </a>
         </nav>
     </aside>
 

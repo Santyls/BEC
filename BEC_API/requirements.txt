@@ -8,3 +8,5 @@ passlib[bcrypt] #encriptar y verificar contraseñas
 bcrypt==3.2.2 # Fix para passlib error de compatibilidad
 python-multipart #leer formulafio de login de OAuth2
 pydantic[email]
+pandas
+statsmodels
