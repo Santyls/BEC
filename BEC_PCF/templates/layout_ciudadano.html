@@ -11,22 +11,33 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     
-    <!-- Configuración exacta de tu Guía de Estilos -->
+    <!-- Configuración exacta de tu Guía de Estilos con CSS Variables para Modo Claro/Oscuro -->
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: { sans: ['Poppins', 'sans-serif'], },
                     colors: {
                         bec: {
-                            dark: '#0B132B',
-                            base: '#1C2541',
-                            primary: '#3A506B',
-                            accent: '#5BC0BE',
-                            light: '#E2F0F9',
+                            dark: 'rgb(var(--color-bec-dark) / <alpha-value>)',
+                            base: 'rgb(var(--color-bec-base) / <alpha-value>)',
+                            primary: 'rgb(var(--color-bec-primary) / <alpha-value>)',
+                            accent: 'rgb(var(--color-bec-accent) / <alpha-value>)',
+                            light: 'rgb(var(--color-bec-light) / <alpha-value>)',
                         },
                         status: {
                             success: '#10B981', warning: '#F59E0B', danger: '#EF4444', info: '#3B82F6',
+                        },
+                        white: 'rgb(var(--color-white) / <alpha-value>)',
+                        slate: {
+                            300: 'rgb(var(--color-slate-300) / <alpha-value>)',
+                            400: 'rgb(var(--color-slate-400) / <alpha-value>)',
+                            500: 'rgb(var(--color-slate-500) / <alpha-value>)',
+                            600: 'rgb(var(--color-slate-600) / <alpha-value>)',
+                            700: 'rgb(var(--color-slate-700) / <alpha-value>)',
+                            800: 'rgb(var(--color-slate-800) / <alpha-value>)',
+                            900: 'rgb(var(--color-slate-900) / <alpha-value>)',
                         }
                     }
                 }
@@ -34,9 +45,59 @@
         }
     </script>
     <style>
-        body { font-family: 'Poppins', sans-serif; background-color: #0B132B; color: #E2F0F9; }
-        .glass-panel { background: rgba(28, 37, 65, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
-        .glass-nav { background: rgba(11, 19, 43, 0.85); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(91, 192, 190, 0.2); }
+        :root {
+            /* MODO CLARO (Por Defecto) */
+            --color-bec-dark: 248 250 252;   /* #F8FAFC (white/slate-50) para fondos */
+            --color-bec-base: 255 255 255;   /* #FFFFFF para tarjetas */
+            --color-bec-primary: 241 245 249;/* #F1F5F9 */
+            --color-bec-accent: 58 176 170;  /* Cyan ajustable */
+            --color-bec-light: 15 23 42;     /* Texto oscuro #0F172A */
+
+            /* Inversión de colores de Tailwind para Modo Claro */
+            --color-white: 15 23 42;         /* text-white -> texto oscuro */
+            --color-slate-300: 71 85 105;    
+            --color-slate-400: 100 116 139;  
+            --color-slate-500: 148 163 184;  
+            --color-slate-600: 203 213 225;  
+            --color-slate-700: 226 232 240;  
+            --color-slate-800: 241 245 249;  
+            --color-slate-900: 248 250 252;  
+        }
+
+        html.dark {
+            /* MODO OSCURO (Amigable a la vista) */
+            --color-bec-dark: 18 18 18;      /* #121212 */
+            --color-bec-base: 30 41 59;      /* #1E293B */
+            --color-bec-primary: 58 80 107;  /* #3A506B */
+            --color-bec-accent: 91 192 190;  /* #5BC0BE */
+            --color-bec-light: 241 245 249;  /* Texto claro (hueso) */
+
+            --color-white: 255 255 255;
+            --color-slate-300: 203 213 225;
+            --color-slate-400: 148 163 184;
+            --color-slate-500: 100 116 139;
+            --color-slate-600: 71 85 105;
+            --color-slate-700: 51 65 85;
+            --color-slate-800: 30 41 59;
+            --color-slate-900: 15 23 42;
+        }
+
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background-color: rgb(var(--color-bec-dark)); 
+            color: rgb(var(--color-bec-light)); 
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .glass-panel { 
+            background: rgba(var(--color-bec-base), 0.7); 
+            backdrop-filter: blur(12px); 
+            border: 1px solid rgba(var(--color-white), 0.1); 
+        }
+        .glass-nav { 
+            background: rgba(var(--color-bec-dark), 0.85); 
+            backdrop-filter: blur(16px); 
+            border-bottom: 1px solid rgba(var(--color-bec-accent), 0.3); 
+        }
     </style>
 </head>
 <body class="flex flex-col min-h-screen relative overflow-x-hidden">
@@ -82,6 +143,11 @@
 
                 <!-- Botones Acceso -->
                 <div class="hidden md:flex items-center space-x-4 z-10">
+                    <!-- Toggle Tema Dark/Light -->
+                    <button id="themeToggleBtn" class="text-slate-300 hover:text-bec-accent transition-colors p-2 rounded-full focus:outline-none" title="Alternar modo visual">
+                        <i data-lucide="moon" id="themeIcon" class="w-5 h-5"></i>
+                    </button>
+                    
                     {% if 'jwt_token' in session %}
                         <span class="text-bec-accent font-medium px-3 py-2 text-sm">{{ session.get('correo') }}</span>
                         <form action="{{ url_for('logout') }}" method="POST" class="inline">
@@ -157,6 +223,45 @@
 
     <script>
         lucide.createIcons();
+        
+        // Logica Toggle Tema (Modo Claro/Oscuro)
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        const themeIcon = document.getElementById('themeIcon');
+        const htmlElement = document.documentElement;
+        
+        // Función para aplicar icono según el tema visual
+        const updateIcon = (isDark) => {
+            if (isDark) {
+                themeIcon.setAttribute('data-lucide', 'sun');
+            } else {
+                themeIcon.setAttribute('data-lucide', 'moon');
+            }
+            lucide.createIcons(); // Recargar iconos
+        };
+
+        // Leer preferencia del localStorage (default Modo Claro)
+        const currentTheme = localStorage.getItem('theme');
+        if (currentTheme === 'dark') {
+            htmlElement.classList.add('dark');
+            updateIcon(true);
+        } else {
+            htmlElement.classList.remove('dark');
+            updateIcon(false);
+        }
+
+        // Lógica de alternancia (Toggle)
+        themeToggleBtn.addEventListener('click', () => {
+            htmlElement.classList.toggle('dark');
+            const isDarkNow = htmlElement.classList.contains('dark');
+            
+            if (isDarkNow) {
+                localStorage.setItem('theme', 'dark');
+            } else {
+                localStorage.setItem('theme', 'light');
+            }
+            
+            updateIcon(isDarkNow);
+        });
     </script>
 </body>
 </html>

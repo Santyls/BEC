@@ -2,7 +2,18 @@
   "permissions": {
     "allow": [
       "Bash(php artisan:*)",
-      "Bash(docker exec bec_pal_app:*)"
+      "Bash(docker exec bec_pal_app:*)",
+      "Bash(docker exec:*)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8000/usuarios/)",
+      "Bash(curl -s http://localhost:8000/)",
+      "Bash(docker network:*)",
+      "Bash(python -m json.tool)",
+      "Bash(docker restart:*)",
+      "Bash(docker-compose down:*)",
+      "Bash(docker-compose up:*)",
+      "Bash(docker volume:*)",
+      "Bash(docker cp:*)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8001/registro)"
     ]
   }
 }
