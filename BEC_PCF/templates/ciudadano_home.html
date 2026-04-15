@@ -25,7 +25,7 @@
                     </span> está en tus manos.
                 </h1>
                 
-                <p class="text-lg text-slate-400 mb-10 leading-relaxed font-light">
+                <p class="text-lg text-slate-300 mb-10 leading-relaxed font-medium">
                     Bienvenido al sistema integral de asistencia. Gestiona tus donaciones, localiza albergues cercanos y únete a los voluntariados activos en Querétaro.
                 </p>
                 
@@ -50,7 +50,7 @@
                         <i data-lucide="box" class="w-6 h-6 text-bec-accent"></i>
                     </div>
                     <h3 class="text-white font-semibold text-lg mb-1">Impacto Real</h3>
-                    <p class="text-slate-400 text-sm mb-4">Tus donaciones llegan a quien más lo necesita.</p>
+                    <p class="text-slate-300 text-sm mb-4 font-medium">Tus donaciones llegan a quien más lo necesita.</p>
                     <div class="w-full bg-bec-dark rounded-full h-2 mb-2">
                         <div class="bg-gradient-to-r from-bec-primary to-bec-accent h-2 rounded-full w-[75%]"></div>
                     </div>
@@ -64,7 +64,7 @@
                         </div>
                         <div>
                             <p class="text-white font-bold">+1,200</p>
-                            <p class="text-xs text-slate-400">Voluntarios Activos</p>
+                            <p class="text-xs text-slate-300 font-medium">Voluntarios Activos</p>
                         </div>
                     </div>
                 </div>
@@ -76,7 +76,7 @@
                         </div>
                         <div>
                             <p class="text-white font-bold">15</p>
-                            <p class="text-xs text-slate-400">Albergues en Red</p>
+                            <p class="text-xs text-slate-300 font-medium">Albergues en Red</p>
                         </div>
                     </div>
                 </div>
@@ -90,7 +90,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
             <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Campañas Activas</h2>
-            <p class="text-slate-400 max-w-2xl mx-auto">Encuentra una causa que te apasione y contribuye a generar un impacto real en nuestra comunidad.</p>
+            <p class="text-slate-300 font-medium max-w-2xl mx-auto">Encuentra una causa que te apasione y contribuye a generar un impacto real en nuestra comunidad.</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -101,15 +101,15 @@
                     <!-- Estado -->
                     <div class="absolute top-4 right-4 z-20">
                         {% if c.id_Estado_campana == 2 %}
-                        <span class="bg-emerald-500/20 text-emerald-400 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider backdrop-blur-md border border-emerald-500/30 flex items-center shadow-lg">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-2 animate-pulse"></span> Activa
+                        <span class="bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider backdrop-blur-md border border-emerald-500/50 dark:border-emerald-500/30 flex items-center shadow-lg">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400 mr-2 animate-pulse"></span> Activa
                         </span>
                         {% elif c.id_Estado_campana == 1 %}
-                        <span class="bg-blue-500/20 text-blue-400 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider backdrop-blur-md border border-blue-500/30 shadow-lg">
+                        <span class="bg-blue-500/20 text-blue-700 dark:text-blue-400 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider backdrop-blur-md border border-blue-500/50 dark:border-blue-500/30 shadow-lg">
                             Programada
                         </span>
                         {% else %}
-                        <span class="bg-slate-700/80 text-slate-300 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider backdrop-blur-md border border-slate-600 shadow-lg">
+                        <span class="bg-slate-200/80 dark:bg-slate-700/80 text-slate-700 dark:text-slate-300 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider backdrop-blur-md border border-slate-400 dark:border-slate-600 shadow-lg">
                             Finalizada
                         </span>
                         {% endif %}
@@ -125,8 +125,8 @@
                             {{ c.Descripcion_Objetivos }}
                         </p>
                         
-                        <div class="space-y-3 mb-8 bg-slate-900/50 p-4 rounded-xl border border-slate-800">
-                            <div class="flex items-center text-sm text-slate-300">
+                        <div class="space-y-3 mb-8 bg-slate-900/40 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-700/60 dark:border-slate-800">
+                            <div class="flex items-center text-sm text-slate-300 dark:text-slate-300 font-medium">
                                 <i data-lucide="calendar" class="w-4 h-4 text-bec-accent mr-3"></i> 
                                 <span>Del {{ c.Fecha_Inicio }} al {{ c.Fecha_Fin }}</span>
                             </div>
@@ -150,7 +150,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center max-w-2xl mx-auto mb-16">
             <h2 class="text-3xl font-bold text-white mb-4">¿Qué puedes hacer en el portal?</h2>
-            <p class="text-slate-400">Tu panel de control para ayudar a Querétaro.</p>
+            <p class="text-slate-300 font-medium">Tu panel de control para ayudar a Querétaro.</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -159,7 +159,7 @@
                     <i data-lucide="clipboard-list" class="w-7 h-7 text-bec-accent"></i>
                 </div>
                 <h3 class="text-xl font-semibold text-white mb-3">Mis Donaciones</h3>
-                <p class="text-slate-400 text-sm mb-6">Consulta el historial y los artículos que has donado en los centros de acopio.</p>
+                <p class="text-slate-300 text-sm mb-6 font-medium">Consulta el historial y los artículos que has donado en los centros de acopio.</p>
                 <span class="text-bec-accent text-sm font-medium flex items-center gap-2">Consultar historial <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
             </a>
 
@@ -168,7 +168,7 @@
                     <i data-lucide="calendar-check" class="w-7 h-7 text-bec-accent"></i>
                 </div>
                 <h3 class="text-xl font-semibold text-white mb-3">Mis Voluntariados</h3>
-                <p class="text-slate-400 text-sm mb-6">Revisa las campañas a las que te has inscrito, fechas, horarios y ubicación de los eventos.</p>
+                <p class="text-slate-300 text-sm mb-6 font-medium">Revisa las campañas a las que te has inscrito, fechas, horarios y ubicación de los eventos.</p>
                 <span class="text-bec-accent text-sm font-medium flex items-center gap-2">Ver agenda <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
             </a>
 
@@ -177,7 +177,7 @@
                     <i data-lucide="user-cog" class="w-7 h-7 text-bec-accent"></i>
                 </div>
                 <h3 class="text-xl font-semibold text-white mb-3">Mi Perfil y Domicilio</h3>
-                <p class="text-slate-400 text-sm mb-6">Actualiza tu información de contacto y domicilio para agilizar el proceso.</p>
+                <p class="text-slate-300 text-sm mb-6 font-medium">Actualiza tu información de contacto y domicilio para agilizar el proceso.</p>
                 <span class="text-bec-accent text-sm font-medium flex items-center gap-2">Editar datos <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
             </a>
         </div>

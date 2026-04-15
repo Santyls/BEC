@@ -7,7 +7,7 @@
 
     {# ── Fondo con imagen ── #}
     <div class="absolute inset-0 z-0">
-        <div class="absolute inset-0 bg-bec-dark/60 z-10"></div>
+        <div class="absolute inset-0 bg-slate-950/75 z-10"></div>
         <img src="https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?q=80&w=1920&auto=format&fit=crop"
              class="w-full h-full object-cover absolute top-0 left-0 opacity-100" alt="Fondo Registro">
     </div>
@@ -51,7 +51,7 @@
                             <label class="text-sm font-medium text-slate-50 drop-shadow-md ml-1">Nombre *</label>
                             <input type="text" name="Nombre"
                                    value="{{ form_data.Nombre if form_data else '' }}"
-                                   class="w-full bg-white/10 border {% if errors and errors.Nombre %}border-rose-400/80{% else %}border-white/20{% endif %} rounded-xl px-4 py-3 text-white placeholder-slate-300/60 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400/60 transition backdrop-blur-sm text-sm"
+                                   class="w-full bg-slate-800/80 border {% if errors and errors.Nombre %}border-rose-400/80{% else %}border-white/30{% endif %} rounded-xl px-4 py-3 text-slate-50 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition backdrop-blur-sm text-sm"
                                    placeholder="Tu nombre" required>
                             {% if errors and errors.Nombre %}
                                 <span class="text-rose-300 text-xs pl-1">{{ errors.Nombre }}</span>
@@ -64,14 +64,14 @@
                                 <label class="text-sm font-medium text-slate-50 drop-shadow-md ml-1">Ap. Paterno *</label>
                                 <input type="text" name="Apellido_P"
                                        value="{{ form_data.Apellido_P if form_data else '' }}"
-                                       class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-slate-300/60 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400/60 transition backdrop-blur-sm text-sm"
+                                       class="w-full bg-slate-800/80 border border-white/30 rounded-xl px-4 py-3 text-slate-50 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition backdrop-blur-sm text-sm"
                                        placeholder="García" required>
                             </div>
                             <div class="space-y-1">
                                 <label class="text-sm font-medium text-slate-50 drop-shadow-md ml-1">Ap. Materno</label>
                                 <input type="text" name="Apellido_M"
                                        value="{{ form_data.Apellido_M if form_data else '' }}"
-                                       class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-slate-300/60 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400/60 transition backdrop-blur-sm text-sm"
+                                       class="w-full bg-slate-800/80 border border-white/30 rounded-xl px-4 py-3 text-slate-50 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition backdrop-blur-sm text-sm"
                                        placeholder="López">
                             </div>
                         </div>
@@ -81,7 +81,7 @@
                             <label class="text-sm font-medium text-slate-50 drop-shadow-md ml-1">Correo Electrónico *</label>
                             <input type="email" name="Correo"
                                    value="{{ form_data.Correo if form_data else '' }}"
-                                   class="w-full bg-white/10 border {% if errors and errors.Correo %}border-rose-400/80{% else %}border-white/20{% endif %} rounded-xl px-4 py-3 text-white placeholder-slate-300/60 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400/60 transition backdrop-blur-sm text-sm"
+                                   class="w-full bg-slate-800/80 border {% if errors and errors.Correo %}border-rose-400/80{% else %}border-white/30{% endif %} rounded-xl px-4 py-3 text-slate-50 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition backdrop-blur-sm text-sm"
                                    placeholder="correo@ejemplo.com" required>
                             {% if errors and errors.Correo %}
                                 <span class="text-rose-300 text-xs pl-1">{{ errors.Correo }}</span>
@@ -93,13 +93,13 @@
                             <div class="space-y-1">
                                 <label class="text-sm font-medium text-slate-50 drop-shadow-md ml-1">Contraseña *</label>
                                 <input type="password" name="password"
-                                       class="w-full bg-white/10 border {% if errors and errors.password %}border-rose-400/80{% else %}border-white/20{% endif %} rounded-xl px-4 py-3 text-white placeholder-slate-300/60 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400/60 transition backdrop-blur-sm text-sm"
+                                       class="w-full bg-slate-800/80 border {% if errors and errors.password %}border-rose-400/80{% else %}border-white/30{% endif %} rounded-xl px-4 py-3 text-slate-50 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition backdrop-blur-sm text-sm"
                                        placeholder="Mín. 6 caract." required>
                             </div>
                             <div class="space-y-1">
                                 <label class="text-sm font-medium text-slate-50 drop-shadow-md ml-1">Confirmar *</label>
                                 <input type="password" name="password_confirmation"
-                                       class="w-full bg-white/10 border {% if errors and errors.password %}border-rose-400/80{% else %}border-white/20{% endif %} rounded-xl px-4 py-3 text-white placeholder-slate-300/60 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400/60 transition backdrop-blur-sm text-sm"
+                                       class="w-full bg-slate-800/80 border {% if errors and errors.password %}border-rose-400/80{% else %}border-white/30{% endif %} rounded-xl px-4 py-3 text-slate-50 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition backdrop-blur-sm text-sm"
                                        placeholder="Repite" required>
                             </div>
                         </div>
@@ -110,7 +110,7 @@
                         {# Términos #}
                         <div class="flex items-start gap-2 pt-1">
                             <input id="terms" name="terms" type="checkbox" required
-                                   class="mt-0.5 w-4 h-4 border border-white/20 rounded bg-white/5 accent-bec-primary">
+                                   class="mt-0.5 w-4 h-4 border border-white/30 rounded bg-slate-800/80 accent-bec-primary">
                             <label for="terms" class="text-sm text-slate-200 drop-shadow-md">
                                 Acepto los <a href="#" class="text-slate-50 hover:underline font-medium">Términos y Condiciones</a>.
                             </label>
