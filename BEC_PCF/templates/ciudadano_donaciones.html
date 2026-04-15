@@ -25,7 +25,7 @@
     <!-- BARRA DE FILTROS DINÁMICOS                 -->
     <!-- ========================================== -->
     <div class="glass-panel p-4 rounded-xl mb-6 flex flex-col md:flex-row gap-4 items-center border-white/5">
-        <div class="flex items-center gap-3 text-slate-300 w-full md:w-auto">
+        <div class="flex items-center gap-3 text-white w-full md:w-auto">
             <i data-lucide="filter" class="w-5 h-5 text-bec-accent"></i>
             <span class="font-medium text-sm">Filtrar por:</span>
         </div>
@@ -48,7 +48,7 @@
 
         <!-- Botón Aplicar Filtro -->
         <button id="btnAplicar" onclick="aplicarFiltro()"
-            class="w-full md:w-auto ml-auto bg-bec-accent hover:bg-bec-accent/80 text-bec-dark font-semibold px-6 py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-[0_0_10px_rgba(91,192,190,0.2)]">
+            class="w-full md:w-auto ml-auto bg-bec-accent hover:bg-cyan-400 text-[#0f172a] font-semibold px-6 py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-[0_0_10px_rgba(91,192,190,0.2)] focus:outline-none focus:ring-2 focus:ring-bec-accent/60">
             <i data-lucide="search" class="w-4 h-4"></i> Aplicar
         </button>
     </div>
@@ -96,7 +96,7 @@
 
                     <!-- Detalle del artículo -->
                     <div class="flex-grow max-w-md bg-bec-dark/50 rounded-lg p-3 border border-white/5">
-                        <p class="text-xs text-slate-500 mb-2 font-medium uppercase tracking-wider">Detalle del Artículo</p>
+                        <p class="text-xs text-slate-400 mb-2 font-semibold uppercase tracking-wider">Detalle del Artículo</p>
                         <ul class="text-sm text-slate-300 space-y-1">
                             <li class="flex justify-between">
                                 <span>Cantidad</span>

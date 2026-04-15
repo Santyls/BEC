@@ -157,7 +157,7 @@
                         </form>
                     {% else %}
                         <a href="{{ url_for('login') }}" class="text-slate-300 hover:text-white font-medium px-3 py-2 transition-colors text-sm">Ingresar</a>
-                        <a href="{{ url_for('register') }}" class="bg-bec-accent text-bec-dark px-6 py-2.5 rounded-xl font-semibold hover:bg-cyan-400 hover:shadow-[0_0_20px_rgba(91,192,190,0.4)] transition-all text-sm">
+                        <a href="{{ url_for('register') }}" class="bg-bec-accent text-[#0f172a] px-6 py-2.5 rounded-xl font-semibold hover:bg-cyan-400 hover:shadow-[0_0_20px_rgba(91,192,190,0.4)] transition-all text-sm">
                             Registrarse
                         </a>
                     {% endif %}
@@ -173,9 +173,9 @@
                 {% if messages %}
                     {% for category, message in messages %}
                         <div class="p-4 rounded-xl text-sm font-medium border shadow-lg
-                            {% if category == 'error' %}bg-rose-500/10 border-rose-500/50 text-rose-400
-                            {% elif category == 'warning' %}bg-amber-500/10 border-amber-500/50 text-amber-400
-                            {% else %}bg-bec-accent/10 border-bec-accent/50 text-bec-accent{% endif %}">
+                            {% if category == 'error' %}bg-rose-500/15 border-rose-600/50 text-rose-700 dark:bg-rose-500/10 dark:border-rose-500/40 dark:text-rose-300
+                            {% elif category == 'warning' %}bg-amber-500/15 border-amber-600/50 text-amber-800 dark:bg-amber-500/10 dark:border-amber-500/40 dark:text-amber-300
+                            {% else %}bg-teal-500/15 border-teal-600/40 text-teal-800 dark:bg-bec-accent/10 dark:border-bec-accent/50 dark:text-bec-accent{% endif %}">
                             {{ message }}
                         </div>
                     {% endfor %}
