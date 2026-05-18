@@ -73,6 +73,21 @@ def listar_municipios_por_estado(
     return db.query(Municipio).filter(Municipio.Id_Estado == id_estado).order_by(Municipio.Nombre_Municipio).all()
 
 # ─────────────────────────────────────────────
+# Catálogo: Municipio por ID (precarga de perfil)
+# ─────────────────────────────────────────────
+
+@router.get("/municipios/{id_municipio}", response_model=MunicipioResponse, tags=["Catálogos"])
+def obtener_municipio(
+    id_municipio: int,
+    db: Session = Depends(get_db),
+    current_user: Usuario = Depends(get_current_user)
+):
+    municipio = db.query(Municipio).filter(Municipio.Id_Municipio == id_municipio).first()
+    if not municipio:
+        raise HTTPException(status_code=404, detail="Municipio no encontrado")
+    return municipio
+
+# ─────────────────────────────────────────────
 # Catálogo: Colonias por Municipio
 # ─────────────────────────────────────────────
 
@@ -86,6 +101,21 @@ def listar_colonias_por_municipio(
     if not municipio:
         raise HTTPException(status_code=404, detail="Municipio no encontrado")
     return db.query(Colonia).filter(Colonia.Id_mucipio == id_municipio).order_by(Colonia.Nombre_Colonia).all()
+
+# ─────────────────────────────────────────────
+# Catálogo: Colonia por ID (precarga de perfil)
+# ─────────────────────────────────────────────
+
+@router.get("/colonias/{id_colonia}", response_model=ColoniaResponse, tags=["Catálogos"])
+def obtener_colonia(
+    id_colonia: int,
+    db: Session = Depends(get_db),
+    current_user: Usuario = Depends(get_current_user)
+):
+    colonia = db.query(Colonia).filter(Colonia.Id_Colonia == id_colonia).first()
+    if not colonia:
+        raise HTTPException(status_code=404, detail="Colonia no encontrada")
+    return colonia
 
 # ─────────────────────────────────────────────
 # CRUD: Direcciones

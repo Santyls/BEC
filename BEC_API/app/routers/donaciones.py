@@ -89,6 +89,28 @@ def crear_donacion(
 def listar_donaciones(db: Session = Depends(get_db), current_user: Usuario = Depends(get_current_user)):
     return db.query(Donacion).all()
 
+@router.get("/me")
+def mis_donaciones(db: Session = Depends(get_db), current_user: Usuario = Depends(get_current_user)):
+    donaciones = db.query(Donacion).filter(
+        Donacion.Id_Usuario == current_user.id_Usuario
+    ).order_by(Donacion.Fecha_Donacion.desc()).all()
+
+    result = []
+    for d in donaciones:
+        categoria = db.query(Categoria).filter(Categoria.Id_Categoria == d.id_Categoria).first()
+        unidad    = db.query(Unidad).filter(Unidad.Id_Unidad == d.Id_Unidad).first()
+        albergue  = db.query(Albergue).filter(Albergue.Id_Albergue == d.Id_Albergue).first()
+        result.append({
+            "nombre_categoria": categoria.Nombre_Categoria if categoria else "Sin categoría",
+            "Id_Condicion":     d.Id_Condicion,
+            "Cantidad":         d.Cantidad,
+            "nombre_unidad":    unidad.Nombre_Unidad if unidad else "",
+            "Marca":            d.Marca,
+            "nombre_albergue":  albergue.Nombre_Albergue if albergue else "Sin asignar",
+            "Fecha_Donacion":   str(d.Fecha_Donacion),
+        })
+    return result
+
 @router.get("/{id}")
 def obtener_donacion(id: int, db: Session = Depends(get_db), current_user: Usuario = Depends(get_current_user)):
     donacion = db.query(Donacion).filter(Donacion.Id_Donacion == id).first()
