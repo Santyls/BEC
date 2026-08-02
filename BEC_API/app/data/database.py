@@ -1,7 +1,6 @@
 import os
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import declarative_base, sessionmaker
 
 # Aquí leemos la variable que configuraste en el docker-compose
 SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL")

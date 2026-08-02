@@ -1,10 +1,10 @@
 fastapi
 uvicorn[standard]
-PyJWT
 sqlalchemy
+alembic # migraciones versionadas del esquema
 psycopg2-binary #PostreSQL
-python-jose[cryptography] #generar, firmar y dedodificar los tokens
+python-jose[cryptography] #generar, firmar y decodificar los tokens
 passlib[bcrypt] #encriptar y verificar contraseñas
 bcrypt==3.2.2 # Fix para passlib error de compatibilidad
-python-multipart #leer formulafio de login de OAuth2
+python-multipart #leer formulario de login de OAuth2 y subida de archivos (foto de perfil)
 pydantic[email]

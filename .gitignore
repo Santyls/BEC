@@ -1,0 +1,34 @@
+# --- Secrets ---
+.env
+!.env.example
+
+# --- Python (BEC_API, BEC_PRF, BEC_PCF) ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+.venv/
+venv/
+env/
+*.sqlite3
+.pytest_cache/
+
+# --- PHP / Laravel (BEC_PAL, BEC_L) ---
+vendor/
+node_modules/
+storage/*.key
+*.log
+.phpunit.result.cache
+
+# --- Certificados / claves TLS (no deben versionarse) ---
+*.pem
+*.key
+*.crt
+*.csr
+!BEC_API/**/*.crt.example
+
+# --- Editores / SO ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
