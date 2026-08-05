@@ -1,0 +1,19 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets: ["prometheus:9090"]
+
+  - job_name: node
+    static_configs:
+      - targets: ["node_exporter:9100"]
+
+  # HAProxy vive en el droplet PÚBLICO — se llega a él por su IP privada
+  # (de la VPC), no la pública. Reemplaza el placeholder en el README, paso 2.
+  - job_name: haproxy-edge
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["10.116.0.2:8405"]

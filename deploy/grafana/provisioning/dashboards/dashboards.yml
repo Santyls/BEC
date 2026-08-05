@@ -1,0 +1,16 @@
+# Carga automáticamente los dashboards que estén en /etc/grafana/dashboards
+# al arrancar Grafana — así el panel de BEC ya aparece solo, sin tener que
+# armarlo a mano desde la UI (y sobrevive si el contenedor se recrea).
+apiVersion: 1
+
+providers:
+  - name: BEC
+    orgId: 1
+    folder: ""
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /etc/grafana/dashboards
+      foldersFromFilesStructure: false

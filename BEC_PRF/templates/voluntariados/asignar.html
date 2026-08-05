@@ -1,0 +1,164 @@
+{% extends 'layout.html' %}
+
+{% block title %}Asignar a Voluntariado{% endblock %}
+{% block header_title %}Asignación de Voluntarios{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+
+    <div class="mb-8 flex items-center justify-between">
+        <div>
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight flex items-center">
+                <i data-lucide="heart-handshake" class="w-6 h-6 mr-3 text-purple-700 dark:text-purple-400"></i>
+                Inscribir Ciudadano a Voluntariado
+            </h2>
+            <p class="text-slate-500 dark:text-slate-400 mt-1 text-sm">Registra a un ciudadano en las actividades activas de tu albergue.</p>
+        </div>
+        <a href="{{ url_for('voluntariados.index') }}" class="px-4 py-2 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition-colors text-sm font-medium flex items-center">
+            <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i> Volver
+        </a>
+    </div>
+
+    <div class="glass rounded-2xl border border-slate-300/50 dark:border-slate-700/50 p-8 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-purple-500/5 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
+
+        <form action="{{ url_for('voluntariados.asignar') }}" method="POST" id="form-asignar" class="relative z-10 space-y-8">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <!-- SECCIÓN 1: CIUDADANO -->
+            <div class="space-y-4">
+                <h3 class="text-lg font-semibold text-slate-900 dark:text-white border-b border-slate-300/50 dark:border-slate-700/50 pb-2 flex items-center">
+                    <span class="bg-purple-500/20 text-purple-700 dark:text-purple-400 w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">1</span>
+                    Buscar Ciudadano
+                </h3>
+
+                <div class="space-y-2">
+                    <label for="usuario_busqueda" class="text-sm font-medium text-slate-700 dark:text-slate-300 ml-1">Nombre o teléfono <span class="text-rose-500">*</span></label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i data-lucide="search" class="h-5 w-5 text-slate-500 dark:text-slate-400"></i>
+                        </div>
+                        <input type="text" id="usuario_busqueda" autocomplete="off" placeholder="Escribe un nombre o número de teléfono..."
+                            class="block w-full pl-10 pr-3 py-3 border border-slate-300 dark:border-slate-700 rounded-xl leading-5 bg-slate-50 dark:bg-slate-800/50 text-slate-800 dark:text-slate-200 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 sm:text-sm transition-all">
+                        <input type="hidden" id="usuario_id" name="usuario_id">
+                        <div id="usuario_resultados" class="hidden absolute z-20 mt-1 w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl shadow-xl max-h-64 overflow-y-auto"></div>
+                    </div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 ml-1 mt-1">¿No está registrado? <a href="{{ url_for('usuarios.crear') }}" class="text-purple-700 dark:text-purple-400 hover:text-purple-600 dark:hover:text-purple-300 underline">Dar de alta ciudadano</a></p>
+                </div>
+            </div>
+
+            <!-- SECCIÓN 2: VOLUNTARIADO -->
+            <div class="space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-300/50 dark:border-slate-700/50 pb-2">
+                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white flex items-center">
+                        <span class="bg-purple-500/20 text-purple-700 dark:text-purple-400 w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">2</span>
+                        Seleccionar Actividad
+                    </h3>
+                    <div class="flex items-center gap-1.5">
+                        <button type="button" data-filtro-toggle="todos" class="px-3 py-1 rounded-lg text-xs font-bold bg-purple-600 text-white transition-colors">Mostrar todos</button>
+                        <button type="button" data-filtro-toggle="disponibles" class="px-3 py-1 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">Solo con cupo disponible</button>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <div class="grid grid-cols-1 gap-4 mt-2" id="lista-voluntariados">
+                        {% for v in voluntariados %}
+                        {% set lleno = v.cupo_maximo and v.inscritos >= v.cupo_maximo %}
+                        <label data-lleno="{{ 'true' if lleno else 'false' }}" class="relative flex cursor-pointer rounded-xl border border-slate-300 dark:border-slate-700 p-4 transition-colors focus-within:ring-2 focus-within:ring-purple-500 {{ 'bg-slate-100/60 dark:bg-slate-800/60 opacity-60 hover:bg-slate-100 dark:hover:bg-slate-800/50' if lleno else 'bg-slate-50 dark:bg-slate-800/30 hover:bg-slate-100 dark:hover:bg-slate-800/50' }}">
+                            <input type="radio" name="voluntariado_id" value="{{ v.id }}" class="sr-only peer" required>
+
+                            <div class="flex items-center justify-between w-full">
+                                <div class="flex items-center">
+                                    <div class="w-5 h-5 rounded-full border-2 border-slate-400 dark:border-slate-600 peer-checked:border-purple-500 peer-checked:bg-purple-500 flex items-center justify-center mr-4 transition-colors">
+                                        <div class="w-2 h-2 rounded-full bg-white opacity-0 peer-checked:opacity-100 transition-opacity"></div>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium {{ 'text-slate-500 dark:text-slate-400' if lleno else 'text-slate-800 dark:text-slate-200' }}">{{ v.nombre_programa }}</p>
+                                        <p class="text-slate-500 dark:text-slate-400 text-sm flex items-center mt-0.5">
+                                            <i data-lucide="calendar" class="w-3.5 h-3.5 mr-1"></i> {{ v.fecha_programada }} · {{ v.hora_inicio[:5] }}-{{ v.hora_fin[:5] }}
+                                            {% if v.cupo_maximo %} · {{ v.inscritos }}/{{ v.cupo_maximo }} cupo{% endif %}
+                                        </p>
+                                    </div>
+                                </div>
+                                {% if lleno %}
+                                    <span class="inline-flex items-center gap-1 text-[10px] font-bold text-slate-500 dark:text-slate-400 bg-slate-200/60 dark:bg-slate-700/60 border border-slate-300 dark:border-slate-700 px-2 py-0.5 rounded-full">
+                                        <i data-lucide="users" class="w-3 h-3"></i> CUPO LLENO
+                                    </span>
+                                {% else %}
+                                    <i data-lucide="users" class="w-5 h-5 text-slate-600 dark:text-slate-400"></i>
+                                {% endif %}
+                            </div>
+
+                            <div class="absolute inset-0 rounded-xl border-2 border-transparent peer-checked:border-purple-500/50 pointer-events-none transition-colors"></div>
+                        </label>
+                        {% else %}
+                        <p class="text-sm text-slate-500 dark:text-slate-400 text-center py-4">No hay voluntariados activos disponibles ahora mismo.</p>
+                        {% endfor %}
+                    </div>
+                    <p id="mensaje-sin-resultados" class="hidden text-sm text-slate-500 dark:text-slate-400 text-center py-4">No hay voluntariados con cupo disponible ahora mismo.</p>
+                </div>
+            </div>
+
+            <div class="pt-6 border-t border-slate-300/50 dark:border-slate-700/50 flex justify-end space-x-4 mt-8">
+                <button type="submit" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white shadow-lg shadow-purple-500/25 transition-all text-sm font-bold flex items-center">
+                    <i data-lucide="clipboard-check" class="w-4 h-4 mr-2"></i> Inscribir Voluntario
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/buscador_usuario.js') }}"></script>
+<script>
+    inicializarBuscadorUsuario({
+        inputBusquedaId: 'usuario_busqueda',
+        inputOcultoId: 'usuario_id',
+        resultadosId: 'usuario_resultados',
+        usuarios: {{ usuarios | tojson }},
+        formId: 'form-asignar',
+        obtenerMensajeConfirmacion: function (usuario) {
+            var nombreVoluntariado = '';
+            var radioMarcado = document.querySelector('input[name="voluntariado_id"]:checked');
+            if (radioMarcado) {
+                var etiqueta = radioMarcado.closest('label').querySelector('p.font-medium');
+                if (etiqueta) nombreVoluntariado = etiqueta.textContent.trim();
+            }
+            var nombreCompleto = [usuario.nombre, usuario.apellido_paterno, usuario.apellido_materno].filter(Boolean).join(' ');
+            var mensaje = 'Se inscribirá a ' + nombreCompleto + ' (Tel. ' + (usuario.telefono || 'sin teléfono') + ')';
+            if (nombreVoluntariado) mensaje += ' al voluntariado "' + nombreVoluntariado + '"';
+            return mensaje + '. ¿Deseas continuar?';
+        },
+    });
+
+    document.querySelectorAll('[data-filtro-toggle]').forEach(function (boton) {
+        boton.addEventListener('click', function () {
+            var modo = this.dataset.filtroToggle;
+
+            document.querySelectorAll('[data-filtro-toggle]').forEach(function (b) {
+                var activo = b === boton;
+                b.classList.toggle('bg-purple-600', activo);
+                b.classList.toggle('text-white', activo);
+                b.classList.toggle('bg-slate-100', !activo);
+                b.classList.toggle('dark:bg-slate-800/60', !activo);
+                b.classList.toggle('text-slate-500', !activo);
+                b.classList.toggle('dark:text-slate-400', !activo);
+                b.classList.toggle('hover:bg-slate-200', !activo);
+                b.classList.toggle('dark:hover:bg-slate-700', !activo);
+            });
+
+            var hayVisibles = false;
+            document.querySelectorAll('#lista-voluntariados [data-lleno]').forEach(function (label) {
+                var lleno = label.dataset.lleno === 'true';
+                var ocultar = modo === 'disponibles' && lleno;
+                label.classList.toggle('hidden', ocultar);
+                if (!ocultar) hayVisibles = true;
+            });
+
+            document.getElementById('mensaje-sin-resultados').classList.toggle('hidden', hayVisibles);
+        });
+    });
+</script>
+{% endblock %}

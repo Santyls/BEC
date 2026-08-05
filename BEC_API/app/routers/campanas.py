@@ -2,30 +2,33 @@ from datetime import date
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from app.data.database import get_db
-from app.models.models import Campana, Usuario
+from app.models.models import Campana, EstadoCampana, Usuario
 from app.security.security import get_admin_user, get_current_user
 
 router = APIRouter(prefix="/campanas", tags=["Campañas"])
 
+ESTADO_PROGRAMADA = 1
+
 
 class CampanaCreate(BaseModel):
-    nombre: str
+    nombre: str = Field(min_length=3, max_length=150)
     fecha_inicio: date
     fecha_fin: date
-    estado_id: int
-    descripcion_objetivos: str
+    descripcion_objetivos: str = Field(min_length=1)
+    # estado_id NO es parte de este schema a propósito: toda campaña nace
+    # "Programada" — no tendría sentido crear una ya Activa/Finalizada.
 
 
 class CampanaUpdate(BaseModel):
-    nombre: Optional[str] = None
+    nombre: Optional[str] = Field(default=None, min_length=3, max_length=150)
     fecha_inicio: Optional[date] = None
     fecha_fin: Optional[date] = None
     estado_id: Optional[int] = None
-    descripcion_objetivos: Optional[str] = None
+    descripcion_objetivos: Optional[str] = Field(default=None, min_length=1)
 
 
 class CampanaResponse(BaseModel):
@@ -66,7 +69,7 @@ def crear_campana(
     if datos.fecha_fin < datos.fecha_inicio:
         raise HTTPException(status_code=400, detail="La fecha de fin no puede ser anterior a la de inicio.")
 
-    campana = Campana(**datos.model_dump())
+    campana = Campana(**datos.model_dump(), estado_id=ESTADO_PROGRAMADA)
     db.add(campana)
     db.commit()
     db.refresh(campana)
@@ -84,7 +87,18 @@ def actualizar_campana(
     if not campana:
         raise HTTPException(status_code=404, detail="Campaña no encontrada")
 
-    for campo, valor in datos.model_dump(exclude_unset=True).items():
+    cambios = datos.model_dump(exclude_unset=True)
+
+    fecha_inicio = cambios.get("fecha_inicio", campana.fecha_inicio)
+    fecha_fin = cambios.get("fecha_fin", campana.fecha_fin)
+    if fecha_fin < fecha_inicio:
+        raise HTTPException(status_code=400, detail="La fecha de fin no puede ser anterior a la de inicio.")
+
+    if "estado_id" in cambios:
+        if not db.query(EstadoCampana).filter(EstadoCampana.id == cambios["estado_id"]).first():
+            raise HTTPException(status_code=404, detail="El estado indicado no existe.")
+
+    for campo, valor in cambios.items():
         setattr(campana, campo, valor)
 
     db.commit()

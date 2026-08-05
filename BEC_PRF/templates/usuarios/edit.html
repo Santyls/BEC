@@ -1,0 +1,81 @@
+{% extends 'layout.html' %}
+
+{% block title %}Editar Ciudadano{% endblock %}
+{% block header_title %}Editar Ciudadano{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+
+    <div class="mb-8 flex items-center justify-between">
+        <div>
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight flex items-center">
+                <i data-lucide="user-cog" class="w-6 h-6 mr-3 text-blue-700 dark:text-blue-400"></i>
+                Editar Ciudadano
+            </h2>
+            <p class="text-slate-500 dark:text-slate-400 mt-1 text-sm">Actualiza los datos de contacto verificados en mostrador.</p>
+        </div>
+        <a href="{{ url_for('usuarios.index') }}" class="px-4 py-2 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition-colors text-sm font-medium flex items-center">
+            <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i> Volver
+        </a>
+    </div>
+
+    <div class="glass rounded-2xl border border-slate-300/50 dark:border-slate-700/50 p-8 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
+
+        <form action="{{ url_for('usuarios.editar', usuario_id=usuario.id) }}" method="POST" class="relative z-10 space-y-6" data-confirm="¿Estás seguro de guardar estos cambios?">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <div class="space-y-2">
+                <label for="nombre" class="text-sm font-medium text-slate-700 dark:text-slate-300 ml-1">Nombre(s) <span class="text-rose-500">*</span></label>
+                <input type="text" id="nombre" name="nombre" required value="{{ usuario.nombre }}"
+                    class="block w-full px-3 py-3 border border-slate-300 dark:border-slate-700 rounded-xl leading-5 bg-slate-50 dark:bg-slate-800/50 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 sm:text-sm transition-all">
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <label for="apellido_paterno" class="text-sm font-medium text-slate-700 dark:text-slate-300 ml-1">Apellido paterno <span class="text-rose-500">*</span></label>
+                    <input type="text" id="apellido_paterno" name="apellido_paterno" required value="{{ usuario.apellido_paterno }}"
+                        class="block w-full px-3 py-3 border border-slate-300 dark:border-slate-700 rounded-xl leading-5 bg-slate-50 dark:bg-slate-800/50 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 sm:text-sm transition-all">
+                </div>
+                <div class="space-y-2">
+                    <label for="apellido_materno" class="text-sm font-medium text-slate-700 dark:text-slate-300 ml-1">Apellido materno <span class="text-rose-500">*</span></label>
+                    <input type="text" id="apellido_materno" name="apellido_materno" required value="{{ usuario.apellido_materno }}"
+                        class="block w-full px-3 py-3 border border-slate-300 dark:border-slate-700 rounded-xl leading-5 bg-slate-50 dark:bg-slate-800/50 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 sm:text-sm transition-all">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <label for="telefono" class="text-sm font-medium text-slate-700 dark:text-slate-300 ml-1">Teléfono <span class="text-rose-500">*</span></label>
+                    <input type="tel" id="telefono" name="telefono" required pattern="[0-9]{10}" value="{{ usuario.telefono or '' }}"
+                        class="block w-full px-3 py-3 border border-slate-300 dark:border-slate-700 rounded-xl leading-5 bg-slate-50 dark:bg-slate-800/50 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 sm:text-sm transition-all">
+                </div>
+                <div class="space-y-2">
+                    <label for="correo" class="text-sm font-medium text-slate-700 dark:text-slate-300 ml-1">Correo <span class="text-slate-500 dark:text-slate-400 font-normal">(Opcional)</span></label>
+                    <input type="email" id="correo" name="correo" value="{{ usuario.correo or '' }}"
+                        class="block w-full px-3 py-3 border border-slate-300 dark:border-slate-700 rounded-xl leading-5 bg-slate-50 dark:bg-slate-800/50 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 sm:text-sm transition-all">
+                </div>
+            </div>
+
+            {% if usuario.vetado %}
+                <div class="bg-rose-500/10 border border-rose-500/20 rounded-xl p-4 flex items-start">
+                    <i data-lucide="shield-off" class="w-5 h-5 text-rose-700 dark:text-rose-400 mt-0.5 mr-3 flex-shrink-0"></i>
+                    <p class="text-sm text-rose-900/80 dark:text-rose-200/80">
+                        Este ciudadano está <strong class="text-rose-700 dark:text-rose-400">vetado</strong>{% if usuario.motivo_veto %}: {{ usuario.motivo_veto }}{% endif %}. Solo un Administrador puede quitar el veto.
+                    </p>
+                </div>
+            {% endif %}
+
+            <div class="pt-6 border-t border-slate-300/50 dark:border-slate-700/50 flex justify-end space-x-4 mt-6">
+                <a href="{{ url_for('usuarios.index') }}" class="px-5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors text-sm font-medium">
+                    Cancelar
+                </a>
+                <button type="submit" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white shadow-lg shadow-blue-500/25 transition-all text-sm font-bold flex items-center">
+                    <i data-lucide="save" class="w-4 h-4 mr-2"></i> Guardar Cambios
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+{% endblock %}

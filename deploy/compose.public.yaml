@@ -1,0 +1,55 @@
+# Corre en el droplet PÚBLICO (el único con IP pública / puertos abiertos a
+# internet). Todo lo demás vive en el droplet privado y solo se alcanza desde
+# aquí por la red privada de la VPC.
+
+services:
+  haproxy:
+    image: haproxy:3.2-alpine
+    restart: unless-stopped
+    volumes:
+      - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+      - ./haproxy/certs:/usr/local/etc/haproxy/certs:ro
+    # OJO con el formato de estos puertos: Docker publica saltándose ufw (mete
+    # sus propias reglas DNAT desde 0.0.0.0/0), así que una regla de ufw NO
+    # basta para cerrar un puerto publicado. La forma real de no exponerlo es
+    # atarlo a una IP concreta, como se hace abajo con 8405.
+    ports:
+      - "80:80"     # redirige a 443
+      - "443:443"   # BEC_PAL (portal admin) + /grafana
+      - "8444:8444" # BEC_PRF (portal recepción)
+      - "8446:8446" # BEC_API (balanceada entre api1/api2/api3)
+      - "8404:8404" # stats de HAProxy (protegidas con usuario/contraseña)
+      # Métricas internas: se atan SOLO a la IP privada de la VPC. Antes estaban
+      # en 0.0.0.0 y cualquiera en internet podía leerlas sin contraseña,
+      # revelando los nombres de los servidores internos (api1, api2, pal, prf).
+      - "10.116.0.2:8405:8405"
+    depends_on:
+      - grafana
+    networks:
+      - edge_network
+
+  grafana:
+    image: grafana/grafana:latest
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_SERVER_ROOT_URL: "%(protocol)s://%(domain)s/grafana/"
+      GF_SERVER_SERVE_FROM_SUB_PATH: "true"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      # Los .json de aquí se cargan solos como dashboards (ver
+      # provisioning/dashboards/dashboards.yml).
+      - ./grafana/dashboards:/etc/grafana/dashboards:ro
+    expose:
+      - "3000"
+    networks:
+      - edge_network
+
+networks:
+  edge_network:
+
+volumes:
+  grafana_data:

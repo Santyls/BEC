@@ -1,0 +1,58 @@
+{% extends 'layout.html' %}
+
+{% block title %}Mis Voluntariados a Cargo{% endblock %}
+{% block header_title %}Mis Voluntariados a Cargo{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <div>
+        <h3 class="text-xl font-bold text-slate-900 dark:text-white">Voluntariados donde eres encargado</h3>
+        <p class="text-sm text-slate-500 dark:text-slate-400">Desde aquí puedes pasar lista y finalizar solo las actividades que tienes asignadas.</p>
+    </div>
+
+    <div class="glass rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-50 dark:bg-slate-900/50 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-widest border-b border-slate-200 dark:border-slate-800">
+                        <th class="p-4 font-semibold">Actividad</th>
+                        <th class="p-4 font-semibold">Fecha y Hora</th>
+                        <th class="p-4 font-semibold">Inscritos</th>
+                        <th class="p-4 font-semibold">Estado</th>
+                        <th class="p-4 font-semibold text-right">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="text-sm divide-y divide-slate-100 dark:divide-slate-800/50">
+                    {% for v in voluntariados %}
+                        {% set nombre_estado = estados[v.estado_id].nombre if v.estado_id in estados else 'Sin estado' %}
+                        {% set color_estado = 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20' if v.estado_id == 2 else ('bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/20' if v.estado_id == 4 else ('bg-slate-500/10 text-slate-700 dark:text-slate-400 border-slate-500/20' if v.estado_id == 3 else 'bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/20')) %}
+                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                            <td class="p-4">
+                                <a href="{{ url_for('voluntariados.mostrar', voluntariado_id=v.id) }}" class="font-bold text-slate-800 dark:text-slate-200 hover:text-purple-700 dark:hover:text-purple-400 transition-colors">{{ v.nombre_programa }}</a>
+                                {% if v.ubicacion %}
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 flex items-center mt-1"><i data-lucide="map-pin" class="w-3 h-3 mr-1"></i>{{ v.ubicacion }}</p>
+                                {% endif %}
+                            </td>
+                            <td class="p-4 text-slate-700 dark:text-slate-300">
+                                <p>{{ v.fecha_programada }}</p>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">{{ v.hora_inicio[:5] }} - {{ v.hora_fin[:5] }}</p>
+                            </td>
+                            <td class="p-4 text-slate-500 dark:text-slate-400">{{ v.inscritos }}{% if v.cupo_maximo %}/{{ v.cupo_maximo }}{% endif %}</td>
+                            <td class="p-4">
+                                <span class="{{ color_estado }} px-2.5 py-1 rounded-full text-[10px] font-bold border">{{ nombre_estado | upper }}</span>
+                            </td>
+                            <td class="p-4 text-right whitespace-nowrap">
+                                <a href="{{ url_for('voluntariados.mostrar', voluntariado_id=v.id) }}" class="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg font-bold text-xs inline-flex items-center transition-all border border-slate-700">
+                                    <i data-lucide="clipboard-check" class="w-3.5 h-3.5 mr-1.5"></i> Pasar lista
+                                </a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="5" class="p-8 text-center text-slate-500 dark:text-slate-400">No tienes voluntariados asignados como encargado.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

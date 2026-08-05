@@ -1,6 +1,7 @@
 import os
 
 from fastapi import FastAPI, HTTPException, status
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import text
 
@@ -12,6 +13,7 @@ from app.routers import (
     catalogos,
     donaciones,
     inscripciones,
+    noticias,
     usuarios,
     voluntariados,
 )
@@ -26,6 +28,16 @@ app = FastAPI(
     version="2.0.0",
 )
 
+# bec_movil (Expo) llama a la API con Bearer token, no con cookies de sesión, así que un
+# origin abierto no expone nada sensible — no hace falta acotarlo a IPs concretas que
+# además cambian con cada red WiFi distinta (ver CLAUDE.md de bec_movil).
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.include_router(auth.router)
 app.include_router(usuarios.router)
 app.include_router(catalogos.router)
@@ -34,6 +46,7 @@ app.include_router(campanas.router)
 app.include_router(voluntariados.router)
 app.include_router(inscripciones.router)
 app.include_router(donaciones.router)
+app.include_router(noticias.router)
 
 os.makedirs("uploads/usuarios", exist_ok=True)
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")

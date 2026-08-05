@@ -1,0 +1,22 @@
+# Auto-registra Prometheus como datasource en Grafana al arrancar — evita
+# configurarlo a mano desde la UI (y que se te olvide justo el día de la
+# presentación). URL = IP privada de bec-private (donde vive Prometheus).
+apiVersion: 1
+
+# Borra la versión anterior antes de recrearla: Grafana no puede cambiarle el
+# uid a un datasource ya existente (falla el arranque), así que se elimina por
+# nombre y se vuelve a crear con el uid fijo de abajo.
+deleteDatasources:
+  - name: Prometheus
+    orgId: 1
+
+datasources:
+  - name: Prometheus
+    # uid fijo (en vez de uno aleatorio): el dashboard de BEC lo referencia
+    # por este id, así no se rompe si Grafana se recrea desde cero.
+    uid: bec-prometheus
+    type: prometheus
+    access: proxy
+    url: http://10.116.0.3:9090
+    isDefault: true
+    editable: true

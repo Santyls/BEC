@@ -2,76 +2,159 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <script>
+        (function () {
+            if (localStorage.getItem('bec-theme') === 'dark') {
+                document.documentElement.classList.add('dark');
+            }
+        })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Recepcionista{% endblock %} - BEC</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' };
+    </script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        body { background-color: #0f172a; color: #f8fafc; }
-        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .sidebar-item-active { background: rgba(59, 130, 246, 0.1); color: #60a5fa; border-left: 4px solid #3b82f6; }
+        body { background-color: #F1F5F9; color: #0F172A; }
+        .glass { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(10px); border: 1px solid rgba(15, 23, 42, 0.08); }
+        .sidebar-item-active { background: rgba(59, 130, 246, 0.1); color: #1d4ed8; border-left: 4px solid #3b82f6; }
+
+        .dark body { background-color: #0f172a; color: #f8fafc; }
+        .dark .glass { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .dark .sidebar-item-active { color: #60a5fa; }
     </style>
+    {% block styles %}{% endblock %}
 </head>
-<body class="flex h-screen overflow-hidden">
-    <!-- BARRA LATERAL -->
-    <aside class="w-64 glass flex flex-col border-r border-slate-800 z-20 relative">
+<body class="flex h-screen overflow-hidden max-w-full">
+    <!-- Fondo oscuro que aparece detrás del menú en móvil (al tocarlo, se cierra) -->
+    <div id="sidebar-backdrop" class="hidden fixed inset-0 bg-slate-900/50 z-30 lg:hidden"></div>
+
+    <!-- BARRA LATERAL
+         En móvil está oculta (hidden) y se muestra encima del contenido con el
+         botón de hamburguesa; a partir de lg (lg:flex lg:static) vuelve a ser la
+         columna fija de siempre. Se oculta con `hidden` y no moviéndola con
+         translate/left porque esas utilidades no se aplicaban de forma confiable
+         sobre este elemento (.glass usa backdrop-filter). -->
+    <aside id="sidebar" class="w-64 glass flex flex-col border-r border-slate-200 dark:border-slate-800 fixed inset-y-0 left-0 z-40 hidden lg:flex lg:static lg:z-20">
         <div class="p-6">
-            <h1 class="text-xl font-black tracking-tighter text-emerald-500 uppercase">BEC<span class="text-white">_Recepción</span></h1>
+            <h1 class="text-xl font-black tracking-tighter text-emerald-500 uppercase">BEC<span class="text-slate-900 dark:text-white">_Recepción</span></h1>
         </div>
-        
+
         <nav class="flex-1 px-4 space-y-2 mt-4">
-            <!-- En Jinja2 usamos url_for('nombre_de_la_funcion_en_app_py') -->
-            <a href="{{ url_for('home') }}" class="flex items-center p-3 rounded-lg transition-colors sidebar-item-active">
+            <a href="{{ url_for('dashboard.inicio') }}" class="flex items-center p-3 rounded-lg transition-colors {{ 'sidebar-item-active' if request.blueprint == 'dashboard' else 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800' }}">
                 <i data-lucide="home" class="w-5 h-5 mr-3"></i> Inicio
             </a>
-            
+
             <div class="pt-4 pb-1">
-                <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-3">Atención al Ciudadano</span>
+                <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest px-3">Atención al Ciudadano</span>
             </div>
 
-            <a href="{{ url_for('nuevo_usuario') }}" class="flex items-center p-3 rounded-lg transition-colors text-slate-400 hover:bg-slate-800">
-                <i data-lucide="user-plus" class="w-5 h-5 mr-3"></i> Alta de Ciudadano
+            <a href="{{ url_for('usuarios.index') }}" class="flex items-center p-3 rounded-lg transition-colors {{ 'sidebar-item-active' if request.blueprint == 'usuarios' else 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800' }}">
+                <i data-lucide="users" class="w-5 h-5 mr-3"></i> Ciudadanos
             </a>
-            <a href="{{ url_for('nueva_donacion') }}" class="flex items-center p-3 rounded-lg transition-colors text-slate-400 hover:bg-slate-800">
-                <i data-lucide="package-plus" class="w-5 h-5 mr-3"></i> Recibir Donación
+            <a href="{{ url_for('donaciones.index') }}" class="flex items-center p-3 rounded-lg transition-colors {{ 'sidebar-item-active' if request.blueprint == 'donaciones' else 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800' }}">
+                <i data-lucide="package-plus" class="w-5 h-5 mr-3"></i> Donaciones
             </a>
-            <a href="{{ url_for('asignar_voluntariado') }}" class="flex items-center p-3 rounded-lg transition-colors text-slate-400 hover:bg-slate-800">
-                <i data-lucide="clipboard-check" class="w-5 h-5 mr-3"></i> Asignar Voluntario
+            <a href="{{ url_for('voluntariados.index') }}" class="flex items-center p-3 rounded-lg transition-colors {{ 'sidebar-item-active' if request.blueprint == 'voluntariados' and request.endpoint != 'voluntariados.mis_encargos' else 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800' }}">
+                <i data-lucide="clipboard-check" class="w-5 h-5 mr-3"></i> Voluntariados
+            </a>
+            <a href="{{ url_for('voluntariados.mis_encargos') }}" class="flex items-center p-3 rounded-lg transition-colors {{ 'sidebar-item-active' if request.endpoint == 'voluntariados.mis_encargos' else 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800' }}">
+                <i data-lucide="user-check" class="w-5 h-5 mr-3"></i> Mis Voluntariados a Cargo
             </a>
         </nav>
-        
-        <div class="p-4 border-t border-slate-800">
-            <button class="flex items-center w-full p-2 text-sm text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors">
-                <i data-lucide="log-out" class="w-4 h-4 mr-2"></i> Cerrar Turno
-            </button>
+
+        <div class="p-4 border-t border-slate-200 dark:border-slate-800">
+            <form method="POST" action="{{ url_for('auth.cerrar_sesion') }}" data-confirm="¿Cerrar tu sesión?">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="flex items-center w-full p-2 text-sm text-rose-700 dark:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors">
+                    <i data-lucide="log-out" class="w-4 h-4 mr-2"></i> Cerrar sesión
+                </button>
+            </form>
         </div>
     </aside>
 
     <!-- CONTENIDO PRINCIPAL -->
     <main class="flex-1 flex flex-col h-screen relative">
         <!-- Decoración de fondo para que se vea más bonito -->
-        <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/5 rounded-full blur-[100px] pointer-events-none"></div>
-        <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-emerald-600/5 rounded-full blur-[100px] pointer-events-none"></div>
+        <!-- Ocultos en móvil: miden 500px y desbordaban el ancho de la pantalla,
+             provocando scroll horizontal. Son solo decorativos. -->
+        <div class="hidden lg:block absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/5 rounded-full blur-[100px] pointer-events-none"></div>
+        <div class="hidden lg:block absolute bottom-0 left-0 w-[500px] h-[500px] bg-emerald-600/5 rounded-full blur-[100px] pointer-events-none"></div>
 
-        <header class="h-16 flex items-center px-8 border-b border-slate-800 justify-between glass z-10">
-            <h2 class="text-sm font-semibold uppercase tracking-widest text-slate-400">{% block header_title %}Panel de Control{% endblock %}</h2>
-            <div class="flex items-center space-x-3">
-                <div class="text-right">
-                    <p class="text-xs font-bold text-slate-200">Recepción Sede Centro</p>
-                    <p class="text-[10px] text-emerald-400">● Turno Matutino</p>
-                </div>
-                <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-600 flex items-center justify-center font-bold text-white shadow-lg">R</div>
+        <header class="h-16 flex items-center px-4 sm:px-8 border-b border-slate-200 dark:border-slate-800 justify-between glass z-10">
+            <div class="flex items-center gap-3 min-w-0">
+                <button type="button" id="sidebar-toggle" title="Menú" class="lg:hidden w-9 h-9 -ml-1 rounded-lg flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex-shrink-0">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
+                </button>
+                <h2 class="text-sm font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400 truncate">{% block header_title %}Panel de Control{% endblock %}</h2>
+            </div>
+            <div class="flex items-center space-x-3 flex-shrink-0">
+                <button type="button" id="theme-toggle" title="Cambiar tema" class="w-9 h-9 rounded-full flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                    <i data-lucide="sun" id="theme-toggle-icon-sun" class="w-5 h-5 hidden"></i>
+                    <i data-lucide="moon" id="theme-toggle-icon-moon" class="w-5 h-5"></i>
+                </button>
+                <a href="{{ url_for('perfil.index') }}" class="flex items-center space-x-3 hover:opacity-80 transition-opacity" title="Mi Perfil">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-xs font-bold text-slate-800 dark:text-slate-200">{{ session.bec_user.nombre if session.bec_user else 'Recepción' }}</p>
+                        <p class="text-[10px] text-emerald-700 dark:text-emerald-400">● En línea</p>
+                    </div>
+                    {% if session.bec_user and session.bec_user.foto_url %}
+                        <img src="{{ config.BEC_API_PUBLIC_URL.rstrip('/') }}{{ session.bec_user.foto_url }}" alt="Foto de perfil" class="w-9 h-9 rounded-full object-cover shadow-lg">
+                    {% else %}
+                        <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-600 flex items-center justify-center font-bold text-white shadow-lg">
+                            {{ (session.bec_user.nombre[0] if session.bec_user else 'R') | upper }}
+                        </div>
+                    {% endif %}
+                </a>
             </div>
         </header>
-        
-        <div class="flex-1 overflow-y-auto p-8 z-10 relative">
+
+        {% with mensajes = get_flashed_messages(with_categories=true) %}
+            {% for categoria, mensaje in mensajes %}
+                <div class="mx-4 sm:mx-8 mt-4 px-4 py-3 rounded-lg text-sm {{ 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-400' if categoria == 'exito' else 'bg-rose-500/10 border border-rose-500/30 text-rose-700 dark:text-rose-400' }}">
+                    {{ mensaje }}
+                </div>
+            {% endfor %}
+        {% endwith %}
+
+        <div class="flex-1 overflow-y-auto p-4 sm:p-8 z-10 relative">
             {% block content %}
             {% endblock %}
         </div>
     </main>
 
+    <!-- Modal de confirmación reutilizable (reemplaza a window.confirm()) -->
+    <div id="confirm-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4">
+        <div id="confirm-modal-backdrop" class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm opacity-0 transition-opacity duration-150"></div>
+        <div id="confirm-modal-panel" class="relative w-full max-w-sm rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl p-6 opacity-0 scale-95 transition-all duration-150">
+            <div class="flex items-start gap-4">
+                <div id="confirm-modal-icon-danger" class="w-10 h-10 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+                </div>
+                <div id="confirm-modal-icon-info" class="hidden w-10 h-10 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="help-circle" class="w-5 h-5"></i>
+                </div>
+                <div class="flex-1 pt-1">
+                    <h3 class="text-base font-bold text-slate-900 dark:text-white mb-1">Confirmar acción</h3>
+                    <p id="confirm-modal-message" class="text-sm text-slate-600 dark:text-slate-400"></p>
+                </div>
+            </div>
+            <div class="flex justify-end gap-3 mt-6">
+                <button type="button" id="confirm-modal-cancel" class="px-4 py-2 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Cancelar</button>
+                <button type="button" id="confirm-modal-accept" class="px-4 py-2 rounded-xl text-sm font-bold text-white bg-rose-600 hover:bg-rose-500 transition-colors shadow-lg">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         lucide.createIcons();
     </script>
+    <script src="{{ url_for('static', filename='js/confirm_dialog.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/theme_toggle.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/password_toggle.js') }}"></script>
+    {% block scripts %}{% endblock %}
 </body>
 </html>

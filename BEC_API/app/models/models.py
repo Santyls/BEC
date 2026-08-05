@@ -146,6 +146,9 @@ class Albergue(Base, TimestampMixin):
     telefono = Column(String(20), nullable=False)
     direccion_id = Column(Integer, ForeignKey("direcciones.id"), nullable=False)
     activo = Column(Boolean, nullable=False, default=True)
+    # Se estampa al desactivar; limpia al reactivar. Da pie a la purga automática
+    # a los 30 días (ver purgar_albergues_vencidos en albergues.py).
+    fecha_desactivacion = Column(TIMESTAMP(timezone=True), nullable=True)
 
     direccion = relationship("Direccion")
 
@@ -177,11 +180,40 @@ class Usuario(Base, TimestampMixin):
     fecha_aceptacion_terminos = Column(TIMESTAMP(timezone=True), nullable=True)
     fecha_registro = Column(TIMESTAMP(timezone=True), server_default=func.now(), nullable=False)
     activo = Column(Boolean, nullable=False, default=True)
+    # Se estampa al desactivar; limpia al reactivar. Da pie a la purga automática
+    # a los 30 días (ver purgar_usuarios_vencidos en usuarios.py).
+    fecha_desactivacion = Column(TIMESTAMP(timezone=True), nullable=True)
+    # Veto general de cuenta: bloquea nuevas inscripciones a voluntariados
+    # (no cancela las que ya tenía). Lo activa un Admin desde el panel.
+    vetado = Column(Boolean, nullable=False, default=False)
+    motivo_veto = Column(Text, nullable=True)
+    # SIN USO. Sobran de la recuperación de contraseña por correo, que se retiró:
+    # ahora la restablece Recepción o un Admin vía PUT /usuarios/{id}. Se dejan las
+    # columnas (nullable, siempre NULL) en vez de borrarlas con una migración porque
+    # no estorban; si algún día se limpia el esquema, van fuera junto con esta nota.
+    reset_password_codigo_hash = Column(String(64), nullable=True)
+    reset_password_expira_en = Column(TIMESTAMP(timezone=True), nullable=True)
 
     direccion = relationship("Direccion")
     albergue = relationship("Albergue")
     rol = relationship("Rol")
     genero = relationship("Genero")
+
+
+class IntentoLogin(Base):
+    """Control de fuerza bruta por correo (independiente de la plataforma que lo use:
+    BEC_PAL, BEC_PRF o el móvil, todos pasan por /auth/login). Ver security.py."""
+
+    __tablename__ = "intentos_login"
+
+    id = Column(Integer, primary_key=True)
+    correo = Column(String(100), nullable=False, unique=True, index=True)
+    intentos = Column(Integer, nullable=False, default=0)
+    estado = Column(String(20), nullable=False, default="normal")  # normal | espera_corta | espera_larga
+    bloqueado_hasta = Column(TIMESTAMP(timezone=True), nullable=True)
+    actualizado_en = Column(
+        TIMESTAMP(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
+    )
 
 
 class Sesion(Base):
@@ -221,6 +253,10 @@ class Voluntariado(Base, TimestampMixin):
     nombre_programa = Column(String(150), nullable=False)
     albergue_id = Column(Integer, ForeignKey("albergues.id"), nullable=True)
     campana_id = Column(Integer, ForeignKey("campanas.id"), nullable=True)
+    # Ubicación libre: cubre el caso donde la actividad no ocurre en un albergue
+    # registrado (ej. jornada en un parque). Si hay albergue_id, se puede usar como
+    # referencia adicional (ej. "Patio trasero", "Entrada principal").
+    ubicacion = Column(String(255), nullable=True)
     fecha_programada = Column(Date, nullable=False)
     cupo_maximo = Column(Integer, nullable=True)
     hora_inicio = Column(Time, nullable=False)
@@ -240,7 +276,10 @@ class InscripcionVoluntariado(Base):
     )
 
     id = Column(Integer, primary_key=True)
-    usuario_id = Column(Integer, ForeignKey("usuarios.id"), nullable=False)
+    # Nullable: si el usuario se elimina permanentemente (tras 30 días desactivado o a
+    # petición del admin), esta fila se conserva con usuario_id=NULL para no perder el
+    # historial de participación del voluntariado, solo se pierde la identidad.
+    usuario_id = Column(Integer, ForeignKey("usuarios.id"), nullable=True)
     voluntariado_id = Column(Integer, ForeignKey("voluntariados.id"), nullable=False)
     estado_id = Column(Integer, ForeignKey("estados_inscripcion.id"), nullable=False)
     fecha_inscripcion = Column(TIMESTAMP(timezone=True), server_default=func.now(), nullable=False)
@@ -249,6 +288,25 @@ class InscripcionVoluntariado(Base):
     usuario = relationship("Usuario")
     voluntariado = relationship("Voluntariado")
     estado = relationship("EstadoInscripcion")
+
+
+class VoluntariadoEncargado(Base):
+    """Recepcionista(s) asignados como responsables de un voluntariado: son quienes
+    pueden pasar lista de asistencia y finalizar el evento (ver security.py). Un
+    voluntariado puede tener cero, uno o varios encargados."""
+
+    __tablename__ = "voluntariados_encargados"
+    __table_args__ = (
+        UniqueConstraint("voluntariado_id", "usuario_id", name="uq_encargado_voluntariado_usuario"),
+    )
+
+    id = Column(Integer, primary_key=True)
+    voluntariado_id = Column(Integer, ForeignKey("voluntariados.id"), nullable=False)
+    usuario_id = Column(Integer, ForeignKey("usuarios.id"), nullable=False)
+    asignado_en = Column(TIMESTAMP(timezone=True), server_default=func.now(), nullable=False)
+
+    voluntariado = relationship("Voluntariado")
+    usuario = relationship("Usuario")
 
 
 class Donacion(Base):
@@ -261,7 +319,10 @@ class Donacion(Base):
     cantidad = Column(Float, nullable=False)
     unidad_id = Column(Integer, ForeignKey("unidades.id"), nullable=False)
     marca = Column(String(100), nullable=True)
-    albergue_id = Column(Integer, ForeignKey("albergues.id"), nullable=False)
+    # Nullable: si el albergue destino se elimina permanentemente, la donación se
+    # conserva (con albergue_id=NULL) en vez de perderse — el monto/categoría siguen
+    # siendo parte del historial aunque ya no exista el albergue.
+    albergue_id = Column(Integer, ForeignKey("albergues.id"), nullable=True)
     fecha_donacion = Column(Date, server_default=func.current_date(), nullable=False)
 
     usuario = relationship("Usuario")
@@ -269,3 +330,16 @@ class Donacion(Base):
     condicion = relationship("Condicion")
     unidad = relationship("Unidad")
     albergue = relationship("Albergue")
+
+
+class Noticia(Base):
+    """Contenido informativo que consume la sección 'Noticias BEC' del móvil. Por ahora
+    solo se leen (seed manual) — no hay CRUD para crearlas desde ningún portal todavía."""
+
+    __tablename__ = "noticias"
+
+    id = Column(Integer, primary_key=True)
+    titulo = Column(String(150), nullable=False)
+    resumen = Column(String(255), nullable=False)
+    contenido = Column(Text, nullable=False)
+    fecha = Column(Date, server_default=func.current_date(), nullable=False)

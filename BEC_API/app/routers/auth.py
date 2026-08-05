@@ -2,7 +2,7 @@ from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 from sqlalchemy.orm import Session
 
 from app.data.database import get_db
@@ -20,11 +20,11 @@ class RegistroCiudadano(BaseModel):
     (RF03 original): nombre, apellidos, correo, contraseña y términos. Teléfono, fecha
     de nacimiento y género se completan después en Mi Perfil, no aquí."""
 
-    nombre: str
-    apellido_paterno: str
-    apellido_materno: str
+    nombre: str = Field(min_length=1, max_length=100)
+    apellido_paterno: str = Field(min_length=1, max_length=100)
+    apellido_materno: str = Field(min_length=1, max_length=100)
     correo: EmailStr
-    password: str
+    password: str = Field(min_length=6)
     terminos_aceptados: bool
 
 
@@ -80,16 +80,21 @@ def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db),
 ):
+    registro_intentos = security.verificar_intentos_login(db, form_data.username)
+
     usuario = db.query(Usuario).filter(Usuario.correo == form_data.username, Usuario.activo.is_(True)).first()
 
     if not usuario or not usuario.password_hash or not security.verificar_password(
         form_data.password, usuario.password_hash
     ):
+        security.registrar_intento_fallido(db, registro_intentos)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Correo o contraseña incorrectos",
             headers={"WWW-Authenticate": "Bearer"},
         )
+
+    security.registrar_intento_exitoso(db, registro_intentos)
 
     access_token = security.crear_token_acceso(
         data={"sub": usuario.correo, "rol": usuario.rol_id},
@@ -123,3 +128,12 @@ def refrescar_token(datos: RefreshRequest, db: Session = Depends(get_db)):
 def logout(datos: LogoutRequest, db: Session = Depends(get_db)):
     security.revocar_refresh_token(db, datos.refresh_token)
     return None
+
+
+# No hay endpoints públicos de recuperación de contraseña.
+#
+# El envío de códigos por correo se retiró: obligaba a mantener credenciales de un
+# servidor SMTP y dejaba dos rutas sin autenticar expuestas a internet. En BEC el
+# restablecimiento lo hace personal identificado — Recepcionista o Admin, vía
+# PUT /usuarios/{id}, que sí exige token y rol. La app móvil solo muestra una
+# pantalla informativa indicando acudir a recepción.

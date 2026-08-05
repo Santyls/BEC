@@ -35,4 +35,12 @@ return [
         ],
     ],
 
+    'bec_api' => [
+        'base_url' => env('BEC_API_URL', 'http://bec_api:5000'),
+        // Distinto del base_url: ese es el hostname de Docker (solo alcanzable
+        // servidor-a-servidor); este es el que el navegador del admin necesita
+        // para pedir archivos estáticos servidos por la API (fotos de perfil, etc.).
+        'public_url' => env('BEC_API_PUBLIC_URL', 'http://localhost:8000'),
+    ],
+
 ];

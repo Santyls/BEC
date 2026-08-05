@@ -16,6 +16,13 @@ services:
       - ALGORITHM=${ALGORITHM}
       - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
       - REFRESH_TOKEN_EXPIRE_DAYS=${REFRESH_TOKEN_EXPIRE_DAYS}
+      # Envío de correo (recuperar contraseña) — opcional: si no se definen, el
+      # código se imprime en los logs del contenedor en vez de enviarse.
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - SMTP_FROM=${SMTP_FROM}
     depends_on:
       # Espera a que Postgres esté realmente listo, no solo iniciado
       db_postgres:
@@ -49,6 +56,17 @@ services:
       - "8002:5000"
     volumes:
       - ./BEC_PRF:/app
+    environment:
+      # Mismo patrón que BEC_PAL: BEC_PRF tampoco toca Postgres directamente,
+      # todo pasa por BEC_API.
+      - BEC_API_URL=http://bec_api:5000
+      # Distinta de BEC_API_URL: esa es solo alcanzable servidor-a-servidor dentro de
+      # Docker; esta es la que el navegador del recepcionista necesita para pedir
+      # archivos estáticos servidos por la API (fotos de perfil, etc.).
+      - BEC_API_PUBLIC_URL=${BEC_API_PUBLIC_URL}
+      - FLASK_SECRET_KEY=${FLASK_SECRET_KEY}
+    depends_on:
+      - bec_api
     networks:
       - bec_network
 
@@ -63,6 +81,15 @@ services:
     working_dir: /app
     volumes:
       - ./BEC_PAL:/app
+    environment:
+      # BEC_PAL NO habla con Postgres directamente ni con Eloquent: toda la
+      # data de negocio (usuarios, albergues, donaciones...) pasa por BEC_API,
+      # que ya trae JWT, validaciones y reglas de negocio. Así no se duplica
+      # lógica ni hay dos ORMs mutando el mismo esquema por su cuenta.
+      - BEC_API_URL=http://bec_api:5000
+      - BEC_API_PUBLIC_URL=${BEC_API_PUBLIC_URL}
+    depends_on:
+      - bec_api
     networks:
       - bec_network
 

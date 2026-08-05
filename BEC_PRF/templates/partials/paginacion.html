@@ -1,0 +1,30 @@
+{% if paginador.total > 0 %}
+<div class="px-6 py-4 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-3">
+    <p class="text-sm text-slate-500 dark:text-slate-400">
+        Mostrando {{ paginador.primer_item }}–{{ paginador.ultimo_item }} de {{ paginador.total }} resultado(s)
+    </p>
+    {% if paginador.tiene_paginas %}
+    <div class="flex gap-1">
+        {% if paginador.pagina_actual == 1 %}
+            <span class="px-3 py-1.5 rounded-lg text-sm text-slate-600 dark:text-slate-400 cursor-not-allowed">Anterior</span>
+        {% else %}
+            <a href="{{ paginador.url_pagina(paginador.pagina_actual - 1) }}" class="px-3 py-1.5 rounded-lg text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Anterior</a>
+        {% endif %}
+
+        {% for p in paginador.rango_paginas() %}
+            {% if p == paginador.pagina_actual %}
+                <span class="px-3 py-1.5 rounded-lg text-sm bg-emerald-600 text-white font-bold">{{ p }}</span>
+            {% else %}
+                <a href="{{ paginador.url_pagina(p) }}" class="px-3 py-1.5 rounded-lg text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">{{ p }}</a>
+            {% endif %}
+        {% endfor %}
+
+        {% if paginador.pagina_actual == paginador.ultima_pagina %}
+            <span class="px-3 py-1.5 rounded-lg text-sm text-slate-600 dark:text-slate-400 cursor-not-allowed">Siguiente</span>
+        {% else %}
+            <a href="{{ paginador.url_pagina(paginador.pagina_actual + 1) }}" class="px-3 py-1.5 rounded-lg text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Siguiente</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endif %}

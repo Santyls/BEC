@@ -1,0 +1,213 @@
+{% extends 'layout.html' %}
+
+{% block title %}{{ voluntariado.nombre_programa }}{% endblock %}
+{% block header_title %}Detalle del Voluntariado{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto space-y-6">
+    <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+            <a href="{{ url_for('voluntariados.index') }}" class="w-10 h-10 rounded-full glass flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i>
+            </a>
+            <div>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white">{{ voluntariado.nombre_programa }}</h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400">{{ inscritos | length }} inscripción(es) registradas en total.</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-2">
+            {% if voluntariado.estado_id in (1, 2) %}
+                {% if puede_pasar_lista %}
+                    <form method="POST" action="{{ url_for('voluntariados.finalizar', voluntariado_id=voluntariado.id) }}" data-confirm="¿Finalizar '{{ voluntariado.nombre_programa }}'? Los inscritos que sigan activos quedarán como completados.">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-xl font-bold text-sm flex items-center transition-all shadow-lg">
+                            <i data-lucide="check-circle" class="w-4 h-4 mr-2"></i> Finalizar
+                        </button>
+                    </form>
+                {% endif %}
+                <a href="{{ url_for('voluntariados.editar', voluntariado_id=voluntariado.id) }}" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-xl font-bold text-sm flex items-center transition-all shadow-lg">
+                    <i data-lucide="edit" class="w-4 h-4 mr-2"></i> Editar
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Detalles -->
+    <div class="glass rounded-2xl p-6 border border-slate-200 dark:border-slate-800 grid grid-cols-1 md:grid-cols-4 gap-6 text-sm">
+        <div>
+            <p class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1">Fecha y hora</p>
+            <p class="text-slate-800 dark:text-slate-200">{{ voluntariado.fecha_programada }}</p>
+            <p class="text-slate-500 dark:text-slate-400 text-xs">{{ voluntariado.hora_inicio[:5] }} - {{ voluntariado.hora_fin[:5] }}</p>
+        </div>
+        <div>
+            <p class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1">Ubicación</p>
+            <p class="text-slate-800 dark:text-slate-200">{{ voluntariado.ubicacion or 'En el albergue' }}</p>
+        </div>
+        <div>
+            <p class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1">Campaña</p>
+            <p class="text-slate-800 dark:text-slate-200">{{ campana.nombre if campana else 'Ninguna (actividad independiente)' }}</p>
+        </div>
+        <div>
+            <p class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1">Estado / Cupo</p>
+            <p class="text-slate-800 dark:text-slate-200">{{ estados[voluntariado.estado_id].nombre if voluntariado.estado_id in estados else '—' }}</p>
+            <p class="text-slate-500 dark:text-slate-400 text-xs">{{ voluntariado.inscritos }} / {{ voluntariado.cupo_maximo or '∞' }}</p>
+        </div>
+        <div class="md:col-span-4 pt-2 border-t border-slate-200 dark:border-slate-800">
+            <p class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1">Descripción y requisitos</p>
+            <p class="text-slate-700 dark:text-slate-300">{{ voluntariado.descripcion_requisitos }}</p>
+        </div>
+    </div>
+
+    <!-- Encargados -->
+    <div class="glass rounded-2xl p-6 border border-slate-200 dark:border-slate-800">
+        <h4 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-widest mb-1">Encargados de pasar lista</h4>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">
+            {% if encargados %}
+                Solo estos recepcionistas pueden pasar lista y finalizar este voluntariado.
+            {% else %}
+                Sin encargados asignados: cualquier recepcionista con acceso puede pasar lista y finalizar.
+            {% endif %}
+        </p>
+        <div class="flex flex-wrap gap-2 mb-4">
+            {% for e in encargados %}
+                <span class="inline-flex items-center gap-2 bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700 rounded-full pl-3 pr-1 py-1 text-xs text-slate-800 dark:text-slate-200">
+                    {{ e.usuario.nombre }} {{ e.usuario.apellido_paterno }}
+                    <form method="POST" action="{{ url_for('voluntariados.quitar_encargado', voluntariado_id=voluntariado.id, usuario_id=e.usuario.id) }}" class="inline" data-confirm="¿Quitar a {{ e.usuario.nombre }} como encargado?">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="w-5 h-5 rounded-full hover:bg-rose-500/20 hover:text-rose-600 dark:hover:text-rose-400 flex items-center justify-center transition-colors" title="Quitar encargado">
+                            <i data-lucide="x" class="w-3 h-3"></i>
+                        </button>
+                    </form>
+                </span>
+            {% else %}
+                <span class="text-xs text-slate-500 dark:text-slate-400 italic">Nadie asignado todavía.</span>
+            {% endfor %}
+        </div>
+        {% if recepcionistas_disponibles %}
+            <form method="POST" action="{{ url_for('voluntariados.asignar_encargado', voluntariado_id=voluntariado.id) }}" class="flex gap-3" data-confirm="¿Asignar a esta persona como encargada de '{{ voluntariado.nombre_programa }}'?">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <select name="usuario_id" class="flex-1 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-sm rounded-lg px-4 py-2.5 focus:outline-none focus:border-purple-500 dark:[color-scheme:dark]">
+                    {% for r in recepcionistas_disponibles %}
+                        <option value="{{ r.id }}">{{ r.nombre }} {{ r.apellido_paterno }} {{ r.apellido_materno }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="bg-slate-800 hover:bg-slate-700 text-white px-5 py-2.5 rounded-xl font-bold text-sm flex items-center transition-all">
+                    <i data-lucide="user-plus" class="w-4 h-4 mr-2"></i> Asignar encargado
+                </button>
+            </form>
+        {% endif %}
+    </div>
+
+    <!-- Inscribir directamente -->
+    <div class="glass rounded-2xl p-6 border border-slate-200 dark:border-slate-800">
+        <h4 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-widest mb-4">Inscribir un ciudadano</h4>
+        <form method="POST" action="{{ url_for('voluntariados.inscribir_desde_detalle', voluntariado_id=voluntariado.id) }}" id="form-inscribir" class="flex gap-3">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="relative flex-1">
+                <input type="text" id="usuario_busqueda" autocomplete="off" placeholder="Buscar por nombre o teléfono..."
+                    class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-sm rounded-lg px-4 py-2.5 focus:outline-none focus:border-purple-500">
+                <input type="hidden" id="usuario_id" name="usuario_id">
+                <div id="usuario_resultados" class="hidden absolute z-20 mt-1 w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl shadow-xl max-h-64 overflow-y-auto"></div>
+            </div>
+            <button type="submit" class="bg-purple-600 hover:bg-purple-500 text-white px-5 py-2.5 rounded-xl font-bold text-sm flex items-center transition-all">
+                <i data-lucide="user-plus" class="w-4 h-4 mr-2"></i> Inscribir
+            </button>
+        </form>
+    </div>
+
+    <!-- Inscritos -->
+    <div class="glass rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
+        <div class="p-4 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-800">
+            <h4 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-widest">Personas inscritas</h4>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-50 dark:bg-slate-900/50 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-widest border-b border-slate-200 dark:border-slate-800">
+                        <th class="p-4 font-semibold">Nombre</th>
+                        <th class="p-4 font-semibold">Contacto</th>
+                        <th class="p-4 font-semibold">Fecha de inscripción</th>
+                        <th class="p-4 font-semibold">Estado</th>
+                        <th class="p-4 font-semibold text-right">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="text-sm divide-y divide-slate-100 dark:divide-slate-800/50">
+                    {% for i in inscritos %}
+                        {% set color_estado = 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20' if i.estado_id == 2 else ('bg-slate-500/10 text-slate-700 dark:text-slate-400 border-slate-500/20' if i.estado_id == 3 else ('bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/20' if i.estado_id == 4 else 'bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/20')) %}
+                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                            <td class="p-4">
+                                {% if i.usuario %}
+                                    <p class="font-bold text-slate-800 dark:text-slate-200">{{ i.usuario.nombre }} {{ i.usuario.apellido_paterno }} {{ i.usuario.apellido_materno }}</p>
+                                    {% if i.usuario.vetado %}
+                                        <span class="inline-flex items-center gap-1 text-[10px] font-bold text-rose-700 dark:text-rose-400 bg-rose-500/10 border border-rose-500/20 px-2 py-0.5 rounded-full mt-1">
+                                            <i data-lucide="shield-off" class="w-3 h-3"></i> VETADO
+                                        </span>
+                                    {% endif %}
+                                {% else %}
+                                    <p class="text-slate-500 dark:text-slate-400 italic">Usuario eliminado</p>
+                                {% endif %}
+                            </td>
+                            <td class="p-4 text-slate-500 dark:text-slate-400">
+                                {{ i.usuario.correo or '—' if i.usuario else '—' }}
+                                <p class="text-xs">{{ i.usuario.telefono if i.usuario else '' }}</p>
+                            </td>
+                            <td class="p-4 text-slate-700 dark:text-slate-300">{{ i.fecha_inscripcion[:16].replace('T', ' ') }}</td>
+                            <td class="p-4">
+                                <span class="{{ color_estado }} px-2.5 py-1 rounded-full text-[10px] font-bold border">
+                                    {{ (estados_inscripcion[i.estado_id].nombre if i.estado_id in estados_inscripcion else '—') | upper }}
+                                </span>
+                            </td>
+                            <td class="p-4 text-right whitespace-nowrap">
+                                {% if i.estado_id == 1 %}
+                    {% if puede_pasar_lista %}
+                                        <form method="POST" action="{{ url_for('voluntariados.marcar_asistencia', voluntariado_id=voluntariado.id, inscripcion_id=i.id) }}" class="inline" data-confirm="¿Registrar que {{ i.usuario.nombre if i.usuario else 'esta persona' }} SÍ asistió? No se puede deshacer.">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                            <input type="hidden" name="asistio" value="1">
+                                            <button type="submit" class="text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 p-1 transition-colors" title="Marcar como asistió">
+                                                <i data-lucide="check" class="w-4 h-4"></i>
+                                            </button>
+                                        </form>
+                                        <form method="POST" action="{{ url_for('voluntariados.marcar_asistencia', voluntariado_id=voluntariado.id, inscripcion_id=i.id) }}" class="inline" data-confirm="¿Registrar que {{ i.usuario.nombre if i.usuario else 'esta persona' }} NO asistió? No se puede deshacer.">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                            <input type="hidden" name="asistio" value="0">
+                                            <button type="submit" class="text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 p-1 transition-colors" title="Marcar como no asistió">
+                                                <i data-lucide="x-circle" class="w-4 h-4"></i>
+                                            </button>
+                                        </form>
+                                    {% endif %}
+                                    <form method="POST" action="{{ url_for('voluntariados.cancelar_inscripcion', voluntariado_id=voluntariado.id, inscripcion_id=i.id) }}" class="inline" data-confirm="¿Cancelar esta inscripción?">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="text-slate-500 dark:text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 p-1 transition-colors" title="Cancelar inscripción">
+                                            <i data-lucide="x" class="w-4 h-4"></i>
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="5" class="p-8 text-center text-slate-500 dark:text-slate-400">Nadie se ha inscrito todavía.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/buscador_usuario.js') }}"></script>
+<script>
+    inicializarBuscadorUsuario({
+        inputBusquedaId: 'usuario_busqueda',
+        inputOcultoId: 'usuario_id',
+        resultadosId: 'usuario_resultados',
+        usuarios: {{ usuarios | tojson }},
+        formId: 'form-inscribir',
+        obtenerMensajeConfirmacion: function (usuario) {
+            var nombreCompleto = [usuario.nombre, usuario.apellido_paterno, usuario.apellido_materno].filter(Boolean).join(' ');
+            return 'Se inscribirá a ' + nombreCompleto + ' (Tel. ' + (usuario.telefono || 'sin teléfono') +
+                ') al voluntariado "{{ voluntariado.nombre_programa }}". ¿Deseas continuar?';
+        },
+    });
+</script>
+{% endblock %}

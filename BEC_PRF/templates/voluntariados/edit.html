@@ -1,0 +1,93 @@
+{% extends 'layout.html' %}
+
+{% block title %}Editar Voluntariado{% endblock %}
+{% block header_title %}Editar Voluntariado{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-6">
+    <div class="flex items-center space-x-4">
+        <a href="{{ url_for('voluntariados.index') }}" class="w-10 h-10 rounded-full glass flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+            <i data-lucide="arrow-left" class="w-5 h-5"></i>
+        </a>
+        <div>
+            <h3 class="text-xl font-bold text-slate-900 dark:text-white">Editar Voluntariado</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400">{{ voluntariado.inscritos }} persona(s) ya inscritas en esta actividad.</p>
+        </div>
+    </div>
+
+    <form action="{{ url_for('voluntariados.editar', voluntariado_id=voluntariado.id) }}" method="POST" class="glass rounded-2xl p-8 border border-slate-200 dark:border-slate-800" data-confirm="¿Estás seguro de guardar estos cambios?">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="md:col-span-2">
+                <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">Nombre de la Actividad *</label>
+                <input type="text" name="nombre_programa" value="{{ voluntariado.nombre_programa }}" required
+                    class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-sm rounded-lg px-4 py-3 focus:outline-none focus:border-purple-500">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">Campaña (Opcional)</label>
+                <select name="campana_id" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-sm rounded-lg px-4 py-3 focus:outline-none focus:border-purple-500 dark:[color-scheme:dark]">
+                    <option value="">Ninguna (Actividad independiente)</option>
+                    {% for c in campanas %}
+                        <option value="{{ c.id }}" {{ 'selected' if voluntariado.campana_id == c.id else '' }}>{{ c.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">Fecha Programada *</label>
+                <input type="date" name="fecha_programada" value="{{ voluntariado.fecha_programada }}" required
+                    class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-sm rounded-lg px-4 py-3 focus:outline-none focus:border-purple-500 dark:[color-scheme:dark]">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">Cupo Máximo</label>
+                <input type="number" name="cupo_maximo" value="{{ voluntariado.cupo_maximo or '' }}" min="{{ voluntariado.inscritos }}"
+                    class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-sm rounded-lg px-4 py-3 focus:outline-none focus:border-purple-500">
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">Hora Inicio *</label>
+                    <input type="time" name="hora_inicio" value="{{ voluntariado.hora_inicio[:5] }}" required class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-sm rounded-lg px-4 py-3 focus:outline-none focus:border-purple-500 dark:[color-scheme:dark]">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">Hora Fin *</label>
+                    <input type="time" name="hora_fin" value="{{ voluntariado.hora_fin[:5] }}" required class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-sm rounded-lg px-4 py-3 focus:outline-none focus:border-purple-500 dark:[color-scheme:dark]">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">Estado *</label>
+                <select name="estado_id" required class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-sm rounded-lg px-4 py-3 focus:outline-none focus:border-purple-500 dark:[color-scheme:dark]">
+                    {% for e in estados %}
+                        <option value="{{ e.id }}" {{ 'selected' if voluntariado.estado_id == e.id else '' }}>{{ e.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="md:col-span-2">
+                <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">Ubicación (Opcional)</label>
+                <input type="text" name="ubicacion" value="{{ voluntariado.ubicacion or '' }}" placeholder="Ej. Patio trasero, entrada principal"
+                    class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-sm rounded-lg px-4 py-3 focus:outline-none focus:border-purple-500">
+            </div>
+
+            <div class="md:col-span-2">
+                <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">Descripción y Requisitos *</label>
+                <textarea name="descripcion_requisitos" rows="4" required
+                    class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-sm rounded-lg px-4 py-3 focus:outline-none focus:border-purple-500 resize-none">{{ voluntariado.descripcion_requisitos }}</textarea>
+            </div>
+        </div>
+
+        <div class="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end space-x-3">
+            <a href="{{ url_for('voluntariados.index') }}" class="px-5 py-2.5 rounded-xl font-bold text-sm text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                Cancelar
+            </a>
+            <button type="submit" class="bg-purple-600 hover:bg-purple-500 text-white px-6 py-2.5 rounded-xl font-bold text-sm flex items-center transition-all shadow-lg shadow-purple-500/20">
+                <i data-lucide="save" class="w-4 h-4 mr-2"></i>
+                Guardar Cambios
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

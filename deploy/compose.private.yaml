@@ -1,0 +1,169 @@
+# Corre en el droplet PRIVADO (sin IP pública / firewall cerrado a todo excepto
+# la red interna hacia el droplet público). Adaptado del demo del profe
+# ("Proxy y Balanceo/demo - Copy") a los servicios reales de BEC.
+#
+# Solo BEC_API se replica (api1/api2/api3, balanceo real en HAProxy): es la única
+# sin sesión de servidor (usa JWT), así que replicarla es segura. BEC_PAL y
+# BEC_PRF usan sesión (Laravel/Flask) y se quedan en una sola instancia cada
+# uno — replicarlas sin un almacén de sesión compartido causaría cierres de
+# sesión aleatorios entre requests.
+
+services:
+  db_postgres:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - data_network
+
+  # --- BEC_API x3 (balanceada por HAProxy en el droplet público) ---
+  api1:
+    build:
+      context: ../BEC_API
+    restart: unless-stopped
+    environment: &api_env
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db_postgres:5432/${POSTGRES_DB}
+      SECRET_KEY: ${SECRET_KEY}
+      ALGORITHM: ${ALGORITHM}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES}
+      REFRESH_TOKEN_EXPIRE_DAYS: ${REFRESH_TOKEN_EXPIRE_DAYS}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      SMTP_FROM: ${SMTP_FROM}
+    depends_on:
+      db_postgres:
+        condition: service_healthy
+    ports:
+      - "8001:5000"
+    networks:
+      - app_network
+      - data_network
+
+  api2:
+    build:
+      context: ../BEC_API
+    restart: unless-stopped
+    environment: *api_env
+    depends_on:
+      db_postgres:
+        condition: service_healthy
+    ports:
+      - "8002:5000"
+    networks:
+      - app_network
+      - data_network
+
+  api3:
+    build:
+      context: ../BEC_API
+    restart: unless-stopped
+    environment: *api_env
+    depends_on:
+      db_postgres:
+        condition: service_healthy
+    ports:
+      - "8003:5000"
+    networks:
+      - app_network
+      - data_network
+
+  # --- BEC_PRF (Flask, portal recepción) — instancia única ---
+  # El código NO va copiado en la imagen (su Dockerfile solo instala deps,
+  # el código se sirve por bind-mount — igual que en local): por eso
+  # necesita el volumen aquí también, o el contenedor arranca vacío.
+  bec_prf:
+    build:
+      context: ../BEC_PRF
+    restart: unless-stopped
+    volumes:
+      - ../BEC_PRF:/app
+    environment:
+      BEC_API_URL: http://api1:5000
+      # La usa el NAVEGADOR del recepcionista para cargar fotos servidas por la
+      # API — debe ser la URL pública (puerto de la API en el droplet público),
+      # no la interna. Ver README para el valor final.
+      BEC_API_PUBLIC_URL: ${BEC_API_PUBLIC_URL}
+      FLASK_SECRET_KEY: ${FLASK_SECRET_KEY}
+    depends_on:
+      - api1
+    ports:
+      - "5001:5000"
+    networks:
+      - app_network
+
+  # --- BEC_PAL (Laravel, portal admin) — instancia única ---
+  # Igual que BEC_PRF: su Dockerfile ni siquiera corre `composer install`,
+  # depende 100% del bind-mount (incluye vendor/, que normalmente no va en
+  # git) — la carpeta local ya lista es la que se copia al droplet.
+  bec_pal:
+    build:
+      context: ../BEC_PAL
+    restart: unless-stopped
+    working_dir: /app
+    volumes:
+      - ../BEC_PAL:/app
+    environment:
+      BEC_API_URL: http://api1:5000
+      BEC_API_PUBLIC_URL: ${BEC_API_PUBLIC_URL}
+    depends_on:
+      - api1
+    ports:
+      - "5002:8000"
+    networks:
+      - app_network
+
+  # --- Monitoreo (Prometheus scrapea desde aquí; Grafana vive en el público
+  #     y lo consulta cruzando la red privada) ---
+  prometheus:
+    image: prom/prometheus:latest
+    restart: unless-stopped
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=15d
+      - --web.enable-lifecycle
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - app_network
+      - monitoring_network
+
+  # cAdvisor y postgres_exporter se quitaron a propósito: con el droplet
+  # privado en 1GB de RAM (9 contenedores ya es bastante), node_exporter solo
+  # ya demuestra "monitoreo del sistema" para el rubric sin arriesgar OOM.
+  # Si más adelante suben el droplet a 2GB+, se pueden regresar sin problema.
+  node_exporter:
+    image: prom/node-exporter:latest
+    restart: unless-stopped
+    command:
+      - --path.rootfs=/host
+    volumes:
+      - /:/host:ro,rslave
+    networks:
+      - monitoring_network
+
+networks:
+  app_network:
+  data_network:
+    internal: true
+  monitoring_network:
+    internal: true
+
+volumes:
+  postgres_data:
+  prometheus_data:

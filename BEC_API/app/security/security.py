@@ -12,7 +12,7 @@ from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
 from app.data.database import get_db
-from app.models.models import Sesion, Usuario
+from app.models.models import IntentoLogin, Sesion, Usuario
 
 # --- Configuración (siempre desde variables de entorno, nunca hardcodeada) ---
 SECRET_KEY = os.environ["SECRET_KEY"]
@@ -107,6 +107,73 @@ def revocar_refresh_token(db: Session, token: str) -> None:
 
 
 # ======================================================================
+# Control de fuerza bruta en /auth/login (por correo, sin importar la
+# plataforma — BEC_PAL, BEC_PRF y el móvil comparten el mismo endpoint).
+#
+# Política: 3 intentos -> bloqueo de 1 min -> 1 intento extra -> si falla,
+# bloqueo de 15 min -> al pasar, el ciclo se reinicia desde 3 intentos.
+# ======================================================================
+
+INTENTOS_MAX = 3
+BLOQUEO_CORTO_MINUTOS = 1
+BLOQUEO_LARGO_MINUTOS = 15
+
+
+def _sin_tz(momento: Optional[datetime]) -> Optional[datetime]:
+    return momento.replace(tzinfo=timezone.utc) if momento else None
+
+
+def verificar_intentos_login(db: Session, correo: str) -> IntentoLogin:
+    """Llamar ANTES de validar la contraseña. Lanza 429 si el correo sigue bloqueado."""
+    correo = correo.strip().lower()
+    registro = db.query(IntentoLogin).filter(IntentoLogin.correo == correo).first()
+    if registro is None:
+        registro = IntentoLogin(correo=correo, intentos=0, estado="normal")
+        db.add(registro)
+        db.flush()
+
+    ahora = datetime.now(timezone.utc)
+    bloqueado_hasta = _sin_tz(registro.bloqueado_hasta)
+
+    if registro.estado == "espera_larga" and bloqueado_hasta and ahora >= bloqueado_hasta:
+        # Los 15 minutos ya pasaron: se reinicia el ciclo completo.
+        registro.estado = "normal"
+        registro.intentos = 0
+        registro.bloqueado_hasta = None
+        bloqueado_hasta = None
+
+    if registro.estado in ("espera_corta", "espera_larga") and bloqueado_hasta and ahora < bloqueado_hasta:
+        segundos = int((bloqueado_hasta - ahora).total_seconds()) + 1
+        if segundos >= 60:
+            mensaje = f"Demasiados intentos fallidos. Vuelve a intentar en {segundos // 60} minuto(s)."
+        else:
+            mensaje = f"Demasiados intentos fallidos. Vuelve a intentar en {segundos} segundos."
+        raise HTTPException(status_code=status.HTTP_429_TOO_MANY_REQUESTS, detail=mensaje)
+
+    return registro
+
+
+def registrar_intento_fallido(db: Session, registro: IntentoLogin) -> None:
+    if registro.estado == "espera_corta":
+        # El intento extra tras el primer bloqueo también falló.
+        registro.estado = "espera_larga"
+        registro.bloqueado_hasta = datetime.now(timezone.utc) + timedelta(minutes=BLOQUEO_LARGO_MINUTOS)
+    else:
+        registro.intentos += 1
+        if registro.intentos >= INTENTOS_MAX:
+            registro.estado = "espera_corta"
+            registro.bloqueado_hasta = datetime.now(timezone.utc) + timedelta(minutes=BLOQUEO_CORTO_MINUTOS)
+    db.commit()
+
+
+def registrar_intento_exitoso(db: Session, registro: IntentoLogin) -> None:
+    registro.intentos = 0
+    registro.estado = "normal"
+    registro.bloqueado_hasta = None
+    db.commit()
+
+
+# ======================================================================
 # Dependencias de autenticación y roles
 # ======================================================================
 
@@ -146,3 +213,16 @@ def get_recepcionista_or_admin(current_user: Usuario = Depends(get_current_user)
             detail="Operación permitida únicamente a Administradores o Recepcionistas.",
         )
     return current_user
+
+
+def verificar_acceso_albergue(current_user: Usuario, albergue_id_recurso: Optional[int]) -> None:
+    """Un Recepcionista solo puede ver/operar recursos (donaciones, voluntariados) de
+    SU propio albergue. Un recurso sin albergue asignado (None) es independiente y
+    cualquier Recepcionista puede operarlo. Admin nunca está restringido."""
+    if current_user.rol_id == ROL_ADMIN:
+        return
+    if albergue_id_recurso is not None and albergue_id_recurso != current_user.albergue_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="No tienes acceso a recursos de otro albergue.",
+        )

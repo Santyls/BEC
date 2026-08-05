@@ -27,8 +27,17 @@ storage/*.key
 *.csr
 !BEC_API/**/*.crt.example
 
-# --- Editores / SO ---
+# --- Archivos subidos por usuarios en tiempo de ejecución ---
+# Son fotos de perfil de personas reales: datos personales que no tienen por qué
+# acabar en un repositorio público, y además se regeneran solas al usar la app.
+BEC_API/uploads/
+
+# --- Empaquetados temporales para desplegar ---
+*.tar.gz
+
+# --- Editores / SO / herramientas ---
 .vscode/
 .idea/
+.claude/
 .DS_Store
 Thumbs.db

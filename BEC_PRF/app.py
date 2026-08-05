@@ -1,29 +1,49 @@
-from flask import Flask, render_template
+import os
 
-app = Flask(__name__)
+from flask import Flask, redirect, url_for
+from flask_wtf import CSRFProtect
 
-# --- RUTAS DEL RECEPCIONISTA ---
+from blueprints.auth import bp as auth_bp
 
-@app.route('/')
-def home():
-    # Renderiza el dashboard principal del recepcionista
-    return render_template('home.html')
 
-@app.route('/usuarios/nuevo')
-def nuevo_usuario():
-    # Vista para registrar ciudadano (rol asignado por defecto en BD)
-    return render_template('usuarios/index.html') # Placeholder
+def create_app():
+    app = Flask(__name__)
+    app.secret_key = os.environ["FLASK_SECRET_KEY"]
+    # Distinta de BEC_API_URL (usada por bec_api_client.py): esa es el hostname de
+    # Docker, solo alcanzable servidor-a-servidor; esta es la que el navegador del
+    # recepcionista necesita para pedir archivos estáticos servidos por la API
+    # (fotos de perfil, etc.).
+    app.config["BEC_API_PUBLIC_URL"] = os.environ.get("BEC_API_PUBLIC_URL", "http://localhost:8000")
+    # Límite global de tamaño de cuerpo — sobre todo pensado para la subida de foto de
+    # perfil; Flask responde 413 automáticamente si se excede, antes de leer el archivo.
+    app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024
 
-@app.route('/donaciones/nueva')
-def nueva_donacion():
-    # Vista para registrar donativo vinculado a un ciudadano
-    return render_template('donaciones/index.html') # Placeholder
+    # Protección CSRF en TODAS las rutas POST/PUT/DELETE — sin esto, cualquier sitio
+    # externo podría enviar peticiones a nombre de una sesión de recepcionista activa
+    # (ej. inscribir/cancelar/editar) con solo lograr que abra un enlace o imagen maliciosa.
+    CSRFProtect(app)
 
-@app.route('/voluntariados/asignar')
-def asignar_voluntariado():
-    # Vista para apuntar ciudadano a voluntariado
-    return render_template('voluntariados/index.html') # Placeholder
+    from blueprints.dashboard import bp as dashboard_bp
+    from blueprints.donaciones import bp as donaciones_bp
+    from blueprints.perfil import bp as perfil_bp
+    from blueprints.usuarios import bp as usuarios_bp
+    from blueprints.voluntariados import bp as voluntariados_bp
 
-if __name__ == '__main__':
-    # Ejecuta el servidor en el puerto 5000
-    app.run(debug=True, port=5000)
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(dashboard_bp)
+    app.register_blueprint(usuarios_bp, url_prefix="/usuarios")
+    app.register_blueprint(donaciones_bp, url_prefix="/donaciones")
+    app.register_blueprint(voluntariados_bp, url_prefix="/voluntariados")
+    app.register_blueprint(perfil_bp, url_prefix="/perfil")
+
+    @app.route("/")
+    def raiz():
+        return redirect(url_for("dashboard.inicio"))
+
+    return app
+
+
+app = create_app()
+
+if __name__ == "__main__":
+    app.run(debug=True, host="0.0.0.0", port=5000)

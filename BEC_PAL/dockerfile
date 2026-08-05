@@ -2,13 +2,31 @@ FROM php:8.2-cli
 
 # Instalamos dependencias básicas del sistema
 RUN apt-get update && apt-get install -y \
-    git curl libpng-dev libonig-dev libxml2-dev zip unzip
+    git curl libpng-dev libonig-dev libxml2-dev libzip-dev zip unzip
 
 # Limpiamos caché
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Instalamos extensiones de PHP que usa Laravel
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+# Instalamos extensiones de PHP que usa Laravel.
+# zip: la requiere phpoffice/phpspreadsheet (maatwebsite/excel) para leer/escribir .xlsx.
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
+
+# OPcache: sin esto, PHP vuelve a parsear TODO Laravel (cientos de archivos) en
+# cada request. Sobre un bind-mount de Windows (ya de por sí lento para I/O),
+# esa combinación es la causa real de la lentitud, no Laravel en sí.
+RUN docker-php-ext-install opcache
+# revalidate_freq=60: revisa cambios cada 60s por archivo en vez de en cada
+# request — sobre un bind-mount lento, revisar el timestamp de ~700 archivos
+# EN CADA PETICIÓN era el verdadero cuello de botella (más que la falta de
+# cacheo en sí). Sigue detectando cambios de código solo, sin reiniciar nada.
+RUN { \
+        echo 'opcache.enable=1'; \
+        echo 'opcache.enable_cli=1'; \
+        echo 'opcache.memory_consumption=128'; \
+        echo 'opcache.max_accelerated_files=20000'; \
+        echo 'opcache.validate_timestamps=1'; \
+        echo 'opcache.revalidate_freq=60'; \
+    } > /usr/local/etc/php/conf.d/opcache-custom.ini
 
 # Instalamos Composer dentro del contenedor
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
